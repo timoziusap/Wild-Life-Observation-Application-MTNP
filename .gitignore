@@ -58,3 +58,13 @@ build/
 hs_err_pid*
 replay_pid*
 >>>>>>> d2ae8104492112f54c933922b8f4878df40dca03
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# macOs
+.DS_Store
