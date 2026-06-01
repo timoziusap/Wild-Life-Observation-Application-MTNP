@@ -1,0 +1,101 @@
+//  style.css Einfaches Layout fuer die Wild Life Observation App.
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.centerdiv {
+    width: 90%;
+    margin: 0 auto;
+}
+
+header h1 {
+    color: #2e6b2e;
+    text-align: center;
+    padding: 15px 0;
+}
+
+//einfache Navigation
+nav {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+nav a {
+    margin: 0 10px;
+    color: #2e6b2e;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+// zwei Spalten: links Tier, rechts Ort
+.left, .right {
+    width: 48%;
+    background-color: #ffffff;
+    padding: 15px;
+    box-sizing: border-box;
+    border: 1px solid #cccccc;
+    border-radius: 6px;
+}
+
+.left {
+    float: left;
+}
+
+.right {
+    float: right;
+}
+
+h2 {
+    color: #2e6b2e;
+}
+
+// Formularfelder schoen untereinander
+label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+input[type=text],
+textarea,
+select {
+    width: 100%;
+    padding: 6px;
+    box-sizing: border-box;
+    margin-top: 3px;
+}
+
+input[type=submit],
+button {
+    margin-top: 12px;
+    padding: 8px 16px;
+    background-color: #2e6b2e;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+input[type=submit]:hover,
+button:hover {
+    background-color: #245624;
+}
+
+table {
+    margin-top: 15px;
+}
+
+footer {
+    clear: both;
+    text-align: center;
+    padding: 20px 0;
+    color: #777777;
+}
