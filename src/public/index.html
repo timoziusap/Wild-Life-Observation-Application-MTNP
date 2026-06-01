@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <title>Wild Life Observation</title>
+    <meta charset="utf-8">
+
+    <!-- eigenes Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- DataTables CSS (Tabellen-Anzeige) -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+
+    <!-- jQuery zuerst, dann DataTables -->
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+
+    <!-- eigene Skripte: erst die Helfer, dann die Dialoge -->
+    <script type="text/javascript" src="js/api.js"></script>
+    <script type="text/javascript" src="js/animal.js"></script>
+    <script type="text/javascript" src="js/location.js"></script>
+</head>
+<body>
+<div class="centerdiv">
+
+    <header><h1>Wild Life Observation</h1></header>
+
+    <!-- einfache Navigation zwischen den drei Dialogen -->
+    <nav>
+        <a href="index.html">Tier &amp; Ort</a>
+        <a href="observation.html">Beobachtung</a>
+    </nav>
+
+    <!-- ===================== Dialog 1: Tier anlegen ===================== -->
+    <section class="left">
+        <h2>Dialog 1: Tier anlegen</h2>
+        <form id="newAnimal">
+            <label>Gattung (Genus):</label>
+            <!-- wird per AJAX aus GET /genus gefuellt -->
+            <select name="genus" id="genusSelect" required="required">
+                <option value="">-- bitte waehlen --</option>
+            </select>
+
+            <label>Geschlecht:</label>
+            <input type="text" name="gender" required="required">
+
+            <label>Geschaetztes Alter:</label>
+            <input type="text" name="estimatedAge">
+
+            <label>Geschaetzte Groesse:</label>
+            <input type="text" name="estimatedSize">
+
+            <label>Geschaetztes Gewicht:</label>
+            <input type="text" name="estimatedWeight">
+
+            <br>
+            <input type="submit" id="newAnimalButton" value="Tier speichern">
+        </form>
+
+        <h3>Vorhandene Tiere</h3>
+        <button id="loadAnimalTable">Laden</button>
+        <table id="animalTable" class="display" cellspacing="0" width="100%">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Geschlecht</th>
+                <th>Alter</th>
+                <th>Groesse</th>
+                <th>Gewicht</th>
+                <th>Gattung</th>
+            </tr>
+            </thead>
+        </table>
+    </section>
+
+    <!-- ===================== Dialog 2: Location anlegen ===================== -->
+    <section class="right">
+        <h2>Dialog 2: Ort anlegen</h2>
+        <form id="newLocation">
+            <label>Kurztitel:</label>
+            <input type="text" name="shorttitle" required="required">
+
+            <label>Beschreibung:</label>
+            <textarea name="description" rows="4"></textarea>
+
+            <label>Breitengrad (Latitude):</label>
+            <input type="text" name="latitude" required="required">
+
+            <label>Laengengrad (Longitude):</label>
+            <input type="text" name="longitude" required="required">
+
+            <br>
+            <input type="submit" id="newLocationButton" value="Ort speichern">
+        </form>
+
+        <h3>Vorhandene Orte</h3>
+        <button id="loadLocationTable">Laden</button>
+        <table id="locationTable" class="display" cellspacing="0" width="100%">
+            <thead>
+            <tr>
+                <th>LNr</th>
+                <th>Kurztitel</th>
+                <th>Beschreibung</th>
+                <th>Latitude</th>
+                <th>Longitude</th>
+            </tr>
+            </thead>
+        </table>
+    </section>
+
+    <footer>Wild Life Observation App &ndash; Hochschule Aalen</footer>
+</div>
+</body>
+</html>
