@@ -1,51 +1,10 @@
-<<<<<<< HEAD
-HELP.md
-target/
-.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
-
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
-
-### VS Code ###
-.vscode/
-=======
-# Compiled class file
+# Compiled class files
 *.class
 
-# Log file
+# Log files
 *.log
 
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
+# Package files
 *.jar
 *.war
 *.nar
@@ -54,10 +13,27 @@ build/
 *.tar.gz
 *.rar
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
-replay_pid*
->>>>>>> d2ae8104492112f54c933922b8f4878df40dca03
+# Maven
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# Gradle / build
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# Spring Tools (STS)
+.apt_generated
+.factorypath
+.springBeans
+.sts4-cache
+
+# Eclipse
+.classpath
+.project
+.settings
 
 # IntelliJ IDEA
 .idea/
@@ -66,8 +42,31 @@ replay_pid*
 *.ipr
 out/
 
-# macOs
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# VS Code
+.vscode/
+
+# BlueJ
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# JVM crash logs
+hs_err_pid*
+replay_pid*
+
+# macOS
 .DS_Store
+
+# Spring generierte Hilfedatei
+HELP.md
 
 # Timo ClaudeDateien
 NormaleDateienClaude/
