@@ -27,6 +27,16 @@ $(document).ready(function() {
     $('#loadAnimalTable').click(function() {
         loadAnimalTable();
     });
+
+    // 5) Wenn im Dropdown "Sonstige" gewaehlt wird, die Felder fuer die
+    //    neue Gattung einblenden, sonst ausblenden.
+    $('#genusSelect').change(function() {
+        if ($('#genusSelect').val() === 'sonstige') {
+            $('#sonstigeGenusBereich').show();
+        } else {
+            $('#sonstigeGenusBereich').hide();
+        }
+    });
 });
 
 
@@ -42,12 +52,40 @@ function postAnimal(event) {
         'gender'          : $('input[name=gender]').val(),
         'estimatedAge'    : $('input[name=estimatedAge]').val(),
         'estimatedSize'   : $('input[name=estimatedSize]').val(),
-        'estimatedWeight' : $('input[name=estimatedWeight]').val(),
-        // Das Tier verweist auf eine Gattung. Spring erwartet ein
-        // Objekt mit der id, deshalb verpacken wir den gewaehlten Wert so.
-        'genus'           : { 'id' : $('#genusSelect').val() }
+        'estimatedWeight' : $('input[name=estimatedWeight]').val()
     };
 
+    // Wurde "Sonstige" gewaehlt, legen wir erst die neue Gattung an
+    // und speichern danach das Tier mit deren id.
+    if ($('#genusSelect').val() === 'sonstige') {
+
+        var bezeichnung = $('#sonstigeDesignation').val();
+        if (!bezeichnung) {
+            alert('Bitte eine Bezeichnung fuer die neue Gattung eingeben.');
+            return;
+        }
+
+        var neueGattung = {
+            'designation'      : bezeichnung,
+            'latinDesignation' : $('#sonstigeLatin').val()
+        };
+
+        // Erst Gattung anlegen, dann im Erfolgsfall das Tier damit speichern.
+        postJson('/genus', neueGattung, function(gattung) {
+            formData.genus = { 'id' : gattung.id };
+            speichereTier(formData);
+        });
+
+    } else {
+        // Normale Auswahl aus der Liste: id der gewaehlten Gattung mitgeben.
+        formData.genus = { 'id' : $('#genusSelect').val() };
+        speichereTier(formData);
+    }
+}
+
+
+// Speichert das Tier. Je nach bearbeiteId wird angelegt (POST) oder geaendert (PUT).
+function speichereTier(formData) {
     if (bearbeiteId === 0) {
         // Neues Tier anlegen; nach Erfolg Formular zuruecksetzen + Tabelle neu laden.
         postJson('/animals', formData, nachSpeichern);
@@ -64,6 +102,7 @@ function postAnimal(event) {
 function nachSpeichern() {
     bearbeiteId = 0;
     $('#newAnimal')[0].reset();
+    $('#sonstigeGenusBereich').hide();   // Felder fuer neue Gattung wieder ausblenden
     $('#newAnimalButton').val('Tier speichern');
     loadAnimalTable();
 }

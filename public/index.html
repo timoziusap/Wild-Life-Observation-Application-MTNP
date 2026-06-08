@@ -38,7 +38,18 @@
             <!-- wird per AJAX aus GET /genus gefuellt -->
             <select name="genus" id="genusSelect" required="required">
                 <option value="">-- bitte waehlen --</option>
+                <!-- feste Option fuer eine Art die nicht in der Liste steht -->
+                <option value="sonstige">Sonstige (neue Gattung)...</option>
             </select>
+
+            <!-- erscheint nur wenn oben "Sonstige" gewaehlt wird (siehe animal.js) -->
+            <div id="sonstigeGenusBereich" style="display:none;">
+                <label>Neue Gattung (Bezeichnung):</label>
+                <input type="text" id="sonstigeDesignation" name="sonstigeDesignation">
+
+                <label>Lateinische Bezeichnung (optional):</label>
+                <input type="text" id="sonstigeLatin" name="sonstigeLatin">
+            </div>
 
             <label>Geschlecht:</label>
             <input type="text" name="gender" required="required">
