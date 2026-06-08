@@ -1,5 +1,11 @@
-//animal.js
-// Tier anlegen, Tier-Tabelle laden, Gattungs-Dropdown fuellen.
+// animal.js
+// Tier anlegen, anzeigen, bearbeiten und loeschen. Gattungs-Dropdown fuellen.
+
+
+// Merkt sich die ID des Tieres, das gerade bearbeitet wird.
+// Ist sie 0, wird ein NEUES Tier angelegt. Ist sie groesser 0,
+// wird ein vorhandenes Tier geaendert.
+var bearbeiteId = 0;
 
 
 // Wird ausgefuehrt, sobald die Seite fertig geladen ist.
@@ -12,7 +18,7 @@ $(document).ready(function() {
     // 2) Tier-Tabelle beim Laden der Seite einmal anzeigen.
     loadAnimalTable();
 
-    // 3) Wenn das Formular abgeschickt wird, neues Tier speichern.
+    // 3) Wenn das Formular abgeschickt wird, Tier speichern.
     $("#newAnimal").submit(function(event) {
         postAnimal(event);
     });
@@ -24,8 +30,12 @@ $(document).ready(function() {
 });
 
 
-// Liest die Formularfelder aus und schickt das neue Tier ans Backend.
+// Liest die Formularfelder aus und speichert das Tier.
+// Je nachdem ob bearbeiteId gesetzt ist, wird angelegt (POST) oder geaendert (PUT).
 function postAnimal(event) {
+
+    // Verhindert, dass die Seite beim Absenden neu laedt.
+    event.preventDefault();
 
     // Werte aus dem Formular einsammeln.
     var formData = {
@@ -38,11 +48,44 @@ function postAnimal(event) {
         'genus'           : { 'id' : $('#genusSelect').val() }
     };
 
-    // Per Helfer absenden; nach Erfolg Tabelle neu laden.
-    postJson('/animals', formData, loadAnimalTable);
+    if (bearbeiteId === 0) {
+        // Neues Tier anlegen; nach Erfolg Formular zuruecksetzen + Tabelle neu laden.
+        postJson('/animals', formData, nachSpeichern);
+    } else {
+        // Vorhandenes Tier aendern. Die ID muss mit ins Objekt.
+        formData.id = bearbeiteId;
+        putJson('/animals/' + bearbeiteId, formData, nachSpeichern);
+    }
+}
 
-    // Verhindert, dass die Seite beim Absenden neu laedt.
-    event.preventDefault();
+
+// Wird nach erfolgreichem Speichern aufgerufen:
+// Formular leeren, zurueck in den "Neu"-Modus, Tabelle neu laden.
+function nachSpeichern() {
+    bearbeiteId = 0;
+    $('#newAnimal')[0].reset();
+    $('#newAnimalButton').val('Tier speichern');
+    loadAnimalTable();
+}
+
+
+// Loescht ein Tier nach Rueckfrage (DELETE /animals/{id}).
+function loescheAnimal(id) {
+    if (confirm('Dieses Tier wirklich loeschen?')) {
+        deleteJson('/animals/' + id, loadAnimalTable);
+    }
+}
+
+
+// Schreibt die Daten eines Tieres zurueck ins Formular, damit man sie aendern kann.
+function bearbeiteAnimal(id, gender, estimatedAge, estimatedSize, estimatedWeight, genusId) {
+    bearbeiteId = id;
+    $('input[name=gender]').val(gender);
+    $('input[name=estimatedAge]').val(estimatedAge);
+    $('input[name=estimatedSize]').val(estimatedSize);
+    $('input[name=estimatedWeight]').val(estimatedWeight);
+    $('#genusSelect').val(genusId);
+    $('#newAnimalButton').val('Aenderung speichern');
 }
 
 
@@ -70,6 +113,33 @@ function loadAnimalTable() {
                         return genus.designation;
                     }
                     return "";
+                }},
+            // Letzte Spalte: Buttons zum Bearbeiten und Loeschen.
+            // "data": null heisst, wir bauen den Inhalt selbst aus der ganzen Zeile.
+            { "data": null, "orderable": false, "render": function(zeile) {
+
+                    // Die Gattungs-ID heraussuchen (kann fehlen).
+                    var genusId = "";
+                    if (zeile.genus && zeile.genus.id) {
+                        genusId = zeile.genus.id;
+                    }
+
+                    // Bearbeiten-Button: gibt die Werte der Zeile mit, damit
+                    // das Formular damit gefuellt werden kann.
+                    var bearbeitenBtn =
+                        '<button onclick="bearbeiteAnimal(' +
+                        zeile.id + ',' +
+                        '\'' + zeile.gender + '\',' +
+                        '\'' + zeile.estimatedAge + '\',' +
+                        '\'' + zeile.estimatedSize + '\',' +
+                        '\'' + zeile.estimatedWeight + '\',' +
+                        '\'' + genusId + '\'' +
+                        ')">Bearbeiten</button>';
+
+                    var loeschenBtn =
+                        '<button onclick="loescheAnimal(' + zeile.id + ')">Loeschen</button>';
+
+                    return bearbeitenBtn + ' ' + loeschenBtn;
                 }}
         ]
     });
