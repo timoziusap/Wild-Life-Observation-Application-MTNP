@@ -1,4 +1,4 @@
-style.css Einfaches Layout fuer die Wild Life Observation App.
+/* style.css Einfaches Layout fuer die Wild Life Observation App. */
 
 body {
     font-family: Arial, sans-serif;
@@ -18,7 +18,7 @@ header h1 {
     padding: 15px 0;
 }
 
-einfache Navigation
+/* einfache Navigation */
 nav {
     text-align: center;
     margin-bottom: 20px;
@@ -35,7 +35,7 @@ nav a:hover {
     text-decoration: underline;
 }
 
-zwei Spalten: links Tier, rechts Ort
+/* zwei Spalten: links Tier, rechts Ort */
 .left, .right {
     width: 48%;
     background-color: #ffffff;
@@ -57,7 +57,7 @@ h2 {
     color: #2e6b2e;
 }
 
-Formularfelder schoen untereinander
+/* Formularfelder schoen untereinander */
 label {
     display: block;
     margin-top: 10px;
