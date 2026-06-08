@@ -26,6 +26,47 @@ function postJson(url, data, onSuccess) {
 }
 
 
+// Schickt ein Objekt als JSON per PUT an die angegebene URL (zum Aendern).
+// url      = z.B. '/animals/5'
+// data     = das Objekt mit den geaenderten Werten
+// onSuccess = Funktion die nach Erfolg aufgerufen wird
+function putJson(url, data, onSuccess) {
+    $.ajax({
+        type: 'PUT',
+        url: url,
+        data: JSON.stringify(data),
+        contentType: 'application/json',
+        success: function(antwort) {
+            if (onSuccess) {
+                onSuccess(antwort);
+            }
+        },
+        error: function(xhr, status, error) {
+            alert('Fehler beim Aendern: ' + error);
+        }
+    });
+}
+
+
+// Schickt eine DELETE-Anfrage an die angegebene URL (zum Loeschen).
+// url      = z.B. '/animals/5'
+// onSuccess = Funktion die nach Erfolg aufgerufen wird
+function deleteJson(url, onSuccess) {
+    $.ajax({
+        type: 'DELETE',
+        url: url,
+        success: function(antwort) {
+            if (onSuccess) {
+                onSuccess(antwort);
+            }
+        },
+        error: function(xhr, status, error) {
+            alert('Fehler beim Loeschen: ' + error);
+        }
+    });
+}
+
+
 // Fuellt ein Dropdown (select) mit Daten aus dem Backend.
 // url        = z.B. '/genus'
 // selectId   = die id vom select-Element, z.B. 'genusSelect'
