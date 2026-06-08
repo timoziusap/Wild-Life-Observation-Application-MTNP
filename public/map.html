@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <title>Wild Life Observation</title>
+    <meta charset="utf-8">
+
+    <!-- eigenes Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- die Karte braucht eine feste Hoehe, sonst sieht man nichts -->
+    <style>
+        #map {
+            width: 100%;
+            height: 500px;
+            margin-top: 15px;
+            border: 1px solid #cccccc;
+            border-radius: 6px;
+        }
+    </style>
+
+    <!-- jQuery (fuer das spaetere Laden der Orte) -->
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- eigenes Karten-Skript -->
+    <script type="text/javascript" src="js/maps.js"></script>
+
+    <!-- Google Maps. Den API Key muss man im Google Cloud Konto erzeugen. -->
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=DEIN_API_KEY&callback=initMap"></script>
+</head>
+<body>
+<div class="centerdiv">
+
+    <header><h1>Wild Life Observation</h1></header>
+
+    <!-- einfache Navigation zwischen den Seiten -->
+    <nav>
+        <a href="index.html">Tier &amp; Ort</a>
+        <a href="observation.html">Beobachtung</a>
+        <a href="map.html">Karte</a>
+    </nav>
+
+    <h2>Karte der Beobachtungsorte</h2>
+
+    <!-- hier rendert Google Maps die Karte hinein -->
+    <div id="map"></div>
+
+    <footer>Wild Life Observation App &ndash; Hochschule Aalen</footer>
+</div>
+</body>
+</html>
