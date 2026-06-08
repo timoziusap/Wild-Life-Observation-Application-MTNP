@@ -18,13 +18,11 @@
     <script type="text/javascript" src="js/api.js"></script>
     <script type="text/javascript" src="js/observation.js"></script>
 
-    <!--
-      Hinweis fuer Marius:
-      maps.js bitte HIER einbinden (nach observation.js).
-      Wenn du die Google-Maps-API brauchst, kommt deren <script>-Tag
-      ebenfalls hier rein.
-    -->
-    <!-- <script type="text/javascript" src="js/maps.js"></script> -->
+    <!-- eigenes Karten-Skript -->
+    <script type="text/javascript" src="js/maps.js"></script>
+
+    <!-- Google Maps wird ueber das Backend geladen (/maps-api), damit der API Key nicht ins Repo kommt. -->
+    <script async defer src="/maps-api"></script>
 </head>
 <body>
 <div class="centerdiv">
