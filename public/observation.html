@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <title>Wild Life Observation - Beobachtung</title>
+    <meta charset="utf-8">
+
+    <!-- eigenes Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- DataTables CSS (Tabellen-Anzeige) -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+
+    <!-- jQuery zuerst, dann DataTables -->
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+
+    <!-- eigene Skripte: erst die Helfer, dann der Dialog, dann die Karte -->
+    <script type="text/javascript" src="js/api.js"></script>
+    <script type="text/javascript" src="js/observation.js"></script>
+
+    <!--
+      Hinweis fuer Marius:
+      maps.js bitte HIER einbinden (nach observation.js).
+      Wenn du die Google-Maps-API brauchst, kommt deren <script>-Tag
+      ebenfalls hier rein.
+    -->
+    <!-- <script type="text/javascript" src="js/maps.js"></script> -->
+</head>
+<body>
+<div class="centerdiv">
+
+    <header><h1>Wild Life Observation</h1></header>
+
+    <!-- einfache Navigation zwischen den Seiten -->
+    <nav>
+        <a href="index.html">Tier &amp; Ort</a>
+        <a href="observation.html">Beobachtung</a>
+    </nav>
+
+    <!-- ===================== Dialog 3: Beobachtung erfassen ===================== -->
+    <section class="left">
+        <h2>Dialog 3: Beobachtung erfassen</h2>
+        <form id="newObservation">
+            <label>Tier:</label>
+            <!-- wird per AJAX aus GET /animals gefuellt -->
+            <select name="animal" id="animalSelect" required="required">
+                <option value="">-- bitte waehlen --</option>
+            </select>
+
+            <label>Ort:</label>
+            <!-- wird per AJAX aus GET /locations gefuellt -->
+            <select name="location" id="locationSelect" required="required">
+                <option value="">-- bitte waehlen --</option>
+            </select>
+
+            <label>Datum:</label>
+            <input type="date" name="date" required="required">
+
+            <label>Uhrzeit:</label>
+            <input type="time" name="time" required="required">
+
+            <br>
+            <input type="submit" id="newObservationButton" value="Beobachtung speichern">
+        </form>
+
+        <h3>Vorhandene Beobachtungen</h3>
+        <button id="loadObservationTable">Laden</button>
+        <table id="observationTable" class="display" cellspacing="0" width="100%">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Tier</th>
+                <th>Ort</th>
+                <th>Datum</th>
+                <th>Uhrzeit</th>
+                <th>Aktion</th>
+            </tr>
+            </thead>
+        </table>
+    </section>
+
+    <!-- ===================== Karte (Marius, maps.js) ===================== -->
+    <section class="right">
+        <h2>Karte</h2>
+        <!--
+          Karten-Container fuer Marius' maps.js.
+          observation.js ruft beim Auswaehlen eines Ortes
+          zeigeOrtAufKarte(lat, lng) auf. Diese Funktion schreibt
+          Marius in maps.js und laesst hier die Karte erscheinen.
+        -->
+        <div id="map" style="width:100%; height:400px; background:#e9e9e9;">
+            <p style="padding:10px; color:#777;">
+                Hier erscheint die Karte (maps.js), sobald ein Ort gewaehlt wird.
+            </p>
+        </div>
+    </section>
+
+    <footer>Wild Life Observation App &ndash; Hochschule Aalen</footer>
+</div>
+</body>
+</html>
