@@ -4,6 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 // Startet die Anwendung
+//Test Push von Passi
 @SpringBootApplication
 public class EntwicklungVonInfoSystemenProjektApplication {
 
