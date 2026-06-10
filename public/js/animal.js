@@ -49,7 +49,7 @@ function postAnimal(event) {
 
     // Werte aus dem Formular einsammeln.
     var formData = {
-        'gender'          : $('input[name=gender]').val(),
+        'gender'          : $('select[name=gender]').val(),
         'estimatedAge'    : $('input[name=estimatedAge]').val(),
         'estimatedSize'   : $('input[name=estimatedSize]').val(),
         'estimatedWeight' : $('input[name=estimatedWeight]').val()
@@ -119,7 +119,7 @@ function loescheAnimal(id) {
 // Schreibt die Daten eines Tieres zurueck ins Formular, damit man sie aendern kann.
 function bearbeiteAnimal(id, gender, estimatedAge, estimatedSize, estimatedWeight, genusId) {
     bearbeiteId = id;
-    $('input[name=gender]').val(gender);
+    $('select[name=gender]').val(gender);
     $('input[name=estimatedAge]').val(estimatedAge);
     $('input[name=estimatedSize]').val(estimatedSize);
     $('input[name=estimatedWeight]').val(estimatedWeight);
