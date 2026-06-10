@@ -1,5 +1,7 @@
 package hs.aalen.location;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -30,7 +32,8 @@ public class Location {
 		this.longitude = longitude;
 	}
 
-	// Getter heisst getlNr, damit das JSON-Feld "lNr" heisst (so liest es das Frontend)
+	// JsonProperty noetig, weil Jackson getlNr sonst nicht als Getter erkennt
+	@JsonProperty("lNr")
 	public Long getlNr() {
 		return lNr;
 	}
