@@ -2,6 +2,10 @@
 // Aufbau wie im VideoArchive (jQuery + $.ajax + DataTables)
 // Passt zur index.html von Niclas (Formular #newLocation, Tabelle #locationTable)
 
+// Merkt sich die lNr des Ortes, der gerade bearbeitet wird.
+// 0 = neuen Ort anlegen, groesser 0 = vorhandenen aendern.
+var bearbeiteLnr = 0;
+
 // Wird aufgerufen sobald die Seite geladen ist
 $(document).ready(function() {
     addLocationListeners();
@@ -22,7 +26,7 @@ function addLocationListeners() {
     });
 }
 
-// Neue Location per POST anlegen
+// Location speichern. Je nach bearbeiteLnr wird angelegt (POST) oder geaendert (PUT).
 function addLocation() {
     var formData = {
         'shorttitle':  $('[name=shorttitle]').val(),
@@ -31,20 +35,56 @@ function addLocation() {
         'longitude':   $('[name=longitude]').val()
     };
 
+    // Bei Bearbeitung geht der Request an /locations/{lNr} per PUT
+    var methode = 'POST';
+    var url = '/locations';
+    if (bearbeiteLnr !== 0) {
+        methode = 'PUT';
+        url = '/locations/' + bearbeiteLnr;
+    }
+
     $.ajax({
-        type: 'POST',
-        url: '/locations',
+        type: methode,
+        url: url,
         data: JSON.stringify(formData),
         contentType: 'application/json',
         success: function(data) {
-            // Formular leeren und Tabelle neu laden
+            // Formular leeren, zurueck in den "Neu"-Modus, Tabelle neu laden
+            bearbeiteLnr = 0;
             $('#newLocation')[0].reset();
+            $('#newLocationButton').val('Ort speichern');
             loadLocations();
         },
         error: function(xhr, status, error) {
-            alert('Fehler beim Anlegen der Location: ' + error);
+            alert('Fehler beim Speichern der Location: ' + error);
         }
     });
+}
+
+// Schreibt die Daten eines Ortes zurueck ins Formular, damit man sie aendern kann.
+function bearbeiteLocation(lNr, shorttitle, description, latitude, longitude) {
+    bearbeiteLnr = lNr;
+    $('[name=shorttitle]').val(shorttitle);
+    $('[name=description]').val(description);
+    $('[name=latitude]').val(latitude);
+    $('[name=longitude]').val(longitude);
+    $('#newLocationButton').val('Aenderung speichern');
+}
+
+// Loescht einen Ort nach Rueckfrage (DELETE /locations/{lNr}).
+function loescheLocation(lNr) {
+    if (confirm('Diesen Ort wirklich loeschen?')) {
+        $.ajax({
+            type: 'DELETE',
+            url: '/locations/' + lNr,
+            success: function() {
+                loadLocations();
+            },
+            error: function(xhr, status, error) {
+                alert('Fehler beim Loeschen der Location: ' + error);
+            }
+        });
+    }
 }
 
 // Alle Locations laden und Tabelle befuellen
@@ -57,12 +97,27 @@ function loadLocations() {
             var table = $('#locationTable').DataTable();
             table.clear();
             $.each(data, function(index, location) {
+
+                // Aktions-Buttons (Bearbeiten + Loeschen), wie bei den Tieren
+                var bearbeitenBtn =
+                    '<button onclick="bearbeiteLocation(' +
+                    location.lNr + ',' +
+                    '\'' + location.shorttitle + '\',' +
+                    '\'' + location.description + '\',' +
+                    '\'' + location.latitude + '\',' +
+                    '\'' + location.longitude + '\'' +
+                    ')">Bearbeiten</button>';
+
+                var loeschenBtn =
+                    '<button onclick="loescheLocation(' + location.lNr + ')">Loeschen</button>';
+
                 table.row.add([
                     location.lNr,
                     location.shorttitle,
                     location.description,
                     location.latitude,
-                    location.longitude
+                    location.longitude,
+                    bearbeitenBtn + ' ' + loeschenBtn
                 ]);
             });
             table.draw();

@@ -8,7 +8,7 @@ body {
 }
 
 .centerdiv {
-    width: 90%;
+    width: 96%;
     margin: 0 auto;
 }
 
@@ -94,6 +94,41 @@ button:hover {
 
 table {
     margin-top: 15px;
+}
+
+/* DataTables rechnet sich gern eine eigene Breite aus und
+   schiesst damit ueber den Kasten hinaus -> hart auf 100% setzen */
+table.dataTable,
+table.display {
+    width: 100% !important;
+}
+
+/* etwas kleinere Schrift, damit die Spalten gut reinpassen
+   (Umbruch nur an Leerzeichen, nicht mitten im Wort) */
+table.display td,
+table.display th {
+    font-size: 14px;
+}
+
+/* Falls doch mal was breiter ist: lieber scrollen als ueberlappen */
+.left, .right {
+    overflow-x: auto;
+}
+
+/* Buttons in den Tabellen (Bearbeiten/Loeschen):
+   klein, gleich breit und sauber untereinander */
+table button {
+    display: block;
+    width: 100%;
+    margin: 2px 0;
+    padding: 3px 8px;
+    font-size: 13px;
+}
+
+/* Aktion-Spalte soll nicht unnoetig breit werden */
+table td:last-child,
+table th:last-child {
+    width: 110px;
 }
 
 footer {
