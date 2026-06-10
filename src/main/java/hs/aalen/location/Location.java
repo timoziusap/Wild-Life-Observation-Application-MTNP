@@ -37,6 +37,7 @@ public class Location {
 	public Long getlNr() {
 		return lNr;
 	}
+	@JsonProperty("lNr")
 	public void setlNr(Long lNr) {
 		this.lNr = lNr;
 	}
