@@ -37,6 +37,16 @@ $(document).ready(function() {
             $('#sonstigeGenusBereich').hide();
         }
     });
+
+    // 6) Jungtiere-Dropdown: bei "ja" das Feld fuer die Anzahl einblenden,
+    //    sonst ausblenden (gleiches Muster wie bei "Sonstige").
+    $('#youngSelect').change(function() {
+        if ($('#youngSelect').val() === 'ja') {
+            $('#youngCountBereich').show();
+        } else {
+            $('#youngCountBereich').hide();
+        }
+    });
 });
 
 
@@ -52,8 +62,17 @@ function postAnimal(event) {
         'gender'          : $('select[name=gender]').val(),
         'estimatedAge'    : $('input[name=estimatedAge]').val(),
         'estimatedSize'   : $('input[name=estimatedSize]').val(),
-        'estimatedWeight' : $('input[name=estimatedWeight]').val()
+        'estimatedWeight' : $('input[name=estimatedWeight]').val(),
+        'animalCount'     : $('input[name=animalCount]').val(),
+        // echtes true/false schicken, nicht den Text aus dem Dropdown
+        'youngPresent'    : $('#youngSelect').val() === 'ja',
+        'youngCount'      : 0
     };
+
+    // Anzahl der Jungtiere nur uebernehmen, wenn auch welche gesichtet wurden.
+    if (formData.youngPresent) {
+        formData.youngCount = $('input[name=youngCount]').val();
+    }
 
     // Wurde "Sonstige" gewaehlt, legen wir erst die neue Gattung an
     // und speichern danach das Tier mit deren id.
@@ -103,6 +122,7 @@ function nachSpeichern() {
     bearbeiteId = 0;
     $('#newAnimal')[0].reset();
     $('#sonstigeGenusBereich').hide();   // Felder fuer neue Gattung wieder ausblenden
+    $('#youngCountBereich').hide();      // Jungtier-Anzahl wieder ausblenden
     $('#newAnimalButton').val('Tier speichern');
     loadAnimalTable();
 }
@@ -117,12 +137,26 @@ function loescheAnimal(id) {
 
 
 // Schreibt die Daten eines Tieres zurueck ins Formular, damit man sie aendern kann.
-function bearbeiteAnimal(id, gender, estimatedAge, estimatedSize, estimatedWeight, genusId) {
+function bearbeiteAnimal(id, gender, estimatedAge, estimatedSize, estimatedWeight,
+                         animalCount, youngPresent, youngCount, genusId) {
     bearbeiteId = id;
     $('select[name=gender]').val(gender);
     $('input[name=estimatedAge]').val(estimatedAge);
     $('input[name=estimatedSize]').val(estimatedSize);
     $('input[name=estimatedWeight]').val(estimatedWeight);
+    $('input[name=animalCount]').val(animalCount);
+
+    // Jungtiere-Dropdown und Anzahl-Feld passend setzen.
+    if (youngPresent) {
+        $('#youngSelect').val('ja');
+        $('input[name=youngCount]').val(youngCount);
+        $('#youngCountBereich').show();
+    } else {
+        $('#youngSelect').val('nein');
+        $('input[name=youngCount]').val('');
+        $('#youngCountBereich').hide();
+    }
+
     $('#genusSelect').val(genusId);
     $('#newAnimalButton').val('Aenderung speichern');
 }
@@ -142,9 +176,17 @@ function loadAnimalTable() {
         "columns": [
             { "data": "id"              },
             { "data": "gender"          },
+            { "data": "animalCount"     },
             { "data": "estimatedAge"    },
             { "data": "estimatedSize"   },
             { "data": "estimatedWeight" },
+            // Jungtiere: Anzahl anzeigen wenn welche gesichtet wurden, sonst "keine".
+            { "data": null, "render": function(zeile) {
+                    if (zeile.youngPresent) {
+                        return zeile.youngCount;
+                    }
+                    return "keine";
+                }},
             // Die Gattung ist ein verschachteltes Objekt. Wir zeigen die
             // Bezeichnung an, falls vorhanden, sonst ein leeres Feld.
             { "data": "genus", "render": function(genus) {
@@ -165,6 +207,7 @@ function loadAnimalTable() {
 
                     // Bearbeiten-Button: gibt die Werte der Zeile mit, damit
                     // das Formular damit gefuellt werden kann.
+                    // youngPresent ist ein boolean und kommt deshalb ohne Anfuehrungszeichen mit.
                     var bearbeitenBtn =
                         '<button onclick="bearbeiteAnimal(' +
                         zeile.id + ',' +
@@ -172,6 +215,9 @@ function loadAnimalTable() {
                         '\'' + zeile.estimatedAge + '\',' +
                         '\'' + zeile.estimatedSize + '\',' +
                         '\'' + zeile.estimatedWeight + '\',' +
+                        '\'' + zeile.animalCount + '\',' +
+                        zeile.youngPresent + ',' +
+                        '\'' + zeile.youngCount + '\',' +
                         '\'' + genusId + '\'' +
                         ')">Bearbeiten</button>';
 

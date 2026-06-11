@@ -19,6 +19,15 @@ public class Animal {
 	private String estimatedSize;
 	private String estimatedWeight;
 
+	// Anzahl der gesichteten Tiere (Pflichtfeld im Dialog).
+	// Heisst animalCount und nicht count, weil COUNT ein
+	// reserviertes Wort in SQL ist und HSQLDB sonst meckert.
+	private Integer animalCount;
+
+	// Wurden Jungtiere gesichtet? Wenn ja, steht in youngCount wie viele.
+	private boolean youngPresent;
+	private Integer youngCount;
+
 	// jedes Tier gehoert zu genau einer Gattung
 	@ManyToOne
 	private Genus genus;
@@ -27,12 +36,16 @@ public class Animal {
 		super();
 	}
 
-	public Animal(String gender, String estimatedAge, String estimatedSize, String estimatedWeight, Genus genus) {
+	public Animal(String gender, String estimatedAge, String estimatedSize, String estimatedWeight,
+			Integer animalCount, boolean youngPresent, Integer youngCount, Genus genus) {
 		super();
 		this.gender = gender;
 		this.estimatedAge = estimatedAge;
 		this.estimatedSize = estimatedSize;
 		this.estimatedWeight = estimatedWeight;
+		this.animalCount = animalCount;
+		this.youngPresent = youngPresent;
+		this.youngCount = youngCount;
 		this.genus = genus;
 	}
 
@@ -65,6 +78,24 @@ public class Animal {
 	}
 	public void setEstimatedWeight(String estimatedWeight) {
 		this.estimatedWeight = estimatedWeight;
+	}
+	public Integer getAnimalCount() {
+		return animalCount;
+	}
+	public void setAnimalCount(Integer animalCount) {
+		this.animalCount = animalCount;
+	}
+	public boolean isYoungPresent() {
+		return youngPresent;
+	}
+	public void setYoungPresent(boolean youngPresent) {
+		this.youngPresent = youngPresent;
+	}
+	public Integer getYoungCount() {
+		return youngCount;
+	}
+	public void setYoungCount(Integer youngCount) {
+		this.youngCount = youngCount;
 	}
 	public Genus getGenus() {
 		return genus;
