@@ -18,7 +18,9 @@ public class Genus {
 
 	// Ist die Tierart geschuetzt? Geschuetzte Arten duerfen nicht bejagt werden.
 	// Heisst protectedSpecies, weil "protected" ein Java-Schluesselwort ist.
-	private boolean protectedSpecies;
+	// Boolean statt boolean: Jackson schickt sonst einen 400er, wenn das Feld
+	// im JSON fehlt (z.B. wenn das Tier nur genus: {id} mitschickt).
+	private Boolean protectedSpecies;
 
 	// Jagdzeitraum bzw. Schutzbestimmung als Freitext,
 	// z.B. "01.05. - 31.01." oder "ganzjaehrig geschont"
@@ -28,7 +30,7 @@ public class Genus {
 		super();
 	}
 
-	public Genus(String latinDesignation, String designation, boolean protectedSpecies, String huntingSeason) {
+	public Genus(String latinDesignation, String designation, Boolean protectedSpecies, String huntingSeason) {
 		super();
 		this.latinDesignation = latinDesignation;
 		this.designation = designation;
@@ -54,10 +56,11 @@ public class Genus {
 	public void setDesignation(String designation) {
 		this.designation = designation;
 	}
+	// Getter bleibt primitiv mit Null-Check, damit die Aufrufer einfach bleiben.
 	public boolean isProtectedSpecies() {
-		return protectedSpecies;
+		return protectedSpecies != null && protectedSpecies;
 	}
-	public void setProtectedSpecies(boolean protectedSpecies) {
+	public void setProtectedSpecies(Boolean protectedSpecies) {
 		this.protectedSpecies = protectedSpecies;
 	}
 	public String getHuntingSeason() {

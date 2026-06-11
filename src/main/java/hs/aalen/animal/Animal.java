@@ -25,7 +25,9 @@ public class Animal {
 	private Integer animalCount;
 
 	// Wurden Jungtiere gesichtet? Wenn ja, steht in youngCount wie viele.
-	private boolean youngPresent;
+	// Boolean statt boolean: Jackson schickt sonst einen 400er, wenn das Feld
+	// im JSON fehlt (z.B. wenn die Beobachtung nur animal: {id} mitschickt).
+	private Boolean youngPresent;
 	private Integer youngCount;
 
 	// jedes Tier gehoert zu genau einer Gattung
@@ -37,7 +39,7 @@ public class Animal {
 	}
 
 	public Animal(String gender, String estimatedAge, String estimatedSize, String estimatedWeight,
-			Integer animalCount, boolean youngPresent, Integer youngCount, Genus genus) {
+			Integer animalCount, Boolean youngPresent, Integer youngCount, Genus genus) {
 		super();
 		this.gender = gender;
 		this.estimatedAge = estimatedAge;
@@ -85,10 +87,11 @@ public class Animal {
 	public void setAnimalCount(Integer animalCount) {
 		this.animalCount = animalCount;
 	}
+	// Getter bleibt primitiv mit Null-Check, damit die Aufrufer einfach bleiben.
 	public boolean isYoungPresent() {
-		return youngPresent;
+		return youngPresent != null && youngPresent;
 	}
-	public void setYoungPresent(boolean youngPresent) {
+	public void setYoungPresent(Boolean youngPresent) {
 		this.youngPresent = youngPresent;
 	}
 	public Integer getYoungCount() {
