@@ -7,13 +7,19 @@
 // wird ein vorhandenes Tier geaendert.
 var bearbeiteId = 0;
 
+// Hier merken wir uns die geladenen Gattungen, damit wir beim Auswaehlen
+// schnell an Schutzstatus und Jagdzeit kommen (fuer die Info-Box).
+// Gleiches Muster wie alleOrte in observation.js.
+var alleGattungen = [];
+
 
 // Wird ausgefuehrt, sobald die Seite fertig geladen ist.
 $(document).ready(function() {
 
     // 1) Gattungs-Dropdown aus dem Backend fuellen (GET /genus).
-    //    "designation" ist der angezeigte Text, "id" der gespeicherte Wert.
-    fillDropdown('/genus', 'genusSelect', 'designation', 'id');
+    //    Das machen wir selbst (nicht ueber fillDropdown), weil wir die
+    //    Gattungen zusaetzlich fuer die Info-Box speichern wollen.
+    ladeGattungen();
 
     // 2) Tier-Tabelle beim Laden der Seite einmal anzeigen.
     loadAnimalTable();
@@ -29,12 +35,14 @@ $(document).ready(function() {
     });
 
     // 5) Wenn im Dropdown "Sonstige" gewaehlt wird, die Felder fuer die
-    //    neue Gattung einblenden, sonst ausblenden.
+    //    neue Gattung einblenden. Sonst die Info-Box zur Gattung anzeigen.
     $('#genusSelect').change(function() {
         if ($('#genusSelect').val() === 'sonstige') {
             $('#sonstigeGenusBereich').show();
+            $('#genusInfo').hide();
         } else {
             $('#sonstigeGenusBereich').hide();
+            zeigeGattungsInfo();
         }
     });
 
@@ -48,6 +56,54 @@ $(document).ready(function() {
         }
     });
 });
+
+
+// Laedt die Gattungen vom Backend, fuellt das Dropdown und merkt sie sich.
+function ladeGattungen() {
+    $.ajax({
+        type: 'GET',
+        url: '/genus',
+        success: function(data) {
+            alleGattungen = data;   // fuer die Info-Box merken
+            var select = $('#genusSelect');
+            $.each(data, function(index, gattung) {
+                var option = $('<option></option>');
+                option.val(gattung.id);
+                option.text(gattung.designation);
+                select.append(option);
+            });
+        },
+        error: function(xhr, status, error) {
+            console.log('Gattungen konnten nicht geladen werden: ' + error);
+        }
+    });
+}
+
+
+// Zeigt Schutzstatus und Jagdzeit der gewaehlten Gattung unter dem Dropdown an.
+function zeigeGattungsInfo() {
+    var gewaehlteId = $('#genusSelect').val();
+    $('#genusInfo').hide();
+
+    // die passende Gattung in der gemerkten Liste suchen
+    $.each(alleGattungen, function(index, gattung) {
+        // == statt ===, weil der Dropdown-Wert ein Text ist und id eine Zahl
+        if (gattung.id == gewaehlteId) {
+
+            var text = '';
+            if (gattung.protectedSpecies) {
+                text = 'GESCHUETZTE ART - darf nicht bejagt werden.';
+            } else {
+                text = 'Nicht geschuetzt.';
+            }
+            if (gattung.huntingSeason) {
+                text = text + ' Jagdzeit: ' + gattung.huntingSeason;
+            }
+
+            $('#genusInfo').text(text).show();
+        }
+    });
+}
 
 
 // Liest die Formularfelder aus und speichert das Tier.
@@ -86,11 +142,16 @@ function postAnimal(event) {
 
         var neueGattung = {
             'designation'      : bezeichnung,
-            'latinDesignation' : $('#sonstigeLatin').val()
+            'latinDesignation' : $('#sonstigeLatin').val(),
+            // Schutzstatus und Jagdzeit der neuen Gattung mitgeben
+            'protectedSpecies' : $('#sonstigeProtected').val() === 'ja',
+            'huntingSeason'    : $('#sonstigeHuntingSeason').val()
         };
 
         // Erst Gattung anlegen, dann im Erfolgsfall das Tier damit speichern.
         postJson('/genus', neueGattung, function(gattung) {
+            // die neue Gattung auch in unsere gemerkte Liste aufnehmen
+            alleGattungen.push(gattung);
             formData.genus = { 'id' : gattung.id };
             speichereTier(formData);
         });
@@ -123,6 +184,7 @@ function nachSpeichern() {
     $('#newAnimal')[0].reset();
     $('#sonstigeGenusBereich').hide();   // Felder fuer neue Gattung wieder ausblenden
     $('#youngCountBereich').hide();      // Jungtier-Anzahl wieder ausblenden
+    $('#genusInfo').hide();              // Info-Box wieder ausblenden
     $('#newAnimalButton').val('Tier speichern');
     loadAnimalTable();
 }
@@ -158,6 +220,7 @@ function bearbeiteAnimal(id, gender, estimatedAge, estimatedSize, estimatedWeigh
     }
 
     $('#genusSelect').val(genusId);
+    zeigeGattungsInfo();   // Info-Box zur Gattung gleich mit anzeigen
     $('#newAnimalButton').val('Aenderung speichern');
 }
 

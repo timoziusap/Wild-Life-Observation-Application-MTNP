@@ -54,7 +54,7 @@ function ladeOrte() {
             var select = $('#locationSelect');
             $.each(data, function(index, ort) {
                 var option = $('<option></option>');
-                option.val(ort.lNr);          // Wert = Standortnummer
+                option.val(ort.lnr);          // Wert = Standortnummer
                 option.text(ort.shorttitle);  // Anzeige = Kurztitel
                 select.append(option);
             });
@@ -73,8 +73,8 @@ function ortWurdeGewaehlt() {
 
     // den passenden Ort in der gemerkten Liste suchen
     $.each(alleOrte, function(index, ort) {
-        // == statt ===, weil der Dropdown-Wert ein Text ist und lNr eine Zahl
-        if (ort.lNr == gewaehlteLnr) {
+        // == statt ===, weil der Dropdown-Wert ein Text ist und lnr eine Zahl
+        if (ort.lnr == gewaehlteLnr) {
 
             // Karte aktualisieren. Diese Funktion schreibt MARIUS in maps.js.
             // Falls maps.js noch nicht eingebunden ist, pruefen wir das vorher,
@@ -179,8 +179,8 @@ function loadObservationTable() {
                         animalId = zeile.animal.id;
                     }
                     var locationLnr = "";
-                    if (zeile.location && zeile.location.lNr) {
-                        locationLnr = zeile.location.lNr;
+                    if (zeile.location && zeile.location.lnr) {
+                        locationLnr = zeile.location.lnr;
                     }
 
                     var bearbeitenBtn =

@@ -16,14 +16,24 @@ public class Genus {
 	private String latinDesignation;
 	private String designation;
 
+	// Ist die Tierart geschuetzt? Geschuetzte Arten duerfen nicht bejagt werden.
+	// Heisst protectedSpecies, weil "protected" ein Java-Schluesselwort ist.
+	private boolean protectedSpecies;
+
+	// Jagdzeitraum bzw. Schutzbestimmung als Freitext,
+	// z.B. "01.05. - 31.01." oder "ganzjaehrig geschont"
+	private String huntingSeason;
+
 	public Genus() {
 		super();
 	}
 
-	public Genus(String latinDesignation, String designation) {
+	public Genus(String latinDesignation, String designation, boolean protectedSpecies, String huntingSeason) {
 		super();
 		this.latinDesignation = latinDesignation;
 		this.designation = designation;
+		this.protectedSpecies = protectedSpecies;
+		this.huntingSeason = huntingSeason;
 	}
 
 	public Long getId() {
@@ -43,6 +53,18 @@ public class Genus {
 	}
 	public void setDesignation(String designation) {
 		this.designation = designation;
+	}
+	public boolean isProtectedSpecies() {
+		return protectedSpecies;
+	}
+	public void setProtectedSpecies(boolean protectedSpecies) {
+		this.protectedSpecies = protectedSpecies;
+	}
+	public String getHuntingSeason() {
+		return huntingSeason;
+	}
+	public void setHuntingSeason(String huntingSeason) {
+		this.huntingSeason = huntingSeason;
 	}
 
 }

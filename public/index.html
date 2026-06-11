@@ -42,6 +42,9 @@
                 <option value="sonstige">Sonstige (neue Gattung)...</option>
             </select>
 
+            <!-- zeigt Schutzstatus und Jagdzeit der gewaehlten Gattung an (siehe animal.js) -->
+            <div id="genusInfo" class="genus-info" style="display:none;"></div>
+
             <!-- erscheint nur wenn oben "Sonstige" gewaehlt wird (siehe animal.js) -->
             <div id="sonstigeGenusBereich" style="display:none;">
                 <label>Neue Gattung (Bezeichnung):</label>
@@ -49,6 +52,16 @@
 
                 <label>Lateinische Bezeichnung (optional):</label>
                 <input type="text" id="sonstigeLatin" name="sonstigeLatin">
+
+                <label>Ist die Tierart geschuetzt?</label>
+                <select id="sonstigeProtected">
+                    <option value="nein">nein</option>
+                    <option value="ja">ja</option>
+                </select>
+
+                <label>Jagdzeitraum / Schutzbestimmung:</label>
+                <input type="text" id="sonstigeHuntingSeason"
+                       placeholder="z.B. 01.05. - 31.01. oder ganzjaehrig geschont">
             </div>
 
             <label>Geschlecht:</label>
