@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -30,6 +31,23 @@ public class ObservationController {
 	public List<Observation> getObservations() {
 		log.info("GET /observations - alle Beobachtungen werden geladen");
 		return observationService.getAllObservations();
+	}
+
+	// Suche mit Filtern (Dialog 4). Alle Parameter sind optional, z.B.
+	// GET /observations/search?genusId=3&gender=weiblich&minCount=2
+	// Spring nimmt fuer /observations/search diesen Endpoint und nicht
+	// /observations/{id}, weil der feste Pfad genauer passt.
+	@GetMapping("/observations/search")
+	public List<Observation> searchObservations(
+			@RequestParam(required = false) Long genusId,
+			@RequestParam(required = false) String gender,
+			@RequestParam(required = false) Integer minCount,
+			@RequestParam(required = false) Integer minYoungCount,
+			@RequestParam(required = false) Long locationLnr,
+			@RequestParam(required = false) Boolean protectedSpecies) {
+		log.info("GET /observations/search - Suche mit Filtern wird ausgefuehrt");
+		return observationService.searchObservations(genusId, gender, minCount, minYoungCount,
+				locationLnr, protectedSpecies);
 	}
 
 	// Eine einzelne Beobachtung anhand der id zurueckgeben.
