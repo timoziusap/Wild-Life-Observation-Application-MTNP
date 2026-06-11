@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <title>Wild Life Observation - Suche</title>
+    <meta charset="utf-8">
+
+    <!-- eigenes Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- DataTables CSS (Tabellen-Anzeige) -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
+
+    <!-- jQuery zuerst, dann DataTables -->
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+
+    <!-- eigene Skripte: erst die Helfer, dann der Dialog -->
+    <script type="text/javascript" src="js/api.js"></script>
+    <script type="text/javascript" src="js/search.js"></script>
+</head>
+<body>
+<div class="centerdiv">
+
+    <header><h1>Wild Life Observation</h1></header>
+
+    <!-- einfache Navigation zwischen den Seiten -->
+    <nav>
+        <a href="index.html">Tier &amp; Ort</a>
+        <a href="observation.html">Beobachtung</a>
+        <a href="search.html">Suche</a>
+    </nav>
+
+    <!-- ===================== Dialog 4: Suche und Filter ===================== -->
+    <!-- class="full": eine Spalte ueber die ganze Breite, weil die
+         Ergebnis-Tabelle viele Spalten hat (Definition in style.css, AP5) -->
+    <section class="left full" style="width:100%; float:none; margin-bottom:20px;">
+        <h2>Dialog 4: Beobachtungen suchen</h2>
+        <form id="searchForm">
+
+            <label>Tierart / Gattung:</label>
+            <!-- wird per AJAX aus GET /genus gefuellt -->
+            <select id="searchGenus">
+                <option value="">-- alle --</option>
+            </select>
+
+            <label>Geschlecht:</label>
+            <select id="searchGender">
+                <option value="">-- alle --</option>
+                <option value="maennlich">maennlich</option>
+                <option value="weiblich">weiblich</option>
+                <option value="unbekannt">unbekannt</option>
+            </select>
+
+            <label>Anzahl der Tiere (mindestens):</label>
+            <input type="number" id="searchMinCount" min="1" max="999" step="1">
+
+            <label>Anzahl der Jungtiere (mindestens):</label>
+            <input type="number" id="searchMinYoung" min="1" max="999" step="1">
+
+            <label>Sichtungsort:</label>
+            <!-- wird per AJAX aus GET /locations gefuellt -->
+            <select id="searchLocation">
+                <option value="">-- alle --</option>
+            </select>
+
+            <label>Schutzstatus:</label>
+            <select id="searchProtected">
+                <option value="">-- alle --</option>
+                <option value="ja">nur geschuetzte Arten</option>
+                <option value="nein">nur nicht geschuetzte Arten</option>
+            </select>
+
+            <br>
+            <input type="submit" id="searchButton" value="Suchen">
+            <button type="button" id="resetSearch">Filter zuruecksetzen</button>
+        </form>
+    </section>
+
+    <!-- Ergebnis-Tabelle: zeigt die wichtigsten Infos laut Anforderung Punkt 5 -->
+    <section class="left full" style="width:100%; float:none;">
+        <h3>Suchergebnisse</h3>
+        <table id="searchTable" class="display" cellspacing="0" width="100%">
+            <thead>
+            <tr>
+                <th>Tierart/Gattung</th>
+                <th>Anzahl</th>
+                <th>Geschlecht</th>
+                <th>Jungtiere</th>
+                <th>Schutzstatus</th>
+                <th>Jagdzeitraum</th>
+                <th>Sichtungsort</th>
+                <th>Datum</th>
+                <th>Uhrzeit</th>
+            </tr>
+            </thead>
+        </table>
+    </section>
+
+    <footer>Wild Life Observation App &ndash; Hochschule Aalen</footer>
+</div>
+</body>
+</html>
