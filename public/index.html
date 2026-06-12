@@ -33,7 +33,7 @@
 
     <!-- ===================== Dialog 1: Tier anlegen ===================== -->
     <section class="left">
-        <h2>Dialog 1: Tier anlegen</h2>
+        <h2>Tier anlegen</h2>
         <form id="newAnimal">
             <label>Gattung (Genus):</label>
             <!-- wird per AJAX aus GET /genus gefuellt -->
@@ -110,13 +110,14 @@
         <table id="animalTable" class="display" cellspacing="0" width="100%">
             <thead>
             <tr>
+                <!-- kurze Spaltentitel, damit alles ohne Scrollen in den Kasten passt -->
                 <th>ID</th>
-                <th>Geschlecht</th>
-                <th>Anzahl</th>
+                <th>Geschl.</th>
+                <th>Anz.</th>
                 <th>Alter</th>
-                <th>Groesse</th>
-                <th>Gewicht</th>
-                <th>Jungtiere</th>
+                <th>Gr. (cm)</th>
+                <th>Gew. (kg)</th>
+                <th>Junge</th>
                 <th>Gattung</th>
                 <th>Aktion</th>
             </tr>
@@ -126,7 +127,7 @@
 
     <!-- ===================== Dialog 2: Location anlegen ===================== -->
     <section class="right">
-        <h2>Dialog 2: Ort anlegen</h2>
+        <h2>Ort anlegen</h2>
         <form id="newLocation">
             <label>Kurztitel:</label>
             <input type="text" name="shorttitle" required="required">
