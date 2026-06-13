@@ -42,7 +42,7 @@ function putJson(url, data, onSuccess) {
             }
         },
         error: function(xhr, status, error) {
-            alert('Fehler beim Aendern: ' + error);
+            alert('Fehler beim Ändern: ' + error);
         }
     });
 }
@@ -61,7 +61,7 @@ function deleteJson(url, onSuccess) {
             }
         },
         error: function(xhr, status, error) {
-            alert('Fehler beim Loeschen: ' + error);
+            alert('Fehler beim Löschen: ' + error);
         }
     });
 }

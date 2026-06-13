@@ -38,7 +38,7 @@
             <label>Gattung (Genus):</label>
             <!-- wird per AJAX aus GET /genus gefuellt -->
             <select name="genus" id="genusSelect" required="required">
-                <option value="">-- bitte waehlen --</option>
+                <option value="">-- bitte wählen --</option>
                 <!-- feste Option fuer eine Art die nicht in der Liste steht -->
                 <option value="sonstige">Sonstige (neue Gattung)...</option>
             </select>
@@ -54,7 +54,7 @@
                 <label>Lateinische Bezeichnung (optional):</label>
                 <input type="text" id="sonstigeLatin" name="sonstigeLatin">
 
-                <label>Ist die Tierart geschuetzt?</label>
+                <label>Ist die Tierart geschützt?</label>
                 <select id="sonstigeProtected">
                     <option value="nein">nein</option>
                     <option value="ja">ja</option>
@@ -62,14 +62,14 @@
 
                 <label>Jagdzeitraum / Schutzbestimmung:</label>
                 <input type="text" id="sonstigeHuntingSeason"
-                       placeholder="z.B. 01.05. - 31.01. oder ganzjaehrig geschont">
+                       placeholder="z.B. 01.05. - 31.01. oder ganzjährig geschont">
             </div>
 
             <label>Geschlecht:</label>
             <!-- Dropdown statt Freitext, damit keine Tippfehler in der DB landen -->
             <select name="gender" required="required">
-                <option value="">-- bitte waehlen --</option>
-                <option value="maennlich">maennlich</option>
+                <option value="">-- bitte wählen --</option>
+                <option value="männlich">männlich</option>
                 <option value="weiblich">weiblich</option>
                 <option value="unbekannt">unbekannt</option>
             </select>
@@ -78,14 +78,14 @@
             <!-- Pflichtfeld laut Anforderung, mindestens 1 Tier -->
             <input type="number" name="animalCount" min="1" max="999" step="1" required="required">
 
-            <label>Geschaetztes Alter (Jahre):</label>
+            <label>Geschätztes Alter (Jahre):</label>
             <!-- nur ganze Jahre, grobe Schaetzung reicht -->
             <input type="number" name="estimatedAge" min="0" max="50" step="1">
 
-            <label>Geschaetzte Groesse (cm):</label>
+            <label>Geschätzte Größe (cm):</label>
             <input type="number" name="estimatedSize" min="0" max="500" step="1">
 
-            <label>Geschaetztes Gewicht (kg):</label>
+            <label>Geschätztes Gewicht (kg):</label>
             <!-- step 0.1 erlaubt z.B. 12.5 kg -->
             <input type="number" name="estimatedWeight" min="0" max="1000" step="0.1">
 
@@ -138,7 +138,7 @@
             <label>Breitengrad (Latitude):</label>
             <input type="text" name="latitude" required="required">
 
-            <label>Laengengrad (Longitude):</label>
+            <label>Längengrad (Longitude):</label>
             <input type="text" name="longitude" required="required">
 
             <br>

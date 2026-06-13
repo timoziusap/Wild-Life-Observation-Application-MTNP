@@ -125,7 +125,7 @@ function nachSpeichern() {
 
 // Loescht eine Beobachtung nach Rueckfrage (DELETE /observations/{id}).
 function loescheObservation(id) {
-    if (confirm('Diese Beobachtung wirklich loeschen?')) {
+    if (confirm('Diese Beobachtung wirklich löschen?')) {
         deleteJson('/observations/' + id, loadObservationTable);
     }
 }
@@ -193,7 +193,7 @@ function loadObservationTable() {
                         ')">Bearbeiten</button>';
 
                     var loeschenBtn =
-                        '<button onclick="loescheObservation(' + zeile.id + ')">Loeschen</button>';
+                        '<button onclick="loescheObservation(' + zeile.id + ')">Löschen</button>';
 
                     return bearbeitenBtn + ' ' + loeschenBtn;
                 }}

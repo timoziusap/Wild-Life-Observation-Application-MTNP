@@ -92,9 +92,9 @@ function zeigeGattungsInfo() {
 
             var text = '';
             if (gattung.protectedSpecies) {
-                text = 'GESCHUETZTE ART - darf nicht bejagt werden.';
+                text = 'GESCHÜTZTE ART - darf nicht bejagt werden.';
             } else {
-                text = 'Nicht geschuetzt.';
+                text = 'Nicht geschützt.';
             }
             if (gattung.huntingSeason) {
                 text = text + ' Jagdzeit: ' + gattung.huntingSeason;
@@ -136,7 +136,7 @@ function postAnimal(event) {
 
         var bezeichnung = $('#sonstigeDesignation').val();
         if (!bezeichnung) {
-            alert('Bitte eine Bezeichnung fuer die neue Gattung eingeben.');
+            alert('Bitte eine Bezeichnung für die neue Gattung eingeben.');
             return;
         }
 
@@ -192,7 +192,7 @@ function nachSpeichern() {
 
 // Loescht ein Tier nach Rueckfrage (DELETE /animals/{id}).
 function loescheAnimal(id) {
-    if (confirm('Dieses Tier wirklich loeschen?')) {
+    if (confirm('Dieses Tier wirklich löschen?')) {
         deleteJson('/animals/' + id, loadAnimalTable);
     }
 }
@@ -285,7 +285,7 @@ function loadAnimalTable() {
                         ')">Bearbeiten</button>';
 
                     var loeschenBtn =
-                        '<button onclick="loescheAnimal(' + zeile.id + ')">Loeschen</button>';
+                        '<button onclick="loescheAnimal(' + zeile.id + ')">Löschen</button>';
 
                     return bearbeitenBtn + ' ' + loeschenBtn;
                 }}

@@ -113,9 +113,9 @@ function sucheObservations() {
             { "data": "animal", "render": function(animal) {
                     if (animal && animal.genus) {
                         if (animal.genus.protectedSpecies) {
-                            return "geschuetzt";
+                            return "geschützt";
                         }
-                        return "nicht geschuetzt";
+                        return "nicht geschützt";
                     }
                     return "";
                 }},

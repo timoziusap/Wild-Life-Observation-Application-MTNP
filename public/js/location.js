@@ -73,7 +73,7 @@ function bearbeiteLocation(lNr, shorttitle, description, latitude, longitude) {
 
 // Loescht einen Ort nach Rueckfrage (DELETE /locations/{lNr}).
 function loescheLocation(lNr) {
-    if (confirm('Diesen Ort wirklich loeschen?')) {
+    if (confirm('Diesen Ort wirklich löschen?')) {
         $.ajax({
             type: 'DELETE',
             url: '/locations/' + lNr,
@@ -81,7 +81,7 @@ function loescheLocation(lNr) {
                 loadLocations();
             },
             error: function(xhr, status, error) {
-                alert('Fehler beim Loeschen der Location: ' + error);
+                alert('Fehler beim Löschen der Location: ' + error);
             }
         });
     }
@@ -109,7 +109,7 @@ function loadLocations() {
                     ')">Bearbeiten</button>';
 
                 var loeschenBtn =
-                    '<button onclick="loescheLocation(' + location.lNr + ')">Loeschen</button>';
+                    '<button onclick="loescheLocation(' + location.lNr + ')">Löschen</button>';
 
                 table.row.add([
                     location.lNr,
