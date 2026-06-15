@@ -26,9 +26,14 @@ $(document).ready(function() {
         erstelleCounter();
     });
 
-    // 3) "Zaehlung loeschen": alle Counter wieder auf 0 setzen.
+    // 3) "Alle Zaehlungen auf 0 setzen": alle Counter wieder auf 0 setzen.
     $('#zaehlungLoeschen').click(function() {
         setzeAlleAufNull();
+    });
+
+    // 3b) "Alle Zaehlungen loeschen": alle Counter komplett entfernen.
+    $('#alleLoeschen').click(function() {
+        loescheAlle();
     });
 
     // 4) Pfeiltasten abfangen: hoch zaehlt +1, runter -1 (am aktiven Counter).
@@ -80,14 +85,32 @@ function zeigeCounter() {
             karte.addClass('aktiv');
         }
 
-        // Inhalt: Name und aktueller Zaehlerstand
-        // Feld heisst counterValue (nicht value), weil VALUE ein SQL-Schluesselwort ist.
+        // Name des Counters.
         karte.append('<div class="counter-name">' + counter.name + '</div>');
-        karte.append('<div class="counter-wert">' + counter.counterValue + '</div>');
 
-        // Knoepfe zum hoch-/runterzaehlen und loeschen (auch ohne Tastatur nutzbar)
-        var hoch = $('<button type="button">+</button>');
-        var runter = $('<button type="button">-</button>');
+        // Zaehlerstand als Eingabefeld: zeigt den Wert an und laesst ihn direkt
+        // eintippen. Mit Enter bestaetigen. Mit + und - wird derselbe Wert gezaehlt.
+        // Feld heisst counterValue (nicht value), weil VALUE ein SQL-Schluesselwort ist.
+        var wertFeld = $('<input type="text" class="counter-wert">');
+        wertFeld.val(counter.counterValue);
+
+        // Klick ins Feld soll die Karte nicht neu zeichnen (sonst waere der Fokus weg).
+        wertFeld.click(function(event) {
+            event.stopPropagation();
+        });
+        // Enter bestaetigt die manuelle Eingabe.
+        wertFeld.keydown(function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                setzeWert(counter.id, wertFeld.val());
+            }
+        });
+        karte.append(wertFeld);
+
+        // Knoepfe zum hoch-/runterzaehlen und loeschen (auch ohne Tastatur nutzbar).
+        // + und - bekommen die Klasse counter-pm und werden dadurch groesser dargestellt.
+        var hoch = $('<button type="button" class="counter-pm">+</button>');
+        var runter = $('<button type="button" class="counter-pm">-</button>');
         var weg = $('<button type="button">Löschen</button>');
 
         hoch.click(function(event) {
@@ -103,9 +126,10 @@ function zeigeCounter() {
             loescheCounter(counter.id);
         });
 
-        karte.append(hoch);
+        // Reihenfolge: links Minus, in der Mitte Loeschen, rechts Plus.
         karte.append(runter);
         karte.append(weg);
+        karte.append(hoch);
 
         // Klick auf die Karte macht diesen Counter aktiv (fuer die Pfeiltasten)
         karte.click(function() {
@@ -173,11 +197,46 @@ function zaehle(id, delta) {
 
             var neuerWert = counter.counterValue + delta;
 
+            // die Zaehlung darf nicht unter 0 fallen
+            if (neuerWert < 0) {
+                return;
+            }
+
             var geaendert = {
                 'name'         : counter.name,
                 'counterValue' : neuerWert
             };
 
+            putJson('/counters/' + id, geaendert, function() {
+                ladeCounter();
+            });
+        }
+    });
+}
+
+
+// Setzt den Zaehlerstand eines Counters auf eine selbst eingegebene Zahl.
+// Erlaubt sind ganze Zahlen ab 0 (0, 1, 2 ...). Sonst gibt es einen Fehler.
+function setzeWert(id, eingabe) {
+
+    var text = $.trim(eingabe);
+
+    // ^\d+$ laesst nur Ziffern zu (keine Kommazahl, kein Minus, keine Buchstaben).
+    // 0 ist erlaubt, negative Zahlen und Kommazahlen nicht.
+    if (!/^\d+$/.test(text)) {
+        alert('Bitte eine ganze Zahl (0 oder größer) eingeben.');
+        return;
+    }
+
+    var wert = parseInt(text, 10);
+
+    // den passenden Counter suchen und mit dem neuen Wert speichern.
+    $.each(alleCounter, function(index, counter) {
+        if (counter.id === id) {
+            var geaendert = {
+                'name'         : counter.name,
+                'counterValue' : wert
+            };
             putJson('/counters/' + id, geaendert, function() {
                 ladeCounter();
             });
@@ -197,6 +256,18 @@ function setzeAlleAufNull() {
             ladeCounter();
         });
     });
+}
+
+
+// Loescht alle Counter komplett (DELETE /counters/{id} fuer jeden).
+function loescheAlle() {
+    $.each(alleCounter, function(index, counter) {
+        deleteJson('/counters/' + counter.id, function() {
+            ladeCounter();
+        });
+    });
+    // keine Auswahl mehr nach dem Loeschen
+    aktiveCounterId = null;
 }
 
 

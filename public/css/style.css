@@ -299,18 +299,41 @@ table th:last-child {
     margin-bottom: 6px;
 }
 
-/* der Zaehlerstand gross und auffaellig */
-.counter-wert {
+/* der Zaehlerstand: grosses, mittiges Eingabefeld. Man kann den Wert direkt
+   eintippen und mit Enter bestaetigen, +/- zaehlen denselben Wert.
+   input.counter-wert noetig, um die allgemeine input[type=text]-Darstellung zu ueberschreiben. */
+input.counter-wert {
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
     font-family: Georgia, 'Times New Roman', serif;
     font-size: 40px;
     color: #33302a;
     margin-bottom: 10px;
+    padding: 2px;
+    background-color: #fffdf7;
+    border: 1px solid #c9b894;
+    border-radius: 4px;
 }
 
 /* die +/- und Loeschen-Knoepfe in der Karte schmaler nebeneinander */
 .counter-karte button {
     margin: 2px;
     padding: 4px 10px;
+}
+
+/* die Plus- und Minus-Knoepfe groesser machen (Name und Zaehlerstand bleiben gleich).
+   Feste Breite/Hoehe statt Padding, sonst werden + und - wegen der unterschiedlich
+   breiten Zeichen verschieden gross. */
+.counter-pm {
+    width: 52px;
+    height: 44px;
+    padding: 0;
+    font-size: 22px;
+    font-weight: bold;
+    line-height: 1;
+    text-align: center;
+    box-sizing: border-box;
 }
 
 /* Footer liegt auf dem Foto -> helle Schrift mit Schatten */
