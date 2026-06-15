@@ -5,6 +5,14 @@
 // AP11: Doppelklick auf eine Zeile oeffnet eine Detailansicht.
 
 
+// AP11+: merkt sich die id der gerade angezeigten Sichtung (fuer Loeschen).
+var aktuelleSichtungId = null;
+
+// Karte und Marker fuer die Detailansicht.
+var detailKarte = null;
+var detailMarker = null;
+
+
 // Wird ausgefuehrt, sobald die Seite fertig geladen ist.
 $(document).ready(function() {
 
@@ -44,6 +52,33 @@ $(document).ready(function() {
     // 7) Schliessen-Knopf der Detailansicht.
     $('#detailSchliessen').click(function() {
         $('#detailansicht').hide();
+    });
+
+    // 8) Loeschen-Knopf: erst nach Namensangabe und Bestaetigung loeschen.
+    $('#detailLoeschen').click(function() {
+        if (aktuelleSichtungId === null) {
+            return;
+        }
+        // Wer loescht den Eintrag? (Pflichtangabe)
+        var wer = prompt('Wer löscht diesen Eintrag? Bitte Namen angeben:');
+        if (wer === null) {
+            return;   // Abbruch
+        }
+        if (wer.trim() === '') {
+            alert('Bitte angeben, wer den Eintrag löscht.');
+            return;
+        }
+        // Zweite Bestaetigung, damit nichts aus Versehen geloescht wird.
+        if (!confirm('Eintrag wirklich endgültig löschen? (gelöscht von: ' + wer + ')')) {
+            return;
+        }
+        deleteJson('/observations/' + aktuelleSichtungId, function() {
+            console.log('Sichtung ' + aktuelleSichtungId + ' geloescht von: ' + wer);
+            alert('Eintrag wurde gelöscht (von ' + wer + ').');
+            $('#detailansicht').hide();
+            aktuelleSichtungId = null;
+            sucheObservations();   // Tabelle neu laden
+        });
     });
 });
 
@@ -164,6 +199,9 @@ function sucheObservations() {
 // (eine Observation mit verschachteltem animal, genus und location).
 function zeigeDetails(beob) {
 
+    // id der Sichtung merken, damit der Loeschen-Knopf weiss, was er loescht.
+    aktuelleSichtungId = (beob && beob.id != null) ? beob.id : null;
+
     // Verschachtelte Objekte sicher herausholen (koennen fehlen).
     var tier    = beob.animal   || {};
     var gattung = tier.genus    || {};
@@ -205,4 +243,45 @@ function zeigeDetails(beob) {
     // Detailbox fuellen und einblenden.
     $('#detailInhalt').html(html);
     $('#detailansicht').show();
+
+    // Sichtungsort auf der Karte anzeigen (genaue Koordinaten).
+    zeigeOrtImDetail(ort);
+}
+
+
+// Zeigt den Sichtungsort als Karte mit Marker in der Detailansicht.
+// Ohne Koordinaten wird die Karte ausgeblendet.
+function zeigeOrtImDetail(ort) {
+    if (!ort || !ort.latitude || !ort.longitude) {
+        $('#detailMap').hide();
+        return;
+    }
+
+    var lat = parseFloat(ort.latitude);
+    var lng = parseFloat(ort.longitude);
+
+    // erst sichtbar machen, dann Karte aufbauen/anpassen
+    $('#detailMap').show();
+
+    if (detailKarte === null) {
+        detailKarte = L.map('detailMap').setView([lat, lng], 15);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap'
+        }).addTo(detailKarte);
+    } else {
+        detailKarte.setView([lat, lng], 15);
+    }
+
+    // alten Marker entfernen, neuen setzen
+    if (detailMarker !== null) {
+        detailKarte.removeLayer(detailMarker);
+    }
+    detailMarker = L.marker([lat, lng]).addTo(detailKarte);
+
+    // Leaflet muss die Groesse neu berechnen, da die Karte vorher versteckt war.
+    setTimeout(function() {
+        detailKarte.invalidateSize();
+        detailKarte.setView([lat, lng], 15);
+    }, 100);
 }

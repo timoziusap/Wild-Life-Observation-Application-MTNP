@@ -9,6 +9,9 @@
     <!-- eigenes Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
 
+    <!-- Leaflet CSS fuer die OpenStreetMap Karte in der Detailansicht -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
     <!-- Bootstrap Icons (kostenlos, MIT). Liefert die Symbole als Schrift. -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
@@ -23,6 +26,9 @@
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.2/js/dataTables.responsive.min.js"></script>
+
+    <!-- Leaflet (OpenStreetMap) fuer die Karte in der Detailansicht -->
+    <script type="text/javascript" src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <!-- eigene Skripte: erst die Helfer, dann der Dialog -->
     <script type="text/javascript" src="js/api.js"></script>
@@ -52,7 +58,7 @@
     <!-- class="full": eine Spalte ueber die ganze Breite, weil die
          Ergebnis-Tabelle viele Spalten hat (Definition in style.css, AP5) -->
     <section class="left full" style="width:100%; float:none; margin-bottom:20px;">
-        <h2>Beobachtungen suchen</h2>
+        <h2>Tiersichtung suchen</h2>
         <form id="searchForm">
 
             <!-- ----- Die drei geforderten Filter: Ort, Gattung, Geschlecht ----- -->
@@ -124,8 +130,11 @@
         <!-- Wird beim Doppelklick auf eine Zeile gefuellt und eingeblendet. -->
         <div id="detailansicht" style="display:none; border:1px solid #ccc; padding:15px; margin-top:20px; background:#f7f7f7;">
             <button type="button" id="detailSchliessen" style="float:right;">Schließen</button>
+            <button type="button" id="detailLoeschen" style="float:right; margin-right:10px;">Löschen</button>
             <h3>Detailansicht der Sichtung</h3>
             <div id="detailInhalt"></div>
+            <!-- Karte zeigt den Sichtungsort an den genauen Koordinaten -->
+            <div id="detailMap" style="display:none; width:100%; height:300px; margin-top:15px;"></div>
         </div>
     </section>
 
