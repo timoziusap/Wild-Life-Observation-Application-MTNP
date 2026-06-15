@@ -16,7 +16,6 @@
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type="text/javascript" src="js/api.js"></script>
     <script type="text/javascript" src="js/tier.js"></script>
-    <script type="text/javascript" src="js/flowguard.js"></script>
 </head>
 <body>
 <div class="centerdiv">
@@ -25,11 +24,15 @@
 
     <!-- Navigation: auf dem Laptop als Leiste, auf dem Handy als Hamburger.
          Die Checkbox plus Label klappen die Links per reinem CSS auf, kein JavaScript noetig. -->
-    <!-- Waehrend der Anlage nur der Weg zurueck zur Startseite (= Abbrechen).
-         flowguard.js fragt beim Verlassen nach, falls schon Daten eingegeben wurden. -->
     <nav>
+        <input type="checkbox" id="navToggle" class="nav-toggle">
+        <label for="navToggle" class="nav-burger"><i class="bi bi-list"></i> Menü</label>
         <div class="nav-links">
             <a href="index.html">Startseite</a>
+            <a href="tier.html">Tiersichtung anlegen</a>
+            <a href="search.html">Suchen</a>
+            <a href="counter.html">Counter</a>
+            <a href="schutzzeiten.html">Schutzzeiten</a>
         </div>
     </nav>
 
