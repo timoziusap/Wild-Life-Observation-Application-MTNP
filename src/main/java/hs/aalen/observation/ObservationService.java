@@ -8,6 +8,8 @@ import hs.aalen.animal.AnimalRepository;
 import hs.aalen.location.Location;
 import hs.aalen.location.LocationRepository;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -118,6 +120,19 @@ public class ObservationService {
 	// Fremdschluessel stimmen und beim Laden die Details wieder mitkommen, holen wir
 	// das echte Tier und den echten Ort aus der DB und haengen sie an die Beobachtung.
 	public Observation saveObservation(Observation observation) {
+		// Erfassungszeitpunkt nur beim Neuanlegen setzen (noch keine id da),
+		// damit ein spaeteres Bearbeiten den Zeitpunkt nicht ueberschreibt.
+		if (observation.getId() == null
+				&& (observation.getCreatedAt() == null || observation.getCreatedAt().isEmpty())) {
+			String jetzt = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+			observation.setCreatedAt(jetzt);
+		}
+
+		// Wenn kein Melder angegeben wurde, "unbekannt" eintragen.
+		if (observation.getReporter() == null || observation.getReporter().isEmpty()) {
+			observation.setReporter("unbekannt");
+		}
+
 		if (observation.getAnimal() != null && observation.getAnimal().getId() != null) {
 			Animal animal = animalRepository.findById(observation.getAnimal().getId()).orElse(null);
 			observation.setAnimal(animal);

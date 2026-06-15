@@ -19,6 +19,12 @@ public class Observation {
 	private String date;
 	private String time;
 
+	// wer hat die Sichtung erfasst (Melder)
+	private String reporter;
+
+	// Zeitpunkt, wann die Sichtung gespeichert wurde (als Text, z.B. "2026-06-13 12:50")
+	private String createdAt;
+
 	@ManyToOne
 	private Animal animal;
 
@@ -54,6 +60,18 @@ public class Observation {
 	}
 	public void setTime(String time) {
 		this.time = time;
+	}
+	public String getReporter() {
+		return reporter;
+	}
+	public void setReporter(String reporter) {
+		this.reporter = reporter;
+	}
+	public String getCreatedAt() {
+		return createdAt;
+	}
+	public void setCreatedAt(String createdAt) {
+		this.createdAt = createdAt;
 	}
 	public Animal getAnimal() {
 		return animal;

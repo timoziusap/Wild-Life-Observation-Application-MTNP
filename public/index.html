@@ -6,159 +6,45 @@
 
     <!-- eigenes Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
-
-    <!-- DataTables CSS (Tabellen-Anzeige) -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
-
-    <!-- jQuery zuerst, dann DataTables -->
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
-
-    <!-- eigene Skripte: erst die Helfer, dann die Dialoge -->
-    <script type="text/javascript" src="js/api.js"></script>
-    <script type="text/javascript" src="js/animal.js"></script>
-    <script type="text/javascript" src="js/location.js"></script>
 </head>
 <body>
 <div class="centerdiv">
 
     <header><h1>Wild Life Observation</h1></header>
 
-    <!-- einfache Navigation zwischen den drei Dialogen -->
+    <!-- auf der Startseite reicht ein Link zurueck auf sich selbst -->
     <nav>
-        <a href="index.html">Tier &amp; Ort</a>
-        <a href="observation.html">Beobachtung</a>
-        <a href="search.html">Suche</a>
+        <a href="index.html">Startseite</a>
     </nav>
 
-    <!-- ===================== Dialog 1: Tier anlegen ===================== -->
-    <section class="left">
-        <h2>Tier anlegen</h2>
-        <form id="newAnimal">
-            <label>Gattung (Genus):</label>
-            <!-- wird per AJAX aus GET /genus gefuellt -->
-            <select name="genus" id="genusSelect" required="required">
-                <option value="">-- bitte wählen --</option>
-                <!-- feste Option fuer eine Art die nicht in der Liste steht -->
-                <option value="sonstige">Sonstige (neue Gattung)...</option>
-            </select>
+    <!-- ===================== Hauptmenue ===================== -->
+    <!-- vier Kacheln, jede fuehrt zu einem Bereich der App -->
+    <section class="full">
+        <h2 class="menu-titel">Was möchtest du tun?</h2>
 
-            <!-- zeigt Schutzstatus und Jagdzeit der gewaehlten Gattung an (siehe animal.js) -->
-            <div id="genusInfo" class="genus-info" style="display:none;"></div>
+        <div class="menu">
 
-            <!-- erscheint nur wenn oben "Sonstige" gewaehlt wird (siehe animal.js) -->
-            <div id="sonstigeGenusBereich" style="display:none;">
-                <label>Neue Gattung (Bezeichnung):</label>
-                <input type="text" id="sonstigeDesignation" name="sonstigeDesignation">
+            <a class="menu-kachel" href="tier.html">
+                <h3>Tiersichtung anlegen</h3>
+                <p>Eine neue Sichtung erfassen: erst das Tier, dann den Ort.</p>
+            </a>
 
-                <label>Lateinische Bezeichnung (optional):</label>
-                <input type="text" id="sonstigeLatin" name="sonstigeLatin">
+            <a class="menu-kachel" href="search.html">
+                <h3>Tiersichtung suchen</h3>
+                <p>Vorhandene Sichtungen filtern und Details ansehen.</p>
+            </a>
 
-                <label>Ist die Tierart geschützt?</label>
-                <select id="sonstigeProtected">
-                    <option value="nein">nein</option>
-                    <option value="ja">ja</option>
-                </select>
+            <a class="menu-kachel" href="counter.html">
+                <h3>Counter</h3>
+                <p>Zählungen anlegen und hoch- oder runterzählen.</p>
+            </a>
 
-                <label>Jagdzeitraum / Schutzbestimmung:</label>
-                <input type="text" id="sonstigeHuntingSeason"
-                       placeholder="z.B. 01.05. - 31.01. oder ganzjährig geschont">
-            </div>
+            <a class="menu-kachel" href="schutzzeiten.html">
+                <h3>Schutzzeiten</h3>
+                <p>Schutzstatus und Jagdzeiten der Gattungen ansehen.</p>
+            </a>
 
-            <label>Geschlecht:</label>
-            <!-- Dropdown statt Freitext, damit keine Tippfehler in der DB landen -->
-            <select name="gender" required="required">
-                <option value="">-- bitte wählen --</option>
-                <option value="männlich">männlich</option>
-                <option value="weiblich">weiblich</option>
-                <option value="unbekannt">unbekannt</option>
-            </select>
-
-            <label>Anzahl der gesichteten Tiere:</label>
-            <!-- Pflichtfeld laut Anforderung, mindestens 1 Tier -->
-            <input type="number" name="animalCount" min="1" max="999" step="1" required="required">
-
-            <label>Geschätztes Alter (Jahre):</label>
-            <!-- nur ganze Jahre, grobe Schaetzung reicht -->
-            <input type="number" name="estimatedAge" min="0" max="50" step="1">
-
-            <label>Geschätzte Größe (cm):</label>
-            <input type="number" name="estimatedSize" min="0" max="500" step="1">
-
-            <label>Geschätztes Gewicht (kg):</label>
-            <!-- step 0.1 erlaubt z.B. 12.5 kg -->
-            <input type="number" name="estimatedWeight" min="0" max="1000" step="0.1">
-
-            <label>Jungtiere gesichtet?</label>
-            <!-- bei "ja" erscheint darunter das Feld fuer die Anzahl (siehe animal.js) -->
-            <select name="youngPresent" id="youngSelect">
-                <option value="nein">nein</option>
-                <option value="ja">ja</option>
-            </select>
-
-            <div id="youngCountBereich" style="display:none;">
-                <label>Anzahl der Jungtiere:</label>
-                <input type="number" name="youngCount" min="1" max="999" step="1">
-            </div>
-
-            <br>
-            <input type="submit" id="newAnimalButton" value="Tier speichern">
-        </form>
-
-        <h3>Vorhandene Tiere</h3>
-        <button id="loadAnimalTable">Laden</button>
-        <table id="animalTable" class="display" cellspacing="0" width="100%">
-            <thead>
-            <tr>
-                <!-- kurze Spaltentitel, damit alles ohne Scrollen in den Kasten passt -->
-                <th>ID</th>
-                <th>Geschl.</th>
-                <th>Anz.</th>
-                <th>Alter</th>
-                <th>Gr. (cm)</th>
-                <th>Gew. (kg)</th>
-                <th>Junge</th>
-                <th>Gattung</th>
-                <th>Aktion</th>
-            </tr>
-            </thead>
-        </table>
-    </section>
-
-    <!-- ===================== Dialog 2: Location anlegen ===================== -->
-    <section class="right">
-        <h2>Ort anlegen</h2>
-        <form id="newLocation">
-            <label>Kurztitel:</label>
-            <input type="text" name="shorttitle" required="required">
-
-            <label>Beschreibung:</label>
-            <textarea name="description" rows="4"></textarea>
-
-            <label>Breitengrad (Latitude):</label>
-            <input type="text" name="latitude" required="required">
-
-            <label>Längengrad (Longitude):</label>
-            <input type="text" name="longitude" required="required">
-
-            <br>
-            <input type="submit" id="newLocationButton" value="Ort speichern">
-        </form>
-
-        <h3>Vorhandene Orte</h3>
-        <button id="loadLocationTable">Laden</button>
-        <table id="locationTable" class="display" cellspacing="0" width="100%">
-            <thead>
-            <tr>
-                <th>LNr</th>
-                <th>Kurztitel</th>
-                <th>Beschreibung</th>
-                <th>Latitude</th>
-                <th>Longitude</th>
-                <th>Aktion</th>
-            </tr>
-            </thead>
-        </table>
+        </div>
     </section>
 
     <footer>Wild Life Observation App &ndash; Hochschule Aalen</footer>
