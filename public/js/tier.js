@@ -95,6 +95,19 @@ function zeigeGattungsInfo() {
                 text = text + ' Jagdzeit: ' + gattung.huntingSeason;
             }
 
+            // Pruefen ob heute Schonzeit ist und ggf. warnen (schonzeit.js).
+            // Bei geschuetzten Arten steht der Hinweis schon oben, daher nur sonst.
+            if (!gattung.protectedSpecies && typeof schonzeitHinweis === 'function') {
+                var heute = new Date();
+                var heuteStr = heute.getFullYear() + '-'
+                    + ('0' + (heute.getMonth() + 1)).slice(-2) + '-'
+                    + ('0' + heute.getDate()).slice(-2);
+                var hinweis = schonzeitHinweis(gattung, heuteStr);
+                if (hinweis) {
+                    text = text + '. ' + hinweis;
+                }
+            }
+
             $('#genusInfo').text(text).show();
         }
     });
