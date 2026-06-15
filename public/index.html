@@ -8,15 +8,27 @@
 
     <!-- eigenes Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
+
+    <!-- Bootstrap Icons (kostenlos, MIT). Liefert die Symbole als Schrift. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body>
 <div class="centerdiv">
 
     <header><h1>Wild Life Observation</h1></header>
 
-    <!-- auf der Startseite reicht ein Link zurueck auf sich selbst -->
+    <!-- Navigation: auf dem Laptop als Leiste, auf dem Handy als Hamburger.
+         Die Checkbox plus Label klappen die Links per reinem CSS auf, kein JavaScript noetig. -->
     <nav>
-        <a href="index.html">Startseite</a>
+        <input type="checkbox" id="navToggle" class="nav-toggle">
+        <label for="navToggle" class="nav-burger"><i class="bi bi-list"></i> Menü</label>
+        <div class="nav-links">
+            <a href="index.html">Startseite</a>
+            <a href="tier.html">Tiersichtung anlegen</a>
+            <a href="search.html">Suchen</a>
+            <a href="counter.html">Counter</a>
+            <a href="schutzzeiten.html">Schutzzeiten</a>
+        </div>
     </nav>
 
     <!-- ===================== Hauptmenue ===================== -->
@@ -27,21 +39,25 @@
         <div class="menu">
 
             <a class="menu-kachel" href="tier.html">
+                <i class="bi bi-binoculars kachel-icon"></i>
                 <h3>Tiersichtung anlegen</h3>
                 <p>Eine neue Sichtung erfassen: erst das Tier, dann den Ort.</p>
             </a>
 
             <a class="menu-kachel" href="search.html">
+                <i class="bi bi-search kachel-icon"></i>
                 <h3>Tiersichtung suchen</h3>
                 <p>Vorhandene Sichtungen filtern und Details ansehen.</p>
             </a>
 
             <a class="menu-kachel" href="counter.html">
+                <i class="bi bi-calculator kachel-icon"></i>
                 <h3>Counter</h3>
                 <p>Zählungen anlegen und hoch- oder runterzählen.</p>
             </a>
 
             <a class="menu-kachel" href="schutzzeiten.html">
+                <i class="bi bi-shield-check kachel-icon"></i>
                 <h3>Schutzzeiten</h3>
                 <p>Schutzstatus und Jagdzeiten der Gattungen ansehen.</p>
             </a>

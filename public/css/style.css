@@ -74,6 +74,20 @@ nav a:hover {
     text-decoration: none;
 }
 
+/* die Checkbox steuert nur das Auf und Zu, sie selbst ist unsichtbar */
+.nav-toggle {
+    display: none;
+}
+
+/* der Hamburger-Knopf ist nur auf dem Handy sichtbar (siehe Media Query unten) */
+.nav-burger {
+    display: none;
+    cursor: pointer;
+    font-weight: bold;
+    color: #2f4a2c;
+    padding: 4px 8px;
+}
+
 /* zwei Spalten: links Tier, rechts Ort.
    Links etwas breiter, weil die Tiere-Tabelle mehr Spalten hat.
    Fast deckende Karten mit Schatten, damit sie auf dem Foto "schweben" */
@@ -202,6 +216,14 @@ button:hover {
 .menu-kachel p {
     margin: 0;
     font-size: 14px;
+}
+
+/* Symbol oben in jeder Kachel, in Waldgruen passend zum Design */
+.kachel-icon {
+    display: block;
+    font-size: 30px;
+    color: #4c7044;
+    margin-bottom: 8px;
 }
 
 /* Info-Box unter dem Gattungs-Dropdown (Schutzstatus/Jagdzeit, AP2) */
@@ -360,4 +382,63 @@ footer {
     #map {
         height: 300px;
     }
+
+    /* das feste Hintergrundbild ruckelt auf vielen Handys, deshalb normal mitscrollen */
+    body {
+        background-attachment: scroll;
+    }
+
+    /* groessere Tippflaechen fuer Buttons und Nav, damit man mit dem Daumen gut trifft */
+    input[type=submit],
+    button,
+    nav a {
+        padding: 12px 18px;
+        font-size: 16px;
+    }
+
+    /* Schriftgroesse 16px in Eingabefeldern verhindert das automatische Reinzoomen am iPhone */
+    input[type=text],
+    input[type=number],
+    input[type=date],
+    input[type=time],
+    textarea,
+    select {
+        font-size: 16px;
+    }
+
+    /* Symbol in den Kacheln auf dem Handy etwas groesser */
+    .kachel-icon {
+        font-size: 36px;
+    }
+
+    /* auf dem Handy: Hamburger-Knopf zeigen, die Links erst beim Aufklappen */
+    .nav-burger {
+        display: inline-block;
+    }
+    .nav-links {
+        display: none;
+        margin-top: 8px;
+    }
+    /* Haken in der Checkbox gesetzt (Knopf getippt) -> Links anzeigen */
+    .nav-toggle:checked ~ .nav-links {
+        display: block;
+    }
+    /* die Links stehen aufgeklappt untereinander */
+    .nav-links a {
+        display: block;
+        margin: 6px auto;
+        max-width: 260px;
+    }
+}
+
+/* Auf dem Handy gibt es kein echtes Hovern. Damit sich Buttons trotzdem
+   lebendig anfuehlen, faerben wir sie auch beim Antippen (active) ein. */
+input[type=submit]:active,
+button:active {
+    background-color: #2f4a2c;
+}
+
+nav a:active {
+    background-color: #4c7044;
+    color: #f1e9d6;
 }

@@ -9,6 +9,9 @@
     <!-- eigenes Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
 
+    <!-- Bootstrap Icons (kostenlos, MIT). Liefert die Symbole als Schrift. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
     <!-- jQuery zuerst, dann die Helfer, dann diese Seite -->
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type="text/javascript" src="js/api.js"></script>
@@ -19,9 +22,18 @@
 
     <header><h1>Wild Life Observation</h1></header>
 
-    <!-- einfache Navigation zurueck zur Startseite -->
+    <!-- Navigation: auf dem Laptop als Leiste, auf dem Handy als Hamburger.
+         Die Checkbox plus Label klappen die Links per reinem CSS auf, kein JavaScript noetig. -->
     <nav>
-        <a href="index.html">Startseite</a>
+        <input type="checkbox" id="navToggle" class="nav-toggle">
+        <label for="navToggle" class="nav-burger"><i class="bi bi-list"></i> Menü</label>
+        <div class="nav-links">
+            <a href="index.html">Startseite</a>
+            <a href="tier.html">Tiersichtung anlegen</a>
+            <a href="search.html">Suchen</a>
+            <a href="counter.html">Counter</a>
+            <a href="schutzzeiten.html">Schutzzeiten</a>
+        </div>
     </nav>
 
     <!-- ===================== Tiersichtung anlegen, Schritt 1 (Tier) ===================== -->
