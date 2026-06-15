@@ -2,6 +2,7 @@
 // Dialog 4: Suche und Filter ueber alle Beobachtungen.
 // Baut aus den Filterfeldern die URL fuer GET /observations/search
 // zusammen und zeigt die Treffer in der Ergebnis-Tabelle an.
+// AP11: Doppelklick auf eine Zeile oeffnet eine Detailansicht.
 
 
 // Wird ausgefuehrt, sobald die Seite fertig geladen ist.
@@ -25,7 +26,24 @@ $(document).ready(function() {
     // 5) Zuruecksetzen -> alle Felder leeren und wieder alles anzeigen.
     $('#resetSearch').click(function() {
         $('#searchForm')[0].reset();
+        $('#detailansicht').hide();   // Detailansicht mit zuruecksetzen
         sucheObservations();
+    });
+
+    // 6) AP11: Doppelklick auf eine Tabellenzeile zeigt die Detailansicht.
+    //    Der Handler haengt am tbody (delegiert), damit er auch nach dem
+    //    Neuaufbau der DataTable weiter funktioniert.
+    $('#searchTable tbody').on('dblclick', 'tr', function() {
+        var table = $('#searchTable').DataTable();
+        var zeile = table.row(this).data();
+        if (zeile) {
+            zeigeDetails(zeile);
+        }
+    });
+
+    // 7) Schliessen-Knopf der Detailansicht.
+    $('#detailSchliessen').click(function() {
+        $('#detailansicht').hide();
     });
 });
 
@@ -137,4 +155,53 @@ function sucheObservations() {
             { "data": "time" }
         ]
     });
+}
+
+
+// AP11: Zeigt die Detailansicht zu einer angeklickten Beobachtung.
+// beob ist das komplette Zeilen-Objekt aus der DataTable
+// (eine Observation mit verschachteltem animal, genus und location).
+function zeigeDetails(beob) {
+
+    // Verschachtelte Objekte sicher herausholen (koennen fehlen).
+    var tier    = beob.animal   || {};
+    var gattung = tier.genus    || {};
+    var ort     = beob.location || {};
+
+    // Jungtiere nur als Zahl, wenn welche gesichtet wurden.
+    var jungtiere = 'keine';
+    if (tier.youngPresent) {
+        jungtiere = tier.youngCount;
+    }
+
+    // Ort: Kurztitel, dazu Beschreibung und Koordinaten falls vorhanden.
+    var ortText = ort.shorttitle || 'unbekannt';
+    if (ort.description) {
+        ortText = ortText + ' - ' + ort.description;
+    }
+    var koordinaten = '';
+    if (ort.latitude && ort.longitude) {
+        koordinaten = ort.latitude + ', ' + ort.longitude;
+    }
+
+    // HTML fuer die Detailbox zusammenbauen.
+    // reporter und createdAt kommen aus AP7; falls null -> "unbekannt".
+    var html = '';
+    html += '<p><strong>Sichtungsort:</strong> ' + ortText + '</p>';
+    if (koordinaten) {
+        html += '<p><strong>Koordinaten:</strong> ' + koordinaten + '</p>';
+    }
+    html += '<p><strong>Gattung:</strong> ' + (gattung.designation || 'unbekannt') + '</p>';
+    html += '<p><strong>Geschlecht:</strong> ' + (tier.gender || 'unbekannt') + '</p>';
+    html += '<p><strong>Anzahl der Tiere:</strong> '
+          + (tier.animalCount != null ? tier.animalCount : 'unbekannt') + '</p>';
+    html += '<p><strong>Jungtiere:</strong> ' + jungtiere + '</p>';
+    html += '<p><strong>Datum der Sichtung:</strong> ' + (beob.date || 'unbekannt') + '</p>';
+    html += '<p><strong>Uhrzeit der Sichtung:</strong> ' + (beob.time || 'unbekannt') + '</p>';
+    html += '<p><strong>Erfasst von (Melder):</strong> ' + (beob.reporter || 'unbekannt') + '</p>';
+    html += '<p><strong>Erfassungszeitpunkt:</strong> ' + (beob.createdAt || 'unbekannt') + '</p>';
+
+    // Detailbox fuellen und einblenden.
+    $('#detailInhalt').html(html);
+    $('#detailansicht').show();
 }

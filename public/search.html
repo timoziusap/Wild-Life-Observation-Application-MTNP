@@ -37,6 +37,13 @@
         <h2>Beobachtungen suchen</h2>
         <form id="searchForm">
 
+            <!-- ----- Die drei geforderten Filter: Ort, Gattung, Geschlecht ----- -->
+            <label>Sichtungsort:</label>
+            <!-- wird per AJAX aus GET /locations gefuellt -->
+            <select id="searchLocation">
+                <option value="">-- alle --</option>
+            </select>
+
             <label>Tierart / Gattung:</label>
             <!-- wird per AJAX aus GET /genus gefuellt -->
             <select id="searchGenus">
@@ -51,17 +58,15 @@
                 <option value="unbekannt">unbekannt</option>
             </select>
 
+            <!-- ----- Weitere (optionale) Filter ----- -->
+            <hr>
+            <p style="color:#777; margin:5px 0;">Weitere Filter (optional):</p>
+
             <label>Anzahl der Tiere (mindestens):</label>
             <input type="number" id="searchMinCount" min="1" max="999" step="1">
 
             <label>Anzahl der Jungtiere (mindestens):</label>
             <input type="number" id="searchMinYoung" min="1" max="999" step="1">
-
-            <label>Sichtungsort:</label>
-            <!-- wird per AJAX aus GET /locations gefuellt -->
-            <select id="searchLocation">
-                <option value="">-- alle --</option>
-            </select>
 
             <label>Schutzstatus:</label>
             <select id="searchProtected">
@@ -76,9 +81,11 @@
         </form>
     </section>
 
-    <!-- Ergebnis-Tabelle: zeigt die wichtigsten Infos laut Anforderung Punkt 5 -->
+    <!-- Ergebnis-Tabelle: zeigt die wichtigsten Infos laut Anforderung Punkt 5.
+         Doppelklick auf eine Zeile oeffnet die Detailansicht (search.js). -->
     <section class="left full" style="width:100%; float:none;">
         <h3>Suchergebnisse</h3>
+        <p style="color:#777;">Tipp: Doppelklick auf eine Zeile zeigt die Details.</p>
         <table id="searchTable" class="display" cellspacing="0" width="100%">
             <thead>
             <tr>
@@ -94,6 +101,14 @@
             </tr>
             </thead>
         </table>
+
+        <!-- ===================== Detailansicht (AP11) ===================== -->
+        <!-- Wird beim Doppelklick auf eine Zeile gefuellt und eingeblendet. -->
+        <div id="detailansicht" style="display:none; border:1px solid #ccc; padding:15px; margin-top:20px; background:#f7f7f7;">
+            <button type="button" id="detailSchliessen" style="float:right;">Schließen</button>
+            <h3>Detailansicht der Sichtung</h3>
+            <div id="detailInhalt"></div>
+        </div>
     </section>
 
     <footer>Wild Life Observation App &ndash; Hochschule Aalen</footer>
