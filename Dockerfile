@@ -9,6 +9,9 @@ RUN chmod +x ./mvnw && ./mvnw clean package -DskipTests
 FROM eclipse-temurin:25-jre
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
+# Das Frontend liegt im public Ordner und wird ueber file:./public/ geladen (siehe application.properties).
+# Deshalb muss der Ordner auch ins Laufzeit Image, sonst gibt die Startseite 404.
+COPY --from=build /app/public ./public
 EXPOSE 8080
 # Render gibt den Port ueber die Umgebungsvariable PORT vor. Wenn keiner da ist, nimm 8080.
 ENTRYPOINT ["sh", "-c", "java -Dserver.port=${PORT:-8080} -jar app.jar"]
