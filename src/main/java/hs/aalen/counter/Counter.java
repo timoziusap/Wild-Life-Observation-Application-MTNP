@@ -1,11 +1,13 @@
 package hs.aalen.counter;
 
+import hs.aalen.genus.Genus;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 
-// Ein Counter (Zaehlung) mit Name und aktuellem Zahlenwert.
+// Ein Counter (Zaehlung) fuer eine bestimmte Gattung mit aktuellem Zahlenwert.
 // Wird ueber die Counter-Seite (counter.html) angelegt und hoch-/runtergezaehlt.
 @Entity
 public class Counter {
@@ -14,7 +16,14 @@ public class Counter {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	// frueher der freie Name der Zaehlung. Bleibt fuer alte Datensaetze erhalten,
+	// neue Counter nutzen stattdessen die Gattung (genus).
 	private String name;
+
+	// Jede Zaehlung gehoert zu genau einer Gattung (ersetzt den freien Namen).
+	// Wie bei Animal: @ManyToOne, im JSON kommt nur genus: { id } an.
+	@ManyToOne
+	private Genus genus;
 
 	// aktueller Zaehlerstand.
 	// Heisst counterValue (nicht value), weil VALUE ein SQL-Schluesselwort ist
@@ -42,6 +51,12 @@ public class Counter {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public Genus getGenus() {
+		return genus;
+	}
+	public void setGenus(Genus genus) {
+		this.genus = genus;
 	}
 	public Integer getCounterValue() {
 		return counterValue;

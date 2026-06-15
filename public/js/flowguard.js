@@ -40,8 +40,11 @@ $(document).ready(function() {
             } else {
                 // Der Nutzer verlaesst den Ablauf bewusst -> Zwischenstand
                 // verwerfen, damit es beim naechsten Mal sauber leer beginnt.
+                // Auch das Counter-Herkunft-Flag loeschen, sonst wuerde eine
+                // spaetere normale Sichtung faelschlich zum Counter zurueckfuehren.
                 sessionStorage.removeItem('tierEntwurf');
                 sessionStorage.removeItem('ortEntwurf');
+                sessionStorage.removeItem('counterHerkunftId');
             }
         }
     });

@@ -1,13 +1,19 @@
 // counter.js
-// Counter-Seite (AP12): Zaehlungen anlegen und hoch-/runterzaehlen.
+// Counter-Seite (AP12): Zaehlungen pro Gattung anlegen und hoch-/runterzaehlen.
 // Die Counter liegen im Backend (GET/POST/PUT/DELETE /counters), damit die
 // Zahlen echt gespeichert bleiben - auch nach Reload und nach einem Neustart.
+//
+// Neu: Statt eines freien Namens waehlt man beim Anlegen eine Gattung (wie bei
+// Tier anlegen). Ueber "Sonstige" kann man eine neue Gattung anlegen, die
+// dauerhaft in der Datenbank gespeichert wird. Pro Counter gibt es einen Knopf
+// "Tiersichtung eintragen", der Gattung und Anzahl ins Tier-Formular uebernimmt.
 
-// maximale Anzahl Counter laut Anforderung
-var MAX_COUNTER = 4;
+// hoechstens so viele Counter gleichzeitig (bewusst hoch gewaehlt, kein Hinweis-Text).
+var MAX_COUNTER = 15;
 
-// hier merken wir uns die geladenen Counter aus dem Backend
+// hier merken wir uns die geladenen Counter und Gattungen aus dem Backend
 var alleCounter = [];
+var alleGattungen = [];
 
 // id des gerade aktiven Counters (zuletzt angeklickt). Die Pfeiltasten wirken
 // auf diesen Counter. null bedeutet: es ist noch keiner ausgewaehlt.
@@ -17,30 +23,41 @@ var aktiveCounterId = null;
 // Wird ausgefuehrt, sobald die Seite fertig geladen ist.
 $(document).ready(function() {
 
-    // 1) Counter aus dem Backend laden und anzeigen.
+    // 1) Gattungen fuer das Dropdown laden (GET /genus).
+    ladeGattungen();
+
+    // 2) Counter aus dem Backend laden und anzeigen.
     ladeCounter();
 
-    // 2) Formular: neuen Counter anlegen.
+    // 3) Formular: neuen Counter anlegen.
     $('#newCounter').submit(function(event) {
         event.preventDefault();
         erstelleCounter();
     });
 
-    // 3) "Alle Zaehlungen auf 0 setzen": alle Counter wieder auf 0 setzen.
+    // 3b) "Sonstige" gewaehlt -> Felder fuer die neue Gattung einblenden.
+    $('#counterGenusSelect').change(function() {
+        if ($('#counterGenusSelect').val() === 'sonstige') {
+            $('#counterSonstigeBereich').show();
+        } else {
+            $('#counterSonstigeBereich').hide();
+        }
+    });
+
+    // 4) "Alle Zaehlungen auf 0 setzen".
     $('#zaehlungLoeschen').click(function() {
         setzeAlleAufNull();
     });
 
-    // 3b) "Alle Zaehlungen loeschen": alle Counter komplett entfernen.
+    // 4b) "Alle Zaehlungen loeschen".
     $('#alleLoeschen').click(function() {
         loescheAlle();
     });
 
-    // 4) Pfeiltasten abfangen: hoch zaehlt +1, runter -1 (am aktiven Counter).
-    //    preventDefault verhindert, dass die Seite dabei scrollt.
+    // 5) Pfeiltasten abfangen: hoch zaehlt +1, runter -1 (am aktiven Counter).
     $(document).keydown(function(event) {
-        // im Namensfeld sollen die Pfeiltasten normal funktionieren
-        if ($(event.target).is('input')) {
+        // in Eingabefeldern sollen die Pfeiltasten normal funktionieren
+        if ($(event.target).is('input, select')) {
             return;
         }
         if (event.key === 'ArrowUp') {
@@ -52,6 +69,29 @@ $(document).ready(function() {
         }
     });
 });
+
+
+// Laedt die Gattungen vom Backend und fuellt das Dropdown.
+function ladeGattungen() {
+    $.ajax({
+        type: 'GET',
+        url: '/genus',
+        success: function(data) {
+            alleGattungen = data;
+            var select = $('#counterGenusSelect');
+            $.each(data, function(index, gattung) {
+                var option = $('<option></option>');
+                option.val(gattung.id);
+                option.text(gattung.designation);
+                // "Sonstige" soll immer die letzte Option bleiben
+                option.insertBefore(select.find('option[value="sonstige"]'));
+            });
+        },
+        error: function(xhr, status, error) {
+            console.log('Gattungen konnten nicht geladen werden: ' + error);
+        }
+    });
+}
 
 
 // Laedt alle Counter (GET /counters) und zeichnet sie neu.
@@ -85,20 +125,21 @@ function zeigeCounter() {
             karte.addClass('aktiv');
         }
 
-        // Name des Counters.
-        karte.append('<div class="counter-name">' + counter.name + '</div>');
+        // Name = Gattungsbezeichnung (Fallback: alter Name oder "Zaehlung").
+        var bezeichnung = 'Zählung';
+        if (counter.genus && counter.genus.designation) {
+            bezeichnung = counter.genus.designation;
+        } else if (counter.name) {
+            bezeichnung = counter.name;
+        }
+        karte.append('<div class="counter-name">' + bezeichnung + '</div>');
 
-        // Zaehlerstand als Eingabefeld: zeigt den Wert an und laesst ihn direkt
-        // eintippen. Mit Enter bestaetigen. Mit + und - wird derselbe Wert gezaehlt.
-        // Feld heisst counterValue (nicht value), weil VALUE ein SQL-Schluesselwort ist.
+        // Zaehlerstand als Eingabefeld.
         var wertFeld = $('<input type="text" class="counter-wert">');
         wertFeld.val(counter.counterValue);
-
-        // Klick ins Feld soll die Karte nicht neu zeichnen (sonst waere der Fokus weg).
         wertFeld.click(function(event) {
             event.stopPropagation();
         });
-        // Enter bestaetigt die manuelle Eingabe.
         wertFeld.keydown(function(event) {
             if (event.key === 'Enter') {
                 event.preventDefault();
@@ -107,14 +148,13 @@ function zeigeCounter() {
         });
         karte.append(wertFeld);
 
-        // Knoepfe zum hoch-/runterzaehlen und loeschen (auch ohne Tastatur nutzbar).
-        // + und - bekommen die Klasse counter-pm und werden dadurch groesser dargestellt.
+        // Knoepfe zum hoch-/runterzaehlen und loeschen.
         var hoch = $('<button type="button" class="counter-pm">+</button>');
         var runter = $('<button type="button" class="counter-pm">-</button>');
         var weg = $('<button type="button">Löschen</button>');
 
         hoch.click(function(event) {
-            event.stopPropagation();   // nicht zusaetzlich die Karte aktiv klicken
+            event.stopPropagation();
             zaehle(counter.id, 1);
         });
         runter.click(function(event) {
@@ -126,10 +166,17 @@ function zeigeCounter() {
             loescheCounter(counter.id);
         });
 
-        // Reihenfolge: links Minus, in der Mitte Loeschen, rechts Plus.
         karte.append(runter);
         karte.append(weg);
         karte.append(hoch);
+
+        // Knopf, der die Zaehlung als Tiersichtung uebernimmt.
+        var eintragen = $('<button type="button" class="eintragen-btn">Tiersichtung eintragen</button>');
+        eintragen.click(function(event) {
+            event.stopPropagation();
+            tiersichtungEintragen(counter);
+        });
+        karte.append(eintragen);
 
         // Klick auf die Karte macht diesen Counter aktiv (fuer die Pfeiltasten)
         karte.click(function() {
@@ -140,74 +187,100 @@ function zeigeCounter() {
         liste.append(karte);
     });
 
-    // Erstellen-Knopf sperren, wenn das Maximum erreicht ist.
+    // Erstellen-Knopf sperren, wenn das Maximum erreicht ist (ohne Hinweis-Text).
     pruefeMaximum();
 }
 
 
-// Sperrt den Erstellen-Knopf und zeigt einen Hinweis, wenn schon 4 Counter da sind.
+// Sperrt den Erstellen-Knopf, wenn schon MAX_COUNTER Counter da sind.
 function pruefeMaximum() {
+    $('#erstellenButton').prop('disabled', alleCounter.length >= MAX_COUNTER);
+}
+
+
+// Legt einen neuen Counter an. Bei "Sonstige" wird zuerst die neue Gattung
+// dauerhaft gespeichert (POST /genus), danach der Counter damit angelegt.
+function erstelleCounter() {
+
     if (alleCounter.length >= MAX_COUNTER) {
-        $('#erstellenButton').prop('disabled', true);
-        $('#maxHinweis').show();
+        alert('Es sind schon ' + MAX_COUNTER + ' Zählungen angelegt. Bitte zuerst eine löschen.');
+        return;
+    }
+
+    var auswahl = $('#counterGenusSelect').val();
+    if (!auswahl) {
+        alert('Bitte eine Gattung auswählen.');
+        return;
+    }
+
+    if (auswahl === 'sonstige') {
+        // neue Gattung zuerst anlegen, dann den Counter damit erstellen.
+        var bezeichnung = $('#counterSonstigeDesignation').val();
+        if (!bezeichnung) {
+            alert('Bitte eine Bezeichnung für die neue Gattung eingeben.');
+            return;
+        }
+
+        var neueGattung = {
+            'designation'      : bezeichnung,
+            'latinDesignation' : $('#counterSonstigeLatin').val(),
+            'protectedSpecies' : $('#counterSonstigeProtected').val() === 'ja',
+            'huntingSeason'    : $('#counterSonstigeHuntingSeason').val()
+        };
+
+        postJson('/genus', neueGattung, function(gattung) {
+            speichereCounter(gattung.id);
+        });
+
     } else {
-        $('#erstellenButton').prop('disabled', false);
-        $('#maxHinweis').hide();
+        speichereCounter(auswahl);
     }
 }
 
 
-// Legt einen neuen Counter an (POST /counters) mit Startwert 0.
-function erstelleCounter() {
-
-    // nicht mehr als 4 Counter zulassen
-    if (alleCounter.length >= MAX_COUNTER) {
-        return;
-    }
-
-    var name = $('#counterName').val();
-    if (!name) {
-        alert('Bitte einen Namen für die Zählung eingeben.');
-        return;
-    }
-
+// Speichert einen neuen Counter mit Startwert 0 fuer die uebergebene Gattung.
+function speichereCounter(genusId) {
     var neuerCounter = {
-        'name'         : name,
+        'genus'        : { 'id': genusId },
         'counterValue' : 0
     };
 
     postJson('/counters', neuerCounter, function() {
-        $('#counterName').val('');   // Eingabefeld leeren
-        ladeCounter();               // Liste neu laden
+        // Formular zuruecksetzen und Liste neu laden.
+        $('#newCounter')[0].reset();
+        $('#counterSonstigeBereich').hide();
+        ladeCounter();
     });
+}
+
+
+// Baut die Daten fuer einen PUT zusammen. WICHTIG: die Gattung muss mit, sonst
+// wuerde das Backend die Zuordnung beim Speichern auf null setzen.
+function counterPayload(counter, neuerWert) {
+    var daten = { 'counterValue': neuerWert };
+    if (counter.genus && counter.genus.id != null) {
+        daten.genus = { 'id': counter.genus.id };
+    }
+    return daten;
 }
 
 
 // Zaehlt einen Counter um delta (+1 oder -1) und speichert das per PUT.
 function zaehle(id, delta) {
 
-    // ohne aktiven/uebergebenen Counter passiert nichts
     if (id === null) {
         return;
     }
 
-    // den passenden Counter in der gemerkten Liste suchen
     $.each(alleCounter, function(index, counter) {
         if (counter.id === id) {
 
             var neuerWert = counter.counterValue + delta;
-
-            // die Zaehlung darf nicht unter 0 fallen
             if (neuerWert < 0) {
-                return;
+                return;   // nicht unter 0
             }
 
-            var geaendert = {
-                'name'         : counter.name,
-                'counterValue' : neuerWert
-            };
-
-            putJson('/counters/' + id, geaendert, function() {
+            putJson('/counters/' + id, counterPayload(counter, neuerWert), function() {
                 ladeCounter();
             });
         }
@@ -216,13 +289,10 @@ function zaehle(id, delta) {
 
 
 // Setzt den Zaehlerstand eines Counters auf eine selbst eingegebene Zahl.
-// Erlaubt sind ganze Zahlen ab 0 (0, 1, 2 ...). Sonst gibt es einen Fehler.
 function setzeWert(id, eingabe) {
 
     var text = $.trim(eingabe);
 
-    // ^\d+$ laesst nur Ziffern zu (keine Kommazahl, kein Minus, keine Buchstaben).
-    // 0 ist erlaubt, negative Zahlen und Kommazahlen nicht.
     if (!/^\d+$/.test(text)) {
         alert('Bitte eine ganze Zahl (0 oder größer) eingeben.');
         return;
@@ -230,14 +300,9 @@ function setzeWert(id, eingabe) {
 
     var wert = parseInt(text, 10);
 
-    // den passenden Counter suchen und mit dem neuen Wert speichern.
     $.each(alleCounter, function(index, counter) {
         if (counter.id === id) {
-            var geaendert = {
-                'name'         : counter.name,
-                'counterValue' : wert
-            };
-            putJson('/counters/' + id, geaendert, function() {
+            putJson('/counters/' + id, counterPayload(counter, wert), function() {
                 ladeCounter();
             });
         }
@@ -254,11 +319,7 @@ function setzeAlleAufNull() {
     }
 
     $.each(alleCounter, function(index, counter) {
-        var geaendert = {
-            'name'         : counter.name,
-            'counterValue' : 0
-        };
-        putJson('/counters/' + counter.id, geaendert, function() {
+        putJson('/counters/' + counter.id, counterPayload(counter, 0), function() {
             ladeCounter();
         });
     });
@@ -278,7 +339,6 @@ function loescheAlle() {
             ladeCounter();
         });
     });
-    // keine Auswahl mehr nach dem Loeschen
     aktiveCounterId = null;
 }
 
@@ -286,24 +346,64 @@ function loescheAlle() {
 // Loescht einen Counter ganz (DELETE /counters/{id}).
 function loescheCounter(id) {
 
-    // Namen der Zaehlung fuer die Rueckfrage heraussuchen.
-    var name = '';
+    // Bezeichnung fuer die Rueckfrage heraussuchen.
+    var bezeichnung = '';
     $.each(alleCounter, function(index, counter) {
         if (counter.id === id) {
-            name = counter.name;
+            if (counter.genus && counter.genus.designation) {
+                bezeichnung = counter.genus.designation;
+            } else if (counter.name) {
+                bezeichnung = counter.name;
+            }
         }
     });
 
     // Sicherheitsabfrage, damit nicht aus Versehen geloescht wird.
-    if (!confirm('Zählung "' + name + '" wirklich löschen?')) {
+    if (!confirm('Zählung "' + bezeichnung + '" wirklich löschen?')) {
         return;
     }
 
     deleteJson('/counters/' + id, function() {
-        // war der geloeschte Counter aktiv, Auswahl zuruecksetzen
         if (aktiveCounterId === id) {
             aktiveCounterId = null;
         }
         ladeCounter();
     });
+}
+
+
+// Uebernimmt eine Zaehlung als Tiersichtung: Gattung und Anzahl werden im
+// Tier-Formular (Schritt 1) vorausgefuellt. Nach dem Speichern der Sichtung
+// kommt man zurueck und dieser Counter wird entfernt (siehe ort.js).
+function tiersichtungEintragen(counter) {
+
+    if (!counter.genus || counter.genus.id == null) {
+        alert('Diese Zählung hat keine Gattung und kann nicht übernommen werden.');
+        return;
+    }
+    if (!counter.counterValue || counter.counterValue < 1) {
+        alert('Der Zähler steht auf 0. Bitte zuerst Tiere zählen.');
+        return;
+    }
+
+    // kurze Info, was jetzt passiert.
+    var info = 'Gattung "' + counter.genus.designation + '" mit Anzahl ' + counter.counterValue
+             + ' ins Tier-Formular übernehmen?\n'
+             + 'Nach dem Speichern der Sichtung kommst du zurück und diese Zählung wird entfernt.';
+    if (!confirm(info)) {
+        return;
+    }
+
+    // Schritt 1 (Tier) vorausfuellen, Ort-Entwurf frisch starten.
+    var tierEntwurf = {
+        'genus'      : String(counter.genus.id),
+        'animalCount': String(counter.counterValue)
+    };
+    sessionStorage.setItem('tierEntwurf', JSON.stringify(tierEntwurf));
+    sessionStorage.removeItem('ortEntwurf');
+
+    // merken, dass die Sichtung aus diesem Counter kommt (zum spaeteren Loeschen).
+    sessionStorage.setItem('counterHerkunftId', counter.id);
+
+    window.location.href = 'tier.html';
 }

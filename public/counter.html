@@ -43,22 +43,42 @@
 
     <section class="left full" style="width:100%; float:none;">
         <h2>Counter</h2>
-        <p>Lege bis zu vier Zählungen an. Klicke einen Counter an, um ihn als aktiv
+        <p>Lege Zählungen für einzelne Gattungen an. Klicke einen Counter an, um ihn als aktiv
            auszuwählen. Mit den Pfeiltasten (oder den Knöpfen + und -) zählst du den
-           aktiven Counter hoch und runter.</p>
+           aktiven Counter hoch und runter. Mit "Tiersichtung eintragen" übernimmst du eine
+           Zählung direkt ins Sichtungs-Formular.</p>
 
-        <!-- neuen Counter anlegen -->
+        <!-- neue Zählung anlegen: Gattung auswählen (wie bei Tier anlegen) -->
         <form id="newCounter">
-            <label>Name der Zählung:</label>
-            <input type="text" id="counterName" name="counterName"
-                   placeholder="z.B. Rehe" required="required">
+            <label>Gattung (Genus):</label>
+            <!-- wird per AJAX aus GET /genus gefuellt -->
+            <select id="counterGenusSelect" required="required">
+                <option value="">-- bitte wählen --</option>
+                <!-- feste Option fuer eine Gattung die noch nicht in der Liste steht -->
+                <option value="sonstige">Sonstige (neue Gattung)...</option>
+            </select>
+
+            <!-- erscheint nur wenn oben "Sonstige" gewaehlt wird -->
+            <div id="counterSonstigeBereich" style="display:none;">
+                <label>Neue Gattung (Bezeichnung):</label>
+                <input type="text" id="counterSonstigeDesignation">
+
+                <label>Lateinische Bezeichnung (optional):</label>
+                <input type="text" id="counterSonstigeLatin">
+
+                <label>Ist die Tierart geschützt?</label>
+                <select id="counterSonstigeProtected">
+                    <option value="nein">nein</option>
+                    <option value="ja">ja</option>
+                </select>
+
+                <label>Jagdzeitraum / Schutzbestimmung:</label>
+                <input type="text" id="counterSonstigeHuntingSeason"
+                       placeholder="z.B. 01.05. - 31.01. oder ganzjährig geschont">
+            </div>
+
             <input type="submit" id="erstellenButton" value="Counter erstellen">
         </form>
-
-        <!-- Hinweis wenn das Maximum von 4 Countern erreicht ist -->
-        <div id="maxHinweis" class="genus-info" style="display:none;">
-            Maximal 4 Counter möglich. Bitte zuerst eine Zählung löschen.
-        </div>
 
         <!-- hier werden die Counter angezeigt (per JS gefuellt) -->
         <div id="counterListe" class="counter-liste"></div>

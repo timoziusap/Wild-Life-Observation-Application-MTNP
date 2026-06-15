@@ -296,7 +296,18 @@ function speichereTierUndSichtung(tierDaten, basis) {
             // Zwischenstaende loeschen, damit der naechste Ablauf leer beginnt.
             sessionStorage.removeItem('tierEntwurf');
             sessionStorage.removeItem('ortEntwurf');
-            window.location.href = 'index.html';
+
+            // Kam die Sichtung aus dem Counter? Dann den erledigten Counter
+            // loeschen und zurueck zur Counter-Seite. Sonst zur Startseite.
+            var herkunft = sessionStorage.getItem('counterHerkunftId');
+            if (herkunft) {
+                sessionStorage.removeItem('counterHerkunftId');
+                deleteJson('/counters/' + herkunft, function() {
+                    window.location.href = 'counter.html';
+                });
+            } else {
+                window.location.href = 'index.html';
+            }
         });
     });
 }

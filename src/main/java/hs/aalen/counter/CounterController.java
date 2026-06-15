@@ -42,7 +42,7 @@ public class CounterController {
 	// Neuen Counter anlegen.
 	@PostMapping("/counters")
 	public Counter addCounter(@RequestBody Counter counter) {
-		log.info("POST /counters - neuer Counter wird angelegt: {}", counter.getName());
+		log.info("POST /counters - neuer Counter wird angelegt");
 		return counterService.saveCounter(counter);
 	}
 
