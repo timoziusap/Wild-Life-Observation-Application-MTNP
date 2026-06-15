@@ -1,0 +1,33 @@
+<svg width="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<path id="tp" d="M18,100 A82,82 0 0 1 182,100"/>
+<path id="bp" d="M18,100 A82,82 0 0 0 182,100"/>
+</defs>
+
+<circle cx="100" cy="100" r="96" fill="#faf7ef" stroke="#c9b894" stroke-width="2"/>
+<circle cx="100" cy="100" r="68" fill="#243a22" stroke="#4c7044" stroke-width="2"/>
+
+<g fill="none" stroke="#e4dcc6" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+<path d="M93,88 L83,66"/>
+<path d="M87,76 L74,73"/>
+<path d="M85,71 L80,58"/>
+<path d="M107,88 L117,66"/>
+<path d="M113,76 L126,73"/>
+<path d="M115,71 L120,58"/>
+</g>
+
+<ellipse cx="88" cy="96" rx="12" ry="6" fill="#e4dcc6" transform="rotate(-25 88 96)"/>
+<ellipse cx="112" cy="96" rx="12" ry="6" fill="#e4dcc6" transform="rotate(25 112 96)"/>
+
+<path d="M100,84 Q78,90 81,112 Q84,134 100,142 Q116,134 119,112 Q122,90 100,84 Z" fill="#e4dcc6"/>
+
+<circle cx="90" cy="101" r="3.2" fill="#243a22"/>
+<circle cx="110" cy="101" r="3.2" fill="#243a22"/>
+<ellipse cx="100" cy="134" rx="5" ry="3.2" fill="#243a22"/>
+
+<circle cx="20" cy="100" r="2.5" fill="#7a5c3e"/>
+<circle cx="180" cy="100" r="2.5" fill="#7a5c3e"/>
+
+<text font-family="Georgia, 'Times New Roman', serif" font-size="15" font-weight="500" letter-spacing="3" fill="#2f4a2c"><textPath href="#tp" startOffset="50%" text-anchor="middle">WILD LIFE</textPath></text>
+<text font-family="Georgia, 'Times New Roman', serif" font-size="15" font-weight="500" letter-spacing="3" fill="#2f4a2c"><textPath href="#bp" startOffset="50%" text-anchor="middle">OBSERVATION</textPath></text>
+</svg>
