@@ -10,6 +10,9 @@
     <!-- DataTables CSS (Tabellen-Anzeige) -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css">
 
+    <!-- Leaflet CSS fuer die OpenStreetMap Karte -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
     <!-- jQuery zuerst, dann DataTables -->
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
@@ -18,11 +21,9 @@
     <script type="text/javascript" src="js/api.js"></script>
     <script type="text/javascript" src="js/observation.js"></script>
 
-    <!-- eigenes Karten-Skript -->
+    <!-- Leaflet (OpenStreetMap) zuerst, dann unser Karten-Skript -->
+    <script type="text/javascript" src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script type="text/javascript" src="js/maps.js"></script>
-
-    <!-- Google Maps wird ueber das Backend geladen (/maps-api), damit der API Key nicht ins Repo kommt. -->
-    <script async defer src="/maps-api"></script>
 </head>
 <body>
 <div class="centerdiv">
@@ -87,11 +88,7 @@
           zeigeOrtAufKarte(lat, lng) auf. Diese Funktion schreibt
           Marius in maps.js und laesst hier die Karte erscheinen.
         -->
-        <div id="map" style="width:100%; height:400px; background:#e9e9e9;">
-            <p style="padding:10px; color:#777;">
-                Hier erscheint die Karte (maps.js), sobald ein Ort gewählt wird.
-            </p>
-        </div>
+        <div id="map" style="width:100%; height:400px; background:#e9e9e9;"></div>
     </section>
 
     <footer>Wild Life Observation App &ndash; Hochschule Aalen</footer>
