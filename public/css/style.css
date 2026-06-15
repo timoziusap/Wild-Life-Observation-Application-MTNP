@@ -547,3 +547,86 @@ a.menu-eintrag:hover { background-color: #4c7044; color: #f1e9d6; }
 @media (max-width: 768px) {
     nav:not(.bottom-nav) { display: block; }
 }
+
+/* ===================== Fortschritt "Tiersichtung anlegen" (nav.js) ===================== */
+/* Auf tier.html und ort.html zeigt die Navigationsleiste den Ablauf als zwei
+   Schritte (Tier -> Ort). Der aktuelle Schritt ist hervorgehoben, beide sind
+   anklickbar (Wechsel zwischen den Schritten). */
+.stepper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+/* ein Schritt ist ein klickbarer Link */
+.stepper-schritt {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 6px 16px;
+    color: #2f4a2c;
+    background-color: #e4dcc6;
+    border-radius: 16px;
+    text-decoration: none;
+    font-weight: bold;
+}
+.stepper-schritt:hover {
+    background-color: #4c7044;
+    color: #f1e9d6;
+    text-decoration: none;
+}
+
+/* die kleine Nummer vor dem Schritt-Text */
+.stepper-nr {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background-color: #faf7ef;
+    color: #2f4a2c;
+    font-size: 13px;
+}
+
+/* der aktuelle Schritt: kraeftiges Waldgruen, damit man weiss wo man steht */
+.stepper-schritt.aktiv {
+    background-color: #2f4a2c;
+    color: #f1e9d6;
+}
+.stepper-schritt.aktiv .stepper-nr {
+    background-color: #f1e9d6;
+    color: #2f4a2c;
+}
+
+/* ein bereits erledigter Schritt: gruene Nummer */
+.stepper-schritt.erledigt .stepper-nr {
+    background-color: #4c7044;
+    color: #f1e9d6;
+}
+
+/* Pfeil zwischen den Schritten */
+.stepper-pfeil {
+    color: #7a5c3e;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+/* Abbrechen-Link: verlaesst den Ablauf (flowguard.js warnt dann) */
+.stepper-exit {
+    margin-left: 10px;
+    padding: 6px 14px;
+    color: #7a5c3e;
+    background: none;
+    border-radius: 16px;
+    text-decoration: none;
+    font-weight: bold;
+}
+.stepper-exit:hover {
+    background-color: #7a5c3e;
+    color: #f1e9d6;
+    text-decoration: none;
+}

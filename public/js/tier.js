@@ -1,6 +1,9 @@
 // tier.js
-// Tiersichtung anlegen, Schritt 1: das Tier erfassen und speichern.
-// Nach dem Speichern merken wir uns die neue Tier-id und gehen weiter zu ort.html.
+// Tiersichtung anlegen, Schritt 1: das Tier erfassen.
+// Das Tier wird hier NOCH NICHT gespeichert. Die Eingaben werden nur als
+// Zwischenstand im sessionStorage gemerkt (Schluessel 'tierEntwurf'), damit man
+// zwischen Schritt 1 und Schritt 2 hin- und herwechseln kann, ohne dass etwas
+// verloren geht. Erst beim Abschluss in Schritt 2 (ort.js) wird gespeichert.
 
 // Hier merken wir uns die geladenen Gattungen, damit wir beim Auswaehlen
 // schnell an Schutzstatus und Jagdzeit kommen (fuer die Info-Box).
@@ -10,10 +13,12 @@ var alleGattungen = [];
 // Wird ausgefuehrt, sobald die Seite fertig geladen ist.
 $(document).ready(function() {
 
-    // 1) Gattungs-Dropdown aus dem Backend fuellen (GET /genus).
+    // 1) Gattungs-Dropdown aus dem Backend fuellen (GET /genus). Danach wird in
+    //    der Erfolgs-Funktion der Zwischenstand wiederhergestellt (die Optionen
+    //    muessen erst da sein, bevor man eine auswaehlen kann).
     ladeGattungen();
 
-    // 2) Wenn das Formular abgeschickt wird, Tier speichern und weiter.
+    // 2) Wenn das Formular abgeschickt wird, weiter zu Schritt 2 (Ort).
     $("#newTier").submit(function(event) {
         weiter(event);
     });
@@ -38,6 +43,10 @@ $(document).ready(function() {
             $('#youngCountBereich').hide();
         }
     });
+
+    // 5) Jede Eingabe sofort als Zwischenstand sichern, damit beim Wechsel zu
+    //    Schritt 2 (und wieder zurueck) nichts verloren geht.
+    $('#newTier').on('input change', entwurfMerken);
 });
 
 
@@ -55,6 +64,9 @@ function ladeGattungen() {
                 option.text(gattung.designation);
                 select.append(option);
             });
+
+            // jetzt sind die Optionen da -> Zwischenstand wiederherstellen
+            entwurfWiederherstellen();
         },
         error: function(xhr, status, error) {
             console.log('Gattungen konnten nicht geladen werden: ' + error);
@@ -89,67 +101,66 @@ function zeigeGattungsInfo() {
 }
 
 
-// Liest die Formularfelder aus, speichert das Tier und geht dann weiter.
+// "Weiter": Tier NICHT speichern, nur den Zwischenstand sichern und zu Schritt 2.
+// Da dies der submit-Handler ist, prueft der Browser vorher die Pflichtfelder
+// (Gattung, Geschlecht, Anzahl).
 function weiter(event) {
-
-    // Verhindert, dass die Seite beim Absenden neu laedt.
     event.preventDefault();
 
-    // Werte aus dem Formular einsammeln.
-    // Das Feld "Geschaetztes Alter" gibt es hier nicht mehr (AP9), also kein estimatedAge.
-    var formData = {
-        'gender'          : $('select[name=gender]').val(),
-        'estimatedSize'   : $('input[name=estimatedSize]').val(),
-        'estimatedWeight' : $('input[name=estimatedWeight]').val(),
-        'animalCount'     : $('input[name=animalCount]').val(),
-        // echtes true/false schicken, nicht den Text aus dem Dropdown
-        'youngPresent'    : $('#youngSelect').val() === 'ja',
-        'youngCount'      : 0
-    };
-
-    // Anzahl der Jungtiere nur uebernehmen, wenn auch welche gesichtet wurden.
-    if (formData.youngPresent) {
-        formData.youngCount = $('input[name=youngCount]').val();
+    // Bei "Sonstige" muss wenigstens eine Bezeichnung dastehen.
+    if ($('#genusSelect').val() === 'sonstige' && !$('#sonstigeDesignation').val()) {
+        alert('Bitte eine Bezeichnung für die neue Gattung eingeben.');
+        return;
     }
 
-    // Wurde "Sonstige" gewaehlt, legen wir erst die neue Gattung an
-    // und speichern danach das Tier mit deren id.
-    if ($('#genusSelect').val() === 'sonstige') {
-
-        var bezeichnung = $('#sonstigeDesignation').val();
-        if (!bezeichnung) {
-            alert('Bitte eine Bezeichnung für die neue Gattung eingeben.');
-            return;
-        }
-
-        var neueGattung = {
-            'designation'      : bezeichnung,
-            'latinDesignation' : $('#sonstigeLatin').val(),
-            'protectedSpecies' : $('#sonstigeProtected').val() === 'ja',
-            'huntingSeason'    : $('#sonstigeHuntingSeason').val()
-        };
-
-        // Erst Gattung anlegen, dann im Erfolgsfall das Tier damit speichern.
-        postJson('/genus', neueGattung, function(gattung) {
-            formData.genus = { 'id' : gattung.id };
-            speichereTier(formData);
-        });
-
-    } else {
-        // Normale Auswahl aus der Liste: id der gewaehlten Gattung mitgeben.
-        formData.genus = { 'id' : $('#genusSelect').val() };
-        speichereTier(formData);
-    }
+    // aktuellen Stand sichern und weiter zur Ort-Seite
+    entwurfMerken();
+    window.location.href = 'ort.html';
 }
 
 
-// Speichert das Tier per POST /animals.
-// Aus der Antwort merken wir die neue id und gehen dann zu Schritt 2 (Ort).
-function speichereTier(formData) {
-    postJson('/animals', formData, function(tier) {
-        // die neue Tier-id fuer Schritt 2 (ort.html) merken
-        sessionStorage.setItem('neueAnimalId', tier.id);
-        // weiter zur Ort-Seite
-        window.location.href = 'ort.html';
-    });
+// Schreibt alle Formularfelder als Zwischenstand in den sessionStorage.
+function entwurfMerken() {
+    var entwurf = {
+        'genus'                : $('#genusSelect').val(),
+        'sonstigeDesignation'  : $('#sonstigeDesignation').val(),
+        'sonstigeLatin'        : $('#sonstigeLatin').val(),
+        'sonstigeProtected'    : $('#sonstigeProtected').val(),
+        'sonstigeHuntingSeason': $('#sonstigeHuntingSeason').val(),
+        'gender'               : $('select[name=gender]').val(),
+        'animalCount'          : $('input[name=animalCount]').val(),
+        'estimatedSize'        : $('input[name=estimatedSize]').val(),
+        'estimatedWeight'      : $('input[name=estimatedWeight]').val(),
+        'youngPresent'         : $('#youngSelect').val(),
+        'youngCount'           : $('input[name=youngCount]').val()
+    };
+    sessionStorage.setItem('tierEntwurf', JSON.stringify(entwurf));
+}
+
+
+// Holt einen gemerkten Zwischenstand und traegt ihn wieder ins Formular ein.
+function entwurfWiederherstellen() {
+    var roh = sessionStorage.getItem('tierEntwurf');
+    if (!roh) {
+        return;
+    }
+
+    var e = JSON.parse(roh);
+
+    if (e.genus)             { $('#genusSelect').val(e.genus); }
+    $('#sonstigeDesignation').val(e.sonstigeDesignation || '');
+    $('#sonstigeLatin').val(e.sonstigeLatin || '');
+    if (e.sonstigeProtected) { $('#sonstigeProtected').val(e.sonstigeProtected); }
+    $('#sonstigeHuntingSeason').val(e.sonstigeHuntingSeason || '');
+    if (e.gender)            { $('select[name=gender]').val(e.gender); }
+    $('input[name=animalCount]').val(e.animalCount || '');
+    $('input[name=estimatedSize]').val(e.estimatedSize || '');
+    $('input[name=estimatedWeight]').val(e.estimatedWeight || '');
+    if (e.youngPresent)      { $('#youngSelect').val(e.youngPresent); }
+    $('input[name=youngCount]').val(e.youngCount || '');
+
+    // Abhaengige Bereiche (Sonstige-Felder, Jungtier-Anzahl, Info-Box) passend
+    // ein-/ausblenden, indem wir die change-Handler einmal ausloesen.
+    $('#genusSelect').trigger('change');
+    $('#youngSelect').trigger('change');
 }

@@ -1,8 +1,13 @@
 // ort.js
-// AP10: Ablauf Tiersichtung anlegen, Schritt 2 (Ort und Abschluss).
-// Zweite Seite des Sichtungs-Flows (nach dem Tier aus AP9).
-// Hier waehlt oder erstellt man den Ort und schliesst die Sichtung ab.
-// Die Tier-id kommt aus dem sessionStorage (AP9), Schluessel 'neueAnimalId'.
+// Tiersichtung anlegen, Schritt 2 (Ort und Abschluss).
+// Zweite Seite des Sichtungs-Flows. Hier waehlt oder erstellt man den Ort und
+// schliesst die Sichtung ab.
+//
+// Neu: Das Tier aus Schritt 1 liegt nur als Zwischenstand im sessionStorage
+// (Schluessel 'tierEntwurf'). Erst beim Abschluss ("Weiter") wird zuerst das
+// Tier (und ggf. eine neue Gattung) und danach die Sichtung gespeichert.
+// Auch die Ort-Eingaben werden gemerkt (Schluessel 'ortEntwurf'), damit man
+// zwischen Schritt 1 und Schritt 2 wechseln kann, ohne dass etwas verloren geht.
 
 
 // Hier merken wir uns die geladenen Orte, damit wir beim Auswaehlen
@@ -13,7 +18,8 @@ var alleOrte = [];
 // Wird ausgefuehrt, sobald die Seite fertig geladen ist.
 $(document).ready(function() {
 
-    // 1) Ort-Dropdown aus dem Backend fuellen (GET /locations).
+    // 1) Ort-Dropdown aus dem Backend fuellen (GET /locations). Danach wird der
+    //    Zwischenstand wiederhergestellt (die Optionen muessen erst da sein).
     ladeOrte();
 
     // 2) Klick auf die Karte fuellt die Koordinaten (sobald die Karte bereit ist).
@@ -38,6 +44,9 @@ $(document).ready(function() {
     $('#weiter').click(function() {
         sichtungAbschliessen();
     });
+
+    // 7) Jede Eingabe sofort als Zwischenstand sichern.
+    $('section input, section textarea, #locationSelect').on('input change', entwurfMerken);
 });
 
 
@@ -57,6 +66,9 @@ function ladeOrte() {
                 option.text(ort.shorttitle);  // Anzeige = Kurztitel
                 select.append(option);
             });
+
+            // jetzt sind die Optionen da -> Zwischenstand wiederherstellen
+            entwurfWiederherstellen();
         },
         error: function(xhr, status, error) {
             console.log('Orte konnten nicht geladen werden: ' + error);
@@ -98,6 +110,8 @@ function setzeKoordinaten(lat, lng) {
     if (typeof zeigeOrtAufKarte === 'function') {
         zeigeOrtAufKarte(lat, lng);
     }
+    // von Hand gesetzte Koordinaten auch im Zwischenstand merken
+    entwurfMerken();
 }
 
 
@@ -157,8 +171,9 @@ function speichereNeuenOrt() {
         $('#shorttitle').val('');
         $('#description').val('');
 
-        // Karte auf den gespeicherten Ort schwenken
+        // Karte auf den gespeicherten Ort schwenken und Stand merken
         ortWurdeGewaehlt();
+        entwurfMerken();
     });
 }
 
@@ -179,8 +194,9 @@ function ortWurdeGewaehlt() {
 }
 
 
-// Knopf "Weiter": prueft den Ort, holt die Tier-id aus AP9 und speichert
-// die komplette Sichtung (POST /observations). Danach zurueck zur Startseite.
+// Knopf "Weiter": prueft Ort und Melder, holt den Tier-Zwischenstand aus
+// Schritt 1 und speichert dann das Tier (ggf. mit neuer Gattung) und danach
+// die komplette Sichtung.
 function sichtungAbschliessen() {
 
     // 1) Es muss ein Ort ausgewaehlt sein.
@@ -197,35 +213,134 @@ function sichtungAbschliessen() {
         return;
     }
 
-    // 2) Tier-id aus sessionStorage holen (kommt aus AP9).
-    var animalId = sessionStorage.getItem('neueAnimalId');
-    if (!animalId) {
-        alert('Kein Tier gefunden. Bitte zuerst Schritt 1 (Tier) ausfuellen.');
+    // 2) Tier-Zwischenstand aus Schritt 1 holen.
+    var roh = sessionStorage.getItem('tierEntwurf');
+    var tier = roh ? JSON.parse(roh) : null;
+    if (!tier || !tier.genus || !tier.gender || !tier.animalCount) {
+        alert('Bitte zuerst Schritt 1 (Tier) vollstaendig ausfuellen.');
+        window.location.href = 'tier.html';
         return;
     }
 
-    // 3) Datum und Uhrzeit automatisch setzen.
+    // 3) Datum und Uhrzeit automatisch setzen; alles fuer den Abschluss buendeln.
     var jetzt = new Date();
-    var datum = jetzt.getFullYear() + '-' + zweistellig(jetzt.getMonth() + 1)
-              + '-' + zweistellig(jetzt.getDate());
-    var uhrzeit = zweistellig(jetzt.getHours()) + ':' + zweistellig(jetzt.getMinutes());
-
-    // Tier und Ort werden als verschachtelte Objekte mit ihrer Kennung verpackt.
-    // Ort-Feld heisst lNr (siehe getlNr() im Backend).
-    var sichtung = {
-        'animal'   : { 'id'  : animalId },
-        'location' : { 'lNr' : gewaehlteLnr },
-        'reporter' : melder,
-        'date'     : datum,
-        'time'     : uhrzeit
-        // createdAt setzt das Backend selbst (AP7)
+    var basis = {
+        'lNr'     : gewaehlteLnr,
+        'reporter': melder,
+        'date'    : jetzt.getFullYear() + '-' + zweistellig(jetzt.getMonth() + 1)
+                    + '-' + zweistellig(jetzt.getDate()),
+        'time'    : zweistellig(jetzt.getHours()) + ':' + zweistellig(jetzt.getMinutes())
     };
 
-    // 4) Speichern. Nach Erfolg sessionStorage aufraeumen und zur Startseite.
-    postJson('/observations', sichtung, function() {
-        sessionStorage.removeItem('neueAnimalId');
-        window.location.href = 'index.html';
+    // 4) Tier-Daten aus dem Zwischenstand bauen.
+    var tierDaten = {
+        'gender'         : tier.gender,
+        'estimatedSize'  : tier.estimatedSize,
+        'estimatedWeight': tier.estimatedWeight,
+        'animalCount'    : tier.animalCount,
+        // echtes true/false schicken, nicht den Text aus dem Dropdown
+        'youngPresent'   : tier.youngPresent === 'ja',
+        'youngCount'     : 0
+    };
+    if (tierDaten.youngPresent) {
+        tierDaten.youngCount = tier.youngCount;
+    }
+
+    // 5) Bei "Sonstige" zuerst die neue Gattung anlegen, dann Tier + Sichtung.
+    if (tier.genus === 'sonstige') {
+
+        if (!tier.sonstigeDesignation) {
+            alert('Bitte eine Bezeichnung fuer die neue Gattung eingeben (Schritt 1).');
+            window.location.href = 'tier.html';
+            return;
+        }
+
+        var neueGattung = {
+            'designation'      : tier.sonstigeDesignation,
+            'latinDesignation' : tier.sonstigeLatin,
+            'protectedSpecies' : tier.sonstigeProtected === 'ja',
+            'huntingSeason'    : tier.sonstigeHuntingSeason
+        };
+
+        postJson('/genus', neueGattung, function(gattung) {
+            tierDaten.genus = { 'id': gattung.id };
+            speichereTierUndSichtung(tierDaten, basis);
+        });
+
+    } else {
+        // Normale Auswahl aus der Liste: id der gewaehlten Gattung mitgeben.
+        tierDaten.genus = { 'id': tier.genus };
+        speichereTierUndSichtung(tierDaten, basis);
+    }
+}
+
+
+// Speichert erst das Tier (POST /animals), dann mit dessen id die komplette
+// Sichtung (POST /observations). Danach Zwischenstaende aufraeumen und zur
+// Startseite.
+function speichereTierUndSichtung(tierDaten, basis) {
+    postJson('/animals', tierDaten, function(tierGespeichert) {
+
+        // Tier und Ort werden als verschachtelte Objekte mit ihrer Kennung verpackt.
+        // Ort-Feld heisst lNr (siehe getlNr() im Backend).
+        var sichtung = {
+            'animal'   : { 'id'  : tierGespeichert.id },
+            'location' : { 'lNr' : basis.lNr },
+            'reporter' : basis.reporter,
+            'date'     : basis.date,
+            'time'     : basis.time
+            // createdAt setzt das Backend selbst
+        };
+
+        postJson('/observations', sichtung, function() {
+            // Zwischenstaende loeschen, damit der naechste Ablauf leer beginnt.
+            sessionStorage.removeItem('tierEntwurf');
+            sessionStorage.removeItem('ortEntwurf');
+            window.location.href = 'index.html';
+        });
     });
+}
+
+
+// Schreibt die Ort-Felder als Zwischenstand in den sessionStorage.
+function entwurfMerken() {
+    var entwurf = {
+        'shorttitle'    : $('#shorttitle').val(),
+        'description'   : $('#description').val(),
+        'latitude'      : $('#latitude').val(),
+        'longitude'     : $('#longitude').val(),
+        'locationSelect': $('#locationSelect').val(),
+        'reporter'      : $('#reporter').val()
+    };
+    sessionStorage.setItem('ortEntwurf', JSON.stringify(entwurf));
+}
+
+
+// Holt einen gemerkten Zwischenstand und traegt ihn wieder ins Formular ein.
+function entwurfWiederherstellen() {
+    var roh = sessionStorage.getItem('ortEntwurf');
+    if (!roh) {
+        return;
+    }
+
+    var e = JSON.parse(roh);
+
+    $('#shorttitle').val(e.shorttitle || '');
+    $('#description').val(e.description || '');
+    $('#latitude').val(e.latitude || '');
+    $('#longitude').val(e.longitude || '');
+    $('#reporter').val(e.reporter || '');
+
+    if (e.locationSelect) {
+        // ein bereits gespeicherter Ort war ausgewaehlt -> Karte dorthin
+        $('#locationSelect').val(e.locationSelect);
+        ortWurdeGewaehlt();
+    } else if (e.latitude && e.longitude) {
+        // ein neu eingegebener (noch nicht gespeicherter) Ort -> Marker setzen
+        if (typeof zeigeOrtAufKarte === 'function') {
+            zeigeOrtAufKarte(e.latitude, e.longitude);
+        }
+    }
 }
 
 
