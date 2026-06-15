@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <title>Wild Life Observation - Counter</title>
+    <meta charset="utf-8">
+
+    <!-- eigenes Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- jQuery zuerst, dann die Helfer, dann diese Seite -->
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="js/api.js"></script>
+    <script type="text/javascript" src="js/counter.js"></script>
+</head>
+<body>
+<div class="centerdiv">
+
+    <header><h1>Wild Life Observation</h1></header>
+
+    <!-- einfache Navigation zurueck zur Startseite -->
+    <nav>
+        <a href="index.html">Startseite</a>
+    </nav>
+
+    <section class="left full" style="width:100%; float:none;">
+        <h2>Counter</h2>
+        <p>Lege bis zu vier Zählungen an. Klicke einen Counter an, um ihn als aktiv
+           auszuwählen. Mit den Pfeiltasten (oder den Knöpfen + und -) zählst du den
+           aktiven Counter hoch und runter.</p>
+
+        <!-- neuen Counter anlegen -->
+        <form id="newCounter">
+            <label>Name der Zählung:</label>
+            <input type="text" id="counterName" name="counterName"
+                   placeholder="z.B. Rehe" required="required">
+            <input type="submit" id="erstellenButton" value="Counter erstellen">
+        </form>
+
+        <!-- Hinweis wenn das Maximum von 4 Countern erreicht ist -->
+        <div id="maxHinweis" class="genus-info" style="display:none;">
+            Maximal 4 Counter möglich. Bitte zuerst eine Zählung löschen.
+        </div>
+
+        <!-- hier werden die Counter angezeigt (per JS gefuellt) -->
+        <div id="counterListe" class="counter-liste"></div>
+
+        <!-- setzt alle Counter wieder auf 0 -->
+        <button id="zaehlungLoeschen" type="button">Zählung löschen</button>
+    </section>
+
+    <footer>Wild Life Observation App &ndash; Hochschule Aalen</footer>
+</div>
+</body>
+</html>
