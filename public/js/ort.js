@@ -65,8 +65,8 @@ function ladeOrte() {
 }
 
 
-// Haengt einen Klick-Listener an die Google-Maps-Karte. Die Karte (Variable
-// "karte") wird in maps.js (initMap) angelegt, sobald Google Maps geladen ist.
+// Haengt einen Klick-Listener an die Leaflet-Karte. Die Karte (Variable
+// "karte") wird in maps.js (initMap) angelegt, sobald Leaflet geladen ist.
 // Da das asynchron passiert, warten wir kurz, bis die Karte bereit ist.
 function aktiviereKartenKlick() {
     var versuche = 0;
@@ -76,8 +76,9 @@ function aktiviereKartenKlick() {
         // karte ist eine globale Variable aus maps.js
         if (typeof karte !== 'undefined' && karte !== null) {
             clearInterval(warten);
-            karte.addListener('click', function(event) {
-                setzeKoordinaten(event.latLng.lat(), event.latLng.lng());
+            karte.on('click', function(event) {
+                // Leaflet: die Koordinaten kommen als event.latlng (Eigenschaften, keine Funktionen)
+                setzeKoordinaten(event.latlng.lat, event.latlng.lng);
             });
         }
 
