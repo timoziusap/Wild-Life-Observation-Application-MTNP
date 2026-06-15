@@ -87,22 +87,27 @@
                 <option value="unbekannt">unbekannt</option>
             </select>
 
-            <!-- ----- Weitere (optionale) Filter ----- -->
+            <!-- ----- Weitere (optionale) Filter: ein-/ausklappbar ----- -->
             <hr>
-            <p style="color:#777; margin:5px 0;">Weitere Filter (optional):</p>
+            <button type="button" id="optionaleFilterToggle" class="filter-toggle">
+                Weitere Filter (optional) <span id="optionaleFilterPfeil">&#9662;</span>
+            </button>
 
-            <label>Anzahl der Tiere (mindestens):</label>
-            <input type="number" id="searchMinCount" min="1" max="999" step="1">
+            <!-- startet eingeklappt, weil diese Filter optional sind -->
+            <div id="optionaleFilter" style="display:none;">
+                <label>Anzahl der Tiere (mindestens):</label>
+                <input type="number" id="searchMinCount" min="1" max="999" step="1">
 
-            <label>Anzahl der Jungtiere (mindestens):</label>
-            <input type="number" id="searchMinYoung" min="1" max="999" step="1">
+                <label>Anzahl der Jungtiere (mindestens):</label>
+                <input type="number" id="searchMinYoung" min="1" max="999" step="1">
 
-            <label>Schutzstatus:</label>
-            <select id="searchProtected">
-                <option value="">-- alle --</option>
-                <option value="ja">nur geschützte Arten</option>
-                <option value="nein">nur nicht geschützte Arten</option>
-            </select>
+                <label>Schutzstatus:</label>
+                <select id="searchProtected">
+                    <option value="">-- alle --</option>
+                    <option value="ja">nur geschützte Arten</option>
+                    <option value="nein">nur nicht geschützte Arten</option>
+                </select>
+            </div>
 
             <br>
             <input type="submit" id="searchButton" value="Suchen">
@@ -114,7 +119,7 @@
          Doppelklick auf eine Zeile oeffnet die Detailansicht (search.js). -->
     <section class="left full" style="width:100%; float:none;">
         <h3>Suchergebnisse</h3>
-        <p style="color:#777;">Tipp: Doppelklick auf eine Zeile zeigt die Details.</p>
+        <p style="color:#777;">Tipp: Auf "Details" klicken (oder Doppelklick auf die Zeile) zeigt alle Infos und den Ort auf der Karte.</p>
         <table id="searchTable" class="display" cellspacing="0" width="100%">
             <thead>
             <tr>
@@ -127,6 +132,7 @@
                 <th>Sichtungsort</th>
                 <th>Datum</th>
                 <th>Uhrzeit</th>
+                <th>Details</th>
             </tr>
             </thead>
         </table>

@@ -247,6 +247,12 @@ function setzeWert(id, eingabe) {
 
 // Setzt alle Counter wieder auf 0 (die Counter selbst bleiben bestehen).
 function setzeAlleAufNull() {
+
+    // Sicherheitsabfrage, damit man nicht aus Versehen alles auf 0 setzt.
+    if (!confirm('Möchtest du wirklich alle Zählungen auf 0 setzen?')) {
+        return;
+    }
+
     $.each(alleCounter, function(index, counter) {
         var geaendert = {
             'name'         : counter.name,
@@ -261,6 +267,12 @@ function setzeAlleAufNull() {
 
 // Loescht alle Counter komplett (DELETE /counters/{id} fuer jeden).
 function loescheAlle() {
+
+    // Sicherheitsabfrage: das Loeschen kann nicht rueckgaengig gemacht werden.
+    if (!confirm('Wirklich alle Zählungen löschen? Das kann nicht rückgängig gemacht werden.')) {
+        return;
+    }
+
     $.each(alleCounter, function(index, counter) {
         deleteJson('/counters/' + counter.id, function() {
             ladeCounter();
@@ -273,6 +285,20 @@ function loescheAlle() {
 
 // Loescht einen Counter ganz (DELETE /counters/{id}).
 function loescheCounter(id) {
+
+    // Namen der Zaehlung fuer die Rueckfrage heraussuchen.
+    var name = '';
+    $.each(alleCounter, function(index, counter) {
+        if (counter.id === id) {
+            name = counter.name;
+        }
+    });
+
+    // Sicherheitsabfrage, damit nicht aus Versehen geloescht wird.
+    if (!confirm('Zählung "' + name + '" wirklich löschen?')) {
+        return;
+    }
+
     deleteJson('/counters/' + id, function() {
         // war der geloeschte Counter aktiv, Auswahl zuruecksetzen
         if (aktiveCounterId === id) {

@@ -630,3 +630,18 @@ a.menu-eintrag:hover { background-color: #4c7044; color: #f1e9d6; }
     color: #f1e9d6;
     text-decoration: none;
 }
+
+/* ===================== Ein-/ausklappbare Filter (search.js) ===================== */
+/* Knopf, der die optionalen Filter auf der Suchseite auf- und zuklappt.
+   Sandbraun statt Vollgruen, damit er als "Schalter" und nicht als Aktion wirkt. */
+.filter-toggle {
+    width: 100%;
+    text-align: left;
+    background-color: #e4dcc6;
+    color: #2f4a2c;
+    font-weight: bold;
+}
+.filter-toggle:hover {
+    background-color: #d8cdaf;
+    color: #2f4a2c;
+}

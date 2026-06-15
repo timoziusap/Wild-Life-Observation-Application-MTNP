@@ -32,9 +32,15 @@ $(document).ready(function() {
     });
 
     // 5) Zuruecksetzen -> alle Felder leeren und wieder alles anzeigen.
+    //    Nur nachfragen, wenn ueberhaupt ein Filter gesetzt ist (sonst nervt es).
     $('#resetSearch').click(function() {
+        if (filterGesetzt() && !confirm('Filter wirklich zurücksetzen?')) {
+            return;
+        }
         $('#searchForm')[0].reset();
-        $('#detailansicht').hide();   // Detailansicht mit zuruecksetzen
+        $('#optionaleFilter').hide();            // optionale Filter wieder einklappen
+        $('#optionaleFilterPfeil').html('&#9662;');
+        $('#detailansicht').hide();              // Detailansicht mit zuruecksetzen
         sucheObservations();
     });
 
@@ -47,6 +53,24 @@ $(document).ready(function() {
         if (zeile) {
             zeigeDetails(zeile);
         }
+    });
+
+    // 6b) Klick auf den "Details"-Knopf in einer Zeile: gleiche Detailansicht.
+    $('#searchTable tbody').on('click', 'button.details-btn', function(event) {
+        event.stopPropagation();
+        var table = $('#searchTable').DataTable();
+        var zeile = table.row($(this).closest('tr')).data();
+        if (zeile) {
+            zeigeDetails(zeile);
+        }
+    });
+
+    // 9) Weitere (optionale) Filter ein-/ausklappen.
+    $('#optionaleFilterToggle').click(function() {
+        $('#optionaleFilter').slideToggle(150);
+        var pfeil = $('#optionaleFilterPfeil');
+        // Pfeil nach oben (eingeklappt) / nach unten (ausgeklappt) drehen
+        pfeil.html(pfeil.html() === '▾' ? '▴' : '▾');
     });
 
     // 7) Schliessen-Knopf der Detailansicht.
@@ -188,9 +212,25 @@ function sucheObservations() {
                     return "";
                 }},
             { "data": "date" },
-            { "data": "time" }
+            { "data": "time" },
+            // Aktions-Spalte: Knopf, der die Detailansicht oeffnet.
+            // responsivePriority 1 sorgt dafuer, dass der Knopf auch auf dem
+            // Handy sichtbar bleibt und nicht eingeklappt wird.
+            { "data": null, "orderable": false, "responsivePriority": 1,
+              "render": function() {
+                    return '<button type="button" class="details-btn">Details</button>';
+                }}
         ]
     });
+}
+
+
+// Prueft, ob aktuell irgendein Filter gesetzt ist (fuer die Rueckfrage beim
+// Zuruecksetzen).
+function filterGesetzt() {
+    return $('#searchGenus').val() || $('#searchGender').val()
+        || $('#searchLocation').val() || $('#searchMinCount').val()
+        || $('#searchMinYoung').val() || $('#searchProtected').val();
 }
 
 
