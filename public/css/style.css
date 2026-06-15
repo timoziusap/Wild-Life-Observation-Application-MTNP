@@ -322,3 +322,42 @@ footer {
     text-shadow: 0 1px 6px rgba(0,0,0,0.8);
     margin-top: 25px;
 }
+
+/* Handy und schmale Bildschirme: alles untereinander statt nebeneinander.
+   Greift ab einer Breite von 768px und kleiner. */
+@media (max-width: 768px) {
+
+    /* die zwei Spalten (Tier/Ort) werden volle Breite und stehen untereinander */
+    .left, .right {
+        width: 100%;
+        float: none;
+        margin-bottom: 20px;
+    }
+
+    /* etwas mehr Rand zum Bildschirm und kleinerer Titel */
+    .centerdiv {
+        width: 94%;
+    }
+
+    header h1 {
+        font-size: 26px;
+        padding: 24px 0 16px 0;
+        letter-spacing: 1px;
+    }
+
+    /* Nav-Links duerfen umbrechen und brauchen etwas Luft */
+    nav a {
+        margin: 3px;
+        padding: 6px 12px;
+    }
+
+    /* jede Menue-Kachel nimmt die volle Breite, also eine pro Zeile */
+    .menu-kachel {
+        flex: 1 1 100%;
+    }
+
+    /* Karte etwas niedriger, damit sie auf dem Handy nicht den ganzen Schirm fuellt */
+    #map {
+        height: 300px;
+    }
+}
