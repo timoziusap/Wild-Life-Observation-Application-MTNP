@@ -16,6 +16,43 @@ function initMap() {
         center: startPunkt,
         zoom: 12
     });
+
+    // Klick auf die Karte: Marker an die geklickte Stelle setzen
+    // und die Koordinaten in die Eingabefelder schreiben (falls vorhanden).
+    karte.addListener('click', function(event) {
+        var lat = event.latLng.lat();
+        var lng = event.latLng.lng();
+        setzeMarker(lat, lng);
+        schreibeKoordinaten(lat, lng);
+    });
+}
+
+// Setzt einen einzelnen Marker an die uebergebene Stelle.
+// Ein eventuell vorhandener Marker wird vorher entfernt.
+function setzeMarker(lat, lng) {
+    var ort = { lat: parseFloat(lat), lng: parseFloat(lng) };
+
+    // alten Marker entfernen, damit nicht mehrere stehen bleiben
+    if (markierung !== null) {
+        markierung.setMap(null);
+    }
+    markierung = new google.maps.Marker({
+        position: ort,
+        map: karte
+    });
+}
+
+// Schreibt die Koordinaten in die Felder Latitude und Longitude.
+// Die Felder kommen aus der Ort-Seite (AP10). Gibt es sie nicht, passiert nichts.
+function schreibeKoordinaten(lat, lng) {
+    var latFeld = document.querySelector('[name="latitude"]');
+    var lngFeld = document.querySelector('[name="longitude"]');
+    if (latFeld !== null) {
+        latFeld.value = lat;
+    }
+    if (lngFeld !== null) {
+        lngFeld.value = lng;
+    }
 }
 
 // Springt auf den uebergebenen Ort und setzt dort einen Marker.
@@ -32,14 +69,30 @@ function zeigeOrtAufKarte(lat, lng) {
     karte.setCenter(ort);
     karte.setZoom(15);
 
-    // alten Marker entfernen, damit nicht mehrere stehen bleiben
-    if (markierung !== null) {
-        markierung.setMap(null);
+    setzeMarker(lat, lng);
+}
+
+// Holt die aktuelle Position ueber den Browser und setzt Karte plus Marker dorthin.
+// Wird von einem Knopf "Aktueller Standort" auf der Ort-Seite (AP10) aufgerufen.
+function aktuellerStandort() {
+    // Karte muss bereit sein, sonst gibt es nichts zu zeigen.
+    if (karte === null) {
+        return;
+    }
+    // Manche Browser koennen die Standortabfrage nicht oder sie ist abgeschaltet.
+    if (!navigator.geolocation) {
+        alert('Standortabfrage wird vom Browser nicht unterstützt.');
+        return;
     }
 
-    // neuen Marker setzen
-    markierung = new google.maps.Marker({
-        position: ort,
-        map: karte
+    navigator.geolocation.getCurrentPosition(function(position) {
+        var lat = position.coords.latitude;
+        var lng = position.coords.longitude;
+        karte.setCenter({ lat: lat, lng: lng });
+        karte.setZoom(15);
+        setzeMarker(lat, lng);
+        schreibeKoordinaten(lat, lng);
+    }, function() {
+        alert('Standort konnte nicht ermittelt werden.');
     });
 }
