@@ -459,3 +459,68 @@ nav a:active {
     background-color: #4c7044;
     color: #f1e9d6;
 }
+
+/* ===================== Dropdown-Navigation (nav.js) ===================== */
+/* Titel ist jetzt ein Link zur Startseite, soll aber wie eine Ueberschrift aussehen. */
+.titel-link { text-decoration: none; display: block; }
+.titel-link:hover h1 { text-shadow: 0 2px 14px rgba(0,0,0,0.9); }
+
+/* Wrapper, damit das Aufklapp-Panel relativ zum Knopf positioniert wird. */
+.menu-wrap { position: relative; display: inline-block; }
+
+/* Der Menue-Knopf. */
+.menu-button {
+    cursor: pointer;
+    padding: 8px 20px;
+    color: #2f4a2c;
+    background-color: #e4dcc6;
+    border: none;
+    border-radius: 16px;
+    font-weight: bold;
+    font-size: 15px;
+}
+.menu-button:hover { background-color: #4c7044; color: #f1e9d6; }
+
+/* Das aufklappbare Panel mit den Links. */
+.menu-panel {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 6px;
+    min-width: 230px;
+    background-color: rgba(250,247,239,0.98);
+    border: 1px solid rgba(201,184,148,0.8);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    overflow: hidden;
+    z-index: 1000;
+}
+.menu-panel.offen { display: block; }
+
+/* Eintraege im Panel: untereinander, ueberschreibt die alten nav-a-Pillen. */
+.menu-eintrag {
+    display: block;
+    margin: 0;
+    padding: 11px 18px;
+    background: none;
+    border-radius: 0;
+    color: #2f4a2c;
+    text-decoration: none;
+    font-weight: bold;
+    text-align: left;
+}
+a.menu-eintrag:hover { background-color: #4c7044; color: #f1e9d6; }
+
+/* aktuelle Seite: ausgegraut und nicht klickbar. */
+.menu-eintrag.aktuell {
+    color: #9a9a8c;
+    background-color: #efeadd;
+    cursor: default;
+}
+
+/* Auf dem Handy das Dropdown weiter anzeigen (die alte Regel blendet nav aus). */
+@media (max-width: 768px) {
+    nav:not(.bottom-nav) { display: block; }
+}
