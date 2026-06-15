@@ -74,6 +74,11 @@ nav a:hover {
     text-decoration: none;
 }
 
+/* untere Symbol-Leiste: auf dem Laptop ausgeblendet, nur auf dem Handy sichtbar */
+.bottom-nav {
+    display: none;
+}
+
 /* zwei Spalten: links Tier, rechts Ort.
    Links etwas breiter, weil die Tiere-Tabelle mehr Spalten hat.
    Fast deckende Karten mit Schatten, damit sie auf dem Foto "schweben" */
@@ -202,6 +207,14 @@ button:hover {
 .menu-kachel p {
     margin: 0;
     font-size: 14px;
+}
+
+/* Symbol oben in jeder Kachel, in Waldgruen passend zum Design */
+.kachel-icon {
+    display: block;
+    font-size: 30px;
+    color: #4c7044;
+    margin-bottom: 8px;
 }
 
 /* Info-Box unter dem Gattungs-Dropdown (Schutzstatus/Jagdzeit, AP2) */
@@ -360,4 +373,89 @@ footer {
     #map {
         height: 300px;
     }
+
+    /* das feste Hintergrundbild ruckelt auf vielen Handys, deshalb normal mitscrollen */
+    body {
+        background-attachment: scroll;
+    }
+
+    /* groessere Tippflaechen fuer Buttons und Nav, damit man mit dem Daumen gut trifft */
+    input[type=submit],
+    button,
+    nav a {
+        padding: 12px 18px;
+        font-size: 16px;
+    }
+
+    /* Schriftgroesse 16px in Eingabefeldern verhindert das automatische Reinzoomen am iPhone */
+    input[type=text],
+    input[type=number],
+    input[type=date],
+    input[type=time],
+    textarea,
+    select {
+        font-size: 16px;
+    }
+
+    /* Symbol in den Kacheln auf dem Handy etwas groesser */
+    .kachel-icon {
+        font-size: 36px;
+    }
+
+    /* obere Navigationsleiste auf dem Handy ausblenden, dafuer kommt die untere Leiste */
+    nav:not(.bottom-nav) {
+        display: none;
+    }
+
+    /* untere Leiste fest am unteren Rand, Symbole nebeneinander */
+    .bottom-nav {
+        display: flex;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        margin: 0;
+        padding: 4px 0;
+        border: none;
+        border-top: 1px solid rgba(201,184,148,0.6);
+        border-radius: 0;
+        background-color: rgba(250,247,239,0.97);
+        z-index: 1000;
+    }
+
+    /* jeder Eintrag: Symbol oben, kleiner Text darunter */
+    .bottom-nav a {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+        margin: 0;
+        padding: 6px 0;
+        background: none;
+        border-radius: 0;
+        color: #2f4a2c;
+        font-size: 11px;
+    }
+
+    .bottom-nav a i {
+        font-size: 20px;
+    }
+
+    /* unten Platz lassen, damit die feste Leiste nichts verdeckt */
+    body {
+        padding-bottom: 64px;
+    }
+}
+
+/* Auf dem Handy gibt es kein echtes Hovern. Damit sich Buttons trotzdem
+   lebendig anfuehlen, faerben wir sie auch beim Antippen (active) ein. */
+input[type=submit]:active,
+button:active {
+    background-color: #2f4a2c;
+}
+
+nav a:active {
+    background-color: #4c7044;
+    color: #f1e9d6;
 }
