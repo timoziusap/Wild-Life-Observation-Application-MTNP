@@ -1,0 +1,8 @@
+# muss nicht ins Docker Image, spart Zeit und haelt das Image sauber
+target/
+.git/
+.idea/
+*.iml
+.settings/
+.classpath
+.project
