@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <title>Wild Life Observation - Schutzzeiten</title>
+    <meta charset="utf-8">
+
+    <!-- eigenes Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- jQuery zuerst, dann die Helfer, dann diese Seite -->
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="js/api.js"></script>
+    <script type="text/javascript" src="js/schutzzeiten.js"></script>
+</head>
+<body>
+<div class="centerdiv">
+
+    <header><h1>Wild Life Observation</h1></header>
+
+    <!-- einfache Navigation zurueck zur Startseite -->
+    <nav>
+        <a href="index.html">Startseite</a>
+    </nav>
+
+    <!-- ===================== Schutzzeiten pflegen (AP13) ===================== -->
+    <section class="left full" style="width:100%; float:none;">
+        <h2>Schutzzeiten</h2>
+        <p>Pflege hier den Schutzstatus und den Jagdzeitraum bzw. die
+           Schutzbestimmung jeder Gattung. Die Angaben erscheinen automatisch
+           überall, wo die Gattung verwendet wird (Tier-Dialog und Suche).</p>
+
+        <table id="genusTable" class="display" cellspacing="0" width="100%">
+            <thead>
+            <tr>
+                <th>Gattung</th>
+                <th>Geschützt?</th>
+                <th>Jagdzeitraum / Schutzbestimmung</th>
+                <th>Aktion</th>
+            </tr>
+            </thead>
+            <!-- die Zeilen werden per AJAX aus GET /genus gefuellt (schutzzeiten.js) -->
+            <tbody id="genusBody"></tbody>
+        </table>
+    </section>
+
+    <!-- optional: neue Gattung mit Schutzinfos anlegen (AP13, Punkt 3) -->
+    <section class="left full" style="width:100%; float:none;">
+        <h3>Neue Gattung anlegen</h3>
+        <form id="newGenus">
+            <label>Bezeichnung:</label>
+            <input type="text" id="neueDesignation" required="required" placeholder="z.B. Rehwild">
+
+            <label>Lateinische Bezeichnung (optional):</label>
+            <input type="text" id="neueLatin" placeholder="z.B. Capreolus capreolus">
+
+            <label>Ist die Tierart geschützt?</label>
+            <select id="neueProtected">
+                <option value="nein">nein</option>
+                <option value="ja">ja</option>
+            </select>
+
+            <label>Jagdzeitraum / Schutzbestimmung:</label>
+            <input type="text" id="neueHuntingSeason"
+                   placeholder="z.B. 01.05. - 31.01. oder ganzjährig geschont">
+
+            <input type="submit" value="Gattung anlegen">
+        </form>
+    </section>
+
+    <footer>Wild Life Observation App &ndash; Hochschule Aalen</footer>
+</div>
+</body>
+</html>
