@@ -36,18 +36,22 @@
     <header><h1>Wild Life Observation</h1></header>
 
     <!-- einfache Navigation zwischen den Seiten -->
-    <!-- Navigation: auf dem Laptop als Leiste, auf dem Handy als Hamburger.
-         Die Checkbox plus Label klappen die Links per reinem CSS auf, kein JavaScript noetig. -->
+    <!-- Navigation oben: auf dem Laptop als Leiste sichtbar -->
     <nav>
-        <input type="checkbox" id="navToggle" class="nav-toggle">
-        <label for="navToggle" class="nav-burger"><i class="bi bi-list"></i> Menü</label>
-        <div class="nav-links">
-            <a href="index.html">Startseite</a>
-            <a href="tier.html">Tiersichtung anlegen</a>
-            <a href="search.html">Suchen</a>
-            <a href="counter.html">Counter</a>
-            <a href="schutzzeiten.html">Schutzzeiten</a>
-        </div>
+        <a href="index.html">Startseite</a>
+        <a href="tier.html">Tiersichtung anlegen</a>
+        <a href="search.html">Suchen</a>
+        <a href="counter.html">Counter</a>
+        <a href="schutzzeiten.html">Schutzzeiten</a>
+    </nav>
+
+    <!-- untere Leiste mit Symbolen, erscheint nur auf dem Handy -->
+    <nav class="bottom-nav">
+        <a href="index.html"><i class="bi bi-house"></i><span>Start</span></a>
+        <a href="tier.html"><i class="bi bi-binoculars"></i><span>Sichtung</span></a>
+        <a href="search.html"><i class="bi bi-search"></i><span>Suchen</span></a>
+        <a href="counter.html"><i class="bi bi-calculator"></i><span>Counter</span></a>
+        <a href="schutzzeiten.html"><i class="bi bi-shield-check"></i><span>Schutz</span></a>
     </nav>
 
     <!-- ===================== Dialog 3: Beobachtung erfassen ===================== -->
