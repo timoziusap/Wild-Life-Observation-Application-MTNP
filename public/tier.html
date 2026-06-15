@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <title>Wild Life Observation - Tier anlegen</title>
+    <meta charset="utf-8">
+
+    <!-- eigenes Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- jQuery zuerst, dann die Helfer, dann diese Seite -->
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="js/api.js"></script>
+    <script type="text/javascript" src="js/tier.js"></script>
+</head>
+<body>
+<div class="centerdiv">
+
+    <header><h1>Wild Life Observation</h1></header>
+
+    <!-- einfache Navigation zurueck zur Startseite -->
+    <nav>
+        <a href="index.html">Startseite</a>
+    </nav>
+
+    <!-- ===================== Tiersichtung anlegen, Schritt 1 (Tier) ===================== -->
+    <section class="left full" style="width:100%; float:none;">
+        <h2>Tiersichtung anlegen, Schritt 1 von 2: Tier</h2>
+        <form id="newTier">
+            <label>Gattung (Genus):</label>
+            <!-- wird per AJAX aus GET /genus gefuellt -->
+            <select name="genus" id="genusSelect" required="required">
+                <option value="">-- bitte wählen --</option>
+                <!-- feste Option fuer eine Art die nicht in der Liste steht -->
+                <option value="sonstige">Sonstige (neue Gattung)...</option>
+            </select>
+
+            <!-- zeigt Schutzstatus und Jagdzeit der gewaehlten Gattung an -->
+            <div id="genusInfo" class="genus-info" style="display:none;"></div>
+
+            <!-- erscheint nur wenn oben "Sonstige" gewaehlt wird -->
+            <div id="sonstigeGenusBereich" style="display:none;">
+                <label>Neue Gattung (Bezeichnung):</label>
+                <input type="text" id="sonstigeDesignation" name="sonstigeDesignation">
+
+                <label>Lateinische Bezeichnung (optional):</label>
+                <input type="text" id="sonstigeLatin" name="sonstigeLatin">
+
+                <label>Ist die Tierart geschützt?</label>
+                <select id="sonstigeProtected">
+                    <option value="nein">nein</option>
+                    <option value="ja">ja</option>
+                </select>
+
+                <label>Jagdzeitraum / Schutzbestimmung:</label>
+                <input type="text" id="sonstigeHuntingSeason"
+                       placeholder="z.B. 01.05. - 31.01. oder ganzjährig geschont">
+            </div>
+
+            <label>Geschlecht:</label>
+            <select name="gender" required="required">
+                <option value="">-- bitte wählen --</option>
+                <option value="männlich">männlich</option>
+                <option value="weiblich">weiblich</option>
+                <option value="unbekannt">unbekannt</option>
+            </select>
+
+            <label>Anzahl der gesichteten Tiere:</label>
+            <!-- Pflichtfeld, mindestens 1 Tier -->
+            <input type="number" name="animalCount" min="1" max="999" step="1" required="required">
+
+            <label>Geschätzte Größe (cm):</label>
+            <input type="number" name="estimatedSize" min="0" max="500" step="1">
+
+            <label>Geschätztes Gewicht (kg):</label>
+            <!-- step 0.1 erlaubt z.B. 12.5 kg -->
+            <input type="number" name="estimatedWeight" min="0" max="1000" step="0.1">
+
+            <label>Jungtiere gesichtet?</label>
+            <!-- bei "ja" erscheint darunter das Feld fuer die Anzahl -->
+            <select name="youngPresent" id="youngSelect">
+                <option value="nein">nein</option>
+                <option value="ja">ja</option>
+            </select>
+
+            <div id="youngCountBereich" style="display:none;">
+                <label>Anzahl der Jungtiere:</label>
+                <input type="number" name="youngCount" min="1" max="999" step="1">
+            </div>
+
+            <br>
+            <!-- speichert das Tier und geht weiter zu Schritt 2 (Ort) -->
+            <input type="submit" id="weiterButton" value="Weiter">
+        </form>
+    </section>
+
+    <footer>Wild Life Observation App &ndash; Hochschule Aalen</footer>
+</div>
+</body>
+</html>
