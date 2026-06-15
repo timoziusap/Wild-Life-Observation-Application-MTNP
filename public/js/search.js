@@ -91,6 +91,7 @@ function baueSuchUrl() {
 function sucheObservations() {
     $('#searchTable').DataTable({
         destroy: true,             // alte Tabelle vorher verwerfen
+        responsive: true,          // auf dem Handy zu breite Spalten einklappen
         "ajax": {
             "url"     : baueSuchUrl(),
             "dataSrc" : "",        // flaches JSON-Array, kein Wrapper-Objekt
