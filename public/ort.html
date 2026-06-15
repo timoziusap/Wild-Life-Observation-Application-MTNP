@@ -7,18 +7,19 @@
     <!-- eigenes Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
 
+    <!-- Leaflet CSS fuer die OpenStreetMap Karte -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
     <!-- jQuery zuerst, dann die eigenen Skripte -->
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
-    <!-- eigene Skripte: erst die Helfer, dann die Seitenlogik, dann die Karte -->
+    <!-- eigene Skripte: erst die Helfer, dann die Seitenlogik -->
     <script type="text/javascript" src="js/api.js"></script>
     <script type="text/javascript" src="js/ort.js"></script>
 
-    <!-- eigenes Karten-Skript (AP8) -->
+    <!-- Leaflet (OpenStreetMap) zuerst, dann unser Karten-Skript -->
+    <script type="text/javascript" src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script type="text/javascript" src="js/maps.js"></script>
-
-    <!-- Google Maps wird ueber das Backend geladen (/maps-api), damit der API Key nicht ins Repo kommt. -->
-    <script async defer src="/maps-api"></script>
 </head>
 <body>
 <div class="centerdiv">
@@ -86,11 +87,7 @@
           an die Karte: ein Klick (oder "Standort suchen") fuellt Latitude
           und Longitude und setzt einen Marker ueber zeigeOrtAufKarte().
         -->
-        <div id="map" style="width:100%; height:400px; background:#e9e9e9;">
-            <p style="padding:10px; color:#777;">
-                Hier erscheint die Karte (maps.js). Auf die Karte klicken, um die Koordinaten zu setzen.
-            </p>
-        </div>
+        <div id="map" style="width:100%; height:400px; background:#e9e9e9;"></div>
     </section>
 
     <footer>Wild Life Observation App &ndash; Hochschule Aalen</footer>

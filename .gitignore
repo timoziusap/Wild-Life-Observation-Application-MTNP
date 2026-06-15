@@ -70,3 +70,6 @@ HELP.md
 
 # Timo ClaudeDateien
 NormaleDateienClaude/
+
+# Lokale Datei mit dem echten Google Maps API Key. Darf NIE ins Repo.
+application-local.properties
