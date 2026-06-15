@@ -190,6 +190,13 @@ function sichtungAbschliessen() {
         return;
     }
 
+    // 1b) "Erfasst von" (Melder) ist Pflicht.
+    var melder = $('#reporter').val();
+    if (!melder || melder.trim() === '') {
+        alert('Bitte "Erfasst von" ausfuellen - das Feld ist Pflicht.');
+        return;
+    }
+
     // 2) Tier-id aus sessionStorage holen (kommt aus AP9).
     var animalId = sessionStorage.getItem('neueAnimalId');
     if (!animalId) {
@@ -208,7 +215,7 @@ function sichtungAbschliessen() {
     var sichtung = {
         'animal'   : { 'id'  : animalId },
         'location' : { 'lNr' : gewaehlteLnr },
-        'reporter' : $('#reporter').val(),
+        'reporter' : melder,
         'date'     : datum,
         'time'     : uhrzeit
         // createdAt setzt das Backend selbst (AP7)

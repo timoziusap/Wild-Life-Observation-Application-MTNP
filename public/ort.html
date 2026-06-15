@@ -16,6 +16,7 @@
     <!-- eigene Skripte: erst die Helfer, dann die Seitenlogik -->
     <script type="text/javascript" src="js/api.js"></script>
     <script type="text/javascript" src="js/ort.js"></script>
+    <script type="text/javascript" src="js/flowguard.js"></script>
 
     <!-- Leaflet (OpenStreetMap) zuerst, dann unser Karten-Skript -->
     <script type="text/javascript" src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -26,11 +27,12 @@
 
     <header><h1>Wild Life Observation</h1></header>
 
-    <!-- einfache Navigation zwischen den Seiten -->
+    <!-- Waehrend der Anlage nur der Weg zurueck zur Startseite (= Abbrechen).
+         flowguard.js fragt beim Verlassen nach, falls schon Daten eingegeben wurden. -->
     <nav>
-        <a href="index.html">Startseite</a>
-        <a href="tier.html">Tier</a>
-        <a href="ort.html">Ort</a>
+        <div class="nav-links">
+            <a href="index.html">Startseite</a>
+        </div>
     </nav>
 
     <!-- ===================== Schritt 2: Ort und Abschluss ===================== -->
@@ -71,7 +73,7 @@
         <hr>
 
         <!-- ---------- Melder und Abschluss ---------- -->
-        <label>Erfasst von:</label>
+        <label>Erfasst von (Pflicht):</label>
         <input type="text" id="reporter" placeholder="Name des Melders">
 
         <br>
