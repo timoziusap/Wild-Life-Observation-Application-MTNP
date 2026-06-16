@@ -37,10 +37,13 @@ document.addEventListener('DOMContentLoaded', function() {
     var nav = document.querySelector('nav');
     if (nav && imFlow) {
         // Im Anlage-Ablauf: Fortschrittsbalken statt Menue.
+        nav.classList.add('top-stepper-nav');
         nav.innerHTML = baueStepper(aktuell);
 
     } else if (nav) {
-        // Normale Seite: Aufklapp-Menue.
+        // Normale Seite: Aufklapp-Menue. Auf dem Handy wird diese Leiste
+        // ausgeblendet, weil dort die untere Symbolleiste die Navigation uebernimmt.
+        nav.classList.add('top-menu-nav');
         var eintraege = '';
         seiten.forEach(function(s) {
             if (s.href === aktuell) {

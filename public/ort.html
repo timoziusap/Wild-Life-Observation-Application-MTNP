@@ -3,6 +3,8 @@
 <head>
     <title>Wild Life Observation - Ort</title>
     <meta charset="utf-8">
+    <!-- sorgt dafuer dass die Seite auf dem Handy in echter Geraetebreite angezeigt wird -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- eigenes Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
@@ -36,6 +38,9 @@
         </div>
     </nav>
 
+    <!-- Zwei Spalten: Formular (left) und Karte (right). ort-flow erlaubt es,
+         die Karte auf dem Handy ueber das Formular zu schieben (CSS order). -->
+    <div class="ort-flow">
     <!-- ===================== Schritt 2: Ort und Abschluss ===================== -->
     <section class="left">
         <h2>Schritt 2: Ort</h2>
@@ -92,6 +97,7 @@
         -->
         <div id="map" style="width:100%; height:400px; background:#e9e9e9;"></div>
     </section>
+    </div>
 
     <footer>Wild Life Observation App &ndash; Hochschule Aalen</footer>
 </div>

@@ -676,3 +676,70 @@ a.menu-eintrag:hover { background-color: #4c7044; color: #f1e9d6; }
 .counter-karte .eintragen-btn:hover {
     background-color: #5e4630;
 }
+
+/* ===================== Ort-Seite: zwei Spalten als Flexbox ===================== */
+/* Formular und Karte liegen auf dem Laptop nebeneinander. Auf dem Handy
+   stapeln sie sich, und die Karte rutscht per "order" nach oben, damit man
+   den Standort antippen kann, bevor man die Felder darunter ausfuellt. */
+.ort-flow {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+.ort-flow .left,
+.ort-flow .right {
+    float: none;
+    width: auto;
+    flex: 1 1 0;
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+
+    /* untereinander statt nebeneinander */
+    .ort-flow {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    /* Karte zuerst anzeigen (im HTML steht sie nach dem Formular) */
+    .ort-flow .right {
+        order: -1;
+    }
+
+    /* Knoepfe im Ort-Formular volle Breite und sauber untereinander,
+       damit man sie mit dem Daumen gut trifft */
+    .ort-flow .left button {
+        display: block;
+        width: 100%;
+        margin-top: 8px;
+    }
+
+    /* obere Menue-Leiste auf dem Handy ausblenden: unten gibt es die
+       Symbolleiste. Der Stepper (Anlage-Ablauf) bleibt sichtbar. */
+    nav.top-menu-nav {
+        display: none;
+    }
+
+    /* Startseite: Kacheln kompakter, Symbol links neben dem Titel,
+       Beschreibung darunter. Fuellt den Schirm besser als Symbol oben. */
+    .menu-kachel {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        column-gap: 14px;
+        align-items: center;
+        padding: 18px 16px;
+    }
+    .menu-kachel .kachel-icon {
+        grid-row: 1 / 3;
+        align-self: center;
+        margin-bottom: 0;
+        font-size: 28px;
+    }
+    .menu-kachel h3 {
+        align-self: end;
+    }
+    .menu-kachel p {
+        align-self: start;
+    }
+}

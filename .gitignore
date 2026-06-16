@@ -73,3 +73,6 @@ NormaleDateienClaude/
 
 # Lokale Datei mit dem echten Google Maps API Key. Darf NIE ins Repo.
 application-local.properties
+
+# Backups von der Design-Anpassung (koennen geloescht werden)
+*.bak
