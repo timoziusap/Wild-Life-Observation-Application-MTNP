@@ -702,6 +702,16 @@ a.menu-eintrag:hover { background-color: #4c7044; color: #f1e9d6; }
         gap: 0;
     }
 
+    /* WICHTIG: in der Spalten-Anordnung muessen die Karten wieder die volle
+       Breite einnehmen und ihre Hoehe aus dem Inhalt nehmen. Ohne das schrumpfen
+       sie wegen "align-items: flex-start" + "flex: 1 1 0" auf Mini-Groesse. */
+    .ort-flow .left,
+    .ort-flow .right {
+        flex: 0 0 auto;
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
     /* Karte zuerst anzeigen (im HTML steht sie nach dem Formular) */
     .ort-flow .right {
         order: -1;
