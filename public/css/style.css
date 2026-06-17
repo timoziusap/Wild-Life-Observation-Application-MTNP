@@ -84,11 +84,6 @@ nav a:hover {
     text-decoration: none;
 }
 
-/* untere Symbol-Leiste: auf dem Laptop ausgeblendet, nur auf dem Handy sichtbar */
-.bottom-nav {
-    display: none;
-}
-
 /* zwei Spalten: links Tier, rechts Ort.
    Links etwas breiter, weil die Tiere-Tabelle mehr Spalten hat.
    Fast deckende Karten mit Schatten, damit sie auf dem Foto "schweben" */
@@ -441,50 +436,6 @@ footer {
         font-size: 36px;
     }
 
-    /* obere Navigationsleiste auf dem Handy ausblenden, dafuer kommt die untere Leiste */
-    nav:not(.bottom-nav) {
-        display: none;
-    }
-
-    /* untere Leiste fest am unteren Rand, Symbole nebeneinander */
-    .bottom-nav {
-        display: flex;
-        position: fixed;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        margin: 0;
-        padding: 4px 0;
-        border: none;
-        border-top: 1px solid rgba(201,184,148,0.6);
-        border-radius: 0;
-        background-color: rgba(250,247,239,0.97);
-        z-index: 1000;
-    }
-
-    /* jeder Eintrag: Symbol oben, kleiner Text darunter */
-    .bottom-nav a {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 2px;
-        margin: 0;
-        padding: 6px 0;
-        background: none;
-        border-radius: 0;
-        color: #2f4a2c;
-        font-size: 11px;
-    }
-
-    .bottom-nav a i {
-        font-size: 20px;
-    }
-
-    /* unten Platz lassen, damit die feste Leiste nichts verdeckt */
-    body {
-        padding-bottom: 64px;
-    }
 }
 
 /* Auf dem Handy gibt es kein echtes Hovern. Damit sich Buttons trotzdem
@@ -557,11 +508,6 @@ a.menu-eintrag:hover { background-color: #4c7044; color: #f1e9d6; }
     color: #9a9a8c;
     background-color: #efeadd;
     cursor: default;
-}
-
-/* Auf dem Handy das Dropdown weiter anzeigen (die alte Regel blendet nav aus). */
-@media (max-width: 768px) {
-    nav:not(.bottom-nav) { display: block; }
 }
 
 /* ===================== Fortschritt "Tiersichtung anlegen" (nav.js) ===================== */
