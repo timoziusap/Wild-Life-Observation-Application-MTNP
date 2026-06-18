@@ -70,10 +70,10 @@
         <!-- ---------- Bereich 2: Vorhandenen Ort verwenden ---------- -->
         <h3>Vorhandenen Ort verwenden</h3>
 
-        <label>Ort auswählen:</label>
+        <label>Ort auswaehlen:</label>
         <!-- wird per AJAX aus GET /locations gefuellt -->
         <select id="locationSelect">
-            <option value="">-- bitte wählen --</option>
+            <option value="">-- bitte waehlen --</option>
         </select>
 
         <hr>
@@ -81,6 +81,11 @@
         <!-- ---------- Melder und Abschluss ---------- -->
         <label>Erfasst von (Pflicht):</label>
         <input type="text" id="reporter" placeholder="Name des Melders">
+
+        <!-- Optionales Bild zur Sichtung. Wird nach dem Speichern der Sichtung
+             hochgeladen (POST /observations/{id}/image). -->
+        <label>Bild zur Sichtung (optional):</label>
+        <input type="file" id="sichtungBild" accept="image/*">
 
         <br>
         <!-- speichert die komplette Sichtung (Tier + Ort + Melder + Zeit) -->
