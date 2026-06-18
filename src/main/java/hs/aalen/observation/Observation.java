@@ -1,12 +1,16 @@
 package hs.aalen.observation;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import hs.aalen.animal.Animal;
 import hs.aalen.location.Location;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Column;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Transient;
 
 // eine einzelne Beobachtung: welches Tier wurde wo und wann gesehen
 @Entity
@@ -24,6 +28,17 @@ public class Observation {
 
 	// Zeitpunkt, wann die Sichtung gespeichert wurde (als Text, z.B. "2026-06-13 12:50")
 	private String createdAt;
+
+	// Bild zur Sichtung als Data-URL (z.B. "data:image/jpeg;base64,...").
+	// Als Text (CLOB/TEXT) gespeichert, damit es auf HSQLDB und Postgres gleich
+	// funktioniert. @JsonIgnore: das Bild kommt NICHT in jede Observation-JSON
+	// (waere viel zu gross), sondern nur ueber GET /observations/{id}/image.
+	@Column(length = 10000000)
+	@JsonIgnore
+	private String imageData;
+
+	// Anzahl der "Gefaellt mir" (Likes). Fuer Likes ist kein Name noetig.
+	private int likes;
 
 	@ManyToOne
 	private Animal animal;
@@ -73,6 +88,30 @@ public class Observation {
 	public void setCreatedAt(String createdAt) {
 		this.createdAt = createdAt;
 	}
+
+	// Bild-Rohdaten (Data-URL). Nicht im JSON, nur intern/ueber den Bild-Endpoint.
+	@JsonIgnore
+	public String getImageData() {
+		return imageData;
+	}
+	public void setImageData(String imageData) {
+		this.imageData = imageData;
+	}
+
+	// Praktisches Flag fuers Frontend: gibt es ueberhaupt ein Bild?
+	// Landet als "hasImage" im JSON, ohne das grosse Bild mitzuschicken.
+	@Transient
+	public boolean getHasImage() {
+		return imageData != null && !imageData.isEmpty();
+	}
+
+	public int getLikes() {
+		return likes;
+	}
+	public void setLikes(int likes) {
+		this.likes = likes;
+	}
+
 	public Animal getAnimal() {
 		return animal;
 	}

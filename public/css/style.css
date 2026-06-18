@@ -754,3 +754,219 @@ a.menu-eintrag:hover { background-color: #4c7044; color: #f1e9d6; }
         display: none;
     }
 }
+
+/* ===================== Startseite: PC-Menueleiste ausblenden ===================== */
+/* Auf der Startseite uebernehmen die Kacheln die Navigation. Deshalb wird die
+   obere Leiste dort komplett ausgeblendet (PC und Handy). Auf dem Handy bleibt
+   die untere Symbolleiste (.bottom-nav) als Navigation erhalten. */
+body.startseite nav.start-nav {
+    display: none !important;
+}
+
+/* ===================== Feed: neueste Sichtungen (Startseite) ===================== */
+.feed-section {
+    margin-top: 10px;
+}
+
+/* Kopfzeile des Feeds: Ueberschrift und (auf dem Handy) der Aufklapp-Knopf. */
+.feed-kopf {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* Knopf zum Ein-/Ausblenden des Feeds. Am PC ausgeblendet (Feed ist dort
+   immer sichtbar), nur auf dem Handy sichtbar. */
+.feed-toggle {
+    display: none;
+}
+
+/* Feed-Liste: einspaltig und zentriert, wie ein klassischer Foto-Feed. */
+.feed {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    margin-top: 12px;
+}
+
+.feed-hinweis {
+    color: #f1e9d6;
+    text-shadow: 0 1px 6px rgba(0,0,0,0.7);
+    text-align: center;
+}
+
+/* eine einzelne Feed-Karte (Sichtung) */
+.feed-karte {
+    width: 100%;
+    max-width: 520px;
+    background-color: #faf7ef;
+    border: 1px solid #c9b894;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+    overflow: hidden;
+}
+
+/* Kopf der Karte: wer hat die Sichtung eingetragen */
+.feed-karte-kopf {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-bottom: 1px solid #e4dcc6;
+}
+
+.feed-avatar i {
+    font-size: 34px;
+    color: #4c7044;
+    display: block;
+}
+
+.feed-kopf-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.feed-melder {
+    font-weight: bold;
+    color: #2f4a2c;
+}
+
+.feed-meta {
+    font-size: 12px;
+    color: #7a7363;
+}
+
+/* das Sichtungsbild fuellt die Kartenbreite */
+.feed-bild {
+    display: block;
+    width: 100%;
+    max-height: 520px;
+    object-fit: cover;
+    background-color: #e9e9e9;
+}
+
+/* Info-Zeile unter dem Bild: Art und Ort */
+.feed-info {
+    padding: 10px 14px 4px 14px;
+    color: #33302a;
+    font-size: 15px;
+}
+
+/* Aktionsleiste mit Like- und Kommentar-Knopf (nebeneinander) */
+.feed-aktionen {
+    display: flex;
+    gap: 10px;
+    padding: 4px 14px 8px 14px;
+}
+
+.feed-like-btn,
+.feed-komm-btn {
+    margin-top: 4px;
+    background: none;
+    color: #2f4a2c;
+    border: 1px solid #c9b894;
+    border-radius: 18px;
+    padding: 6px 14px;
+    font-size: 15px;
+}
+
+.feed-like-btn:hover,
+.feed-komm-btn:hover {
+    background-color: #f3eedd;
+    color: #2f4a2c;
+}
+
+.feed-like-btn.geliked,
+.feed-like-btn.geliked:hover {
+    color: #b3402f;
+    border-color: #b3402f;
+}
+
+.feed-like-btn.geliked i::before {
+    /* gefuelltes Herz nach dem Liken */
+    content: "\f415";
+}
+
+/* Kommentarbereich */
+.feed-kommentare {
+    padding: 8px 14px 14px 14px;
+    border-top: 1px solid #e4dcc6;
+}
+
+.kommentar-liste {
+    margin-bottom: 8px;
+}
+
+.kommentar {
+    margin: 4px 0;
+    font-size: 14px;
+    color: #33302a;
+}
+
+.komm-autor {
+    font-weight: bold;
+    color: #2f4a2c;
+    margin-right: 4px;
+}
+
+/* Eingabe fuer neuen Kommentar */
+.kommentar-form .komm-name {
+    margin-bottom: 6px;
+}
+
+.kommentar-form-zeile {
+    display: flex;
+    gap: 6px;
+    align-items: stretch;
+}
+
+.kommentar-form-zeile .komm-text {
+    flex: 1;
+    margin-top: 0;
+}
+
+.kommentar-form-zeile .komm-senden {
+    margin-top: 0;
+    white-space: nowrap;
+}
+
+/* ----- Feed auf dem Handy: erst per Knopf einblenden ----- */
+@media (max-width: 768px) {
+    /* Knopf sichtbar machen */
+    .feed-toggle {
+        display: inline-block;
+        margin-top: 0;
+        width: 100%;
+    }
+    /* Feed zunaechst verborgen ... */
+    .feed-section #feed {
+        display: none;
+    }
+    /* ... und erst nach Klick auf den Knopf anzeigen */
+    .feed-section.feed-offen #feed {
+        display: flex;
+    }
+}
+
+/* ===================== Bild in der Suche-Detailansicht ===================== */
+.detail-bild {
+    margin: 10px 0;
+}
+
+.detail-bild img {
+    max-width: 100%;
+    max-height: 360px;
+    border: 1px solid #c9b894;
+    border-radius: 6px;
+    display: block;
+}
+
+.detail-bild-hinweis {
+    font-size: 12px;
+    color: #7a7363;
+    margin-top: 4px;
+}

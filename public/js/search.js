@@ -280,9 +280,78 @@ function zeigeDetails(beob) {
     html += '<p><strong>Erfasst von (Melder):</strong> ' + (beob.reporter || 'unbekannt') + '</p>';
     html += '<p><strong>Erfassungszeitpunkt:</strong> ' + (beob.createdAt || 'unbekannt') + '</p>';
 
+    // Likes anzeigen (rein informativ).
+    html += '<p><strong>Likes:</strong> ' + (beob.likes != null ? beob.likes : 0) + '</p>';
+
+    // Bild der Sichtung anzeigen, falls vorhanden. Zeitstempel an der URL
+    // verhindert, dass der Browser ein altes Bild aus dem Cache zeigt.
+    if (beob.hasImage) {
+        html += '<div class="detail-bild"><img src="/observations/' + beob.id
+              + '/image?t=' + Date.now() + '" alt="Bild der Sichtung"></div>';
+    }
+
+    // Bild hinzufuegen/aendern - nur der Melder (Ersteller) darf das.
+    html += '<button type="button" id="detailBildBtn" class="detail-bild-btn">'
+          + (beob.hasImage ? 'Bild ändern' : 'Bild hinzufügen') + '</button>';
+    html += '<input type="file" id="detailBildInput" accept="image/*" style="display:none;">';
+    html += '<p class="detail-bild-hinweis">Nur der Melder dieser Sichtung darf ein Bild hinzufügen.</p>';
+
     // Detailbox fuellen und einblenden.
     $('#detailInhalt').html(html);
     $('#detailansicht').show();
+
+    // Knopf "Bild hinzufuegen/aendern": oeffnet den Datei-Dialog.
+    $('#detailBildBtn').off('click').on('click', function() {
+        $('#detailBildInput').click();
+    });
+
+    // Datei gewaehlt: Name (Melder) abfragen und Bild hochladen.
+    $('#detailBildInput').off('change').on('change', function() {
+        var datei = this.files && this.files[0];
+        if (!datei) {
+            return;
+        }
+        var melder = prompt('Nur der Melder darf ein Bild hinzufügen.\nBitte deinen Namen (Melder) angeben:');
+        if (melder === null) {
+            this.value = '';
+            return;   // Abbruch
+        }
+        if (melder.trim() === '') {
+            alert('Bitte einen Namen angeben.');
+            this.value = '';
+            return;
+        }
+
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            $.ajax({
+                type: 'POST',
+                url: '/observations/' + beob.id + '/image',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    'reporter' : melder.trim(),
+                    'imageData': e.target.result
+                }),
+                success: function() {
+                    alert('Bild wurde gespeichert.');
+                    // Detailansicht mit Bild neu aufbauen und Tabelle aktualisieren.
+                    beob.hasImage = true;
+                    zeigeDetails(beob);
+                    sucheObservations();
+                },
+                error: function(xhr) {
+                    if (xhr.status === 403) {
+                        alert('Nur der Melder (' + (beob.reporter || 'unbekannt')
+                            + ') darf ein Bild zu dieser Sichtung hinzufügen.');
+                    } else {
+                        alert('Bild konnte nicht gespeichert werden.');
+                    }
+                }
+            });
+        };
+        reader.readAsDataURL(datei);
+        this.value = '';
+    });
 
     // Sichtungsort auf der Karte anzeigen (genaue Koordinaten).
     zeigeOrtImDetail(ort);
