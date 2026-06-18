@@ -759,13 +759,26 @@ body.startseite nav.start-nav {
     display: none;
 }
 
-/* Feed-Liste: einspaltig und zentriert, wie ein klassischer Foto-Feed. */
+/* Feed-Liste: einspaltig und zentriert, wie ein klassischer Foto-Feed.
+   max-height + overflow-y machen daraus ein eigenes Scrollfenster: die neuesten
+   Sichtungen sind in sich scrollbar, die Kacheln darueber bleiben oben sichtbar.
+   overscroll-behavior:contain verhindert, dass beim Scrollen am Feed-Ende die
+   ganze Hauptseite mitscrollt. Rahmen macht das Fenster sichtbar. */
 .feed {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 18px;
     margin-top: 12px;
+    /* Hoehe so, dass ca. zwei Karten in voller Groesse sichtbar sind.
+       Ab der dritten Sichtung erscheint die Scrollleiste. Wert bei Bedarf
+       anpassen. */
+    max-height: 720px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 12px;
+    border: 1px solid #c9b894;
+    border-radius: 10px;
 }
 
 .feed-hinweis {
@@ -783,6 +796,37 @@ body.startseite nav.start-nav {
     border-radius: 10px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.35);
     overflow: hidden;
+    /* nicht stauchen: im Scrollfenster behalten die Karten ihre volle Groesse,
+       stattdessen wird gescrollt. */
+    flex-shrink: 0;
+}
+
+/* Klickbare Karte: Kopf und Info-Zeile oeffnen die Detailansicht. */
+.feed-karte-klickbar .feed-karte-kopf,
+.feed-karte-klickbar .feed-info {
+    cursor: pointer;
+}
+
+.feed-karte-klickbar:hover {
+    border-color: #4c7044;
+}
+
+/* Detail-Knopf oben rechts im Kartenkopf, im Pill-Stil wie die Feed-Knoepfe. */
+.feed-detail-btn {
+    margin: 0 0 0 auto;     /* nach rechts schieben */
+    align-self: flex-start; /* oben ausrichten */
+    background: none;
+    color: #2f4a2c;
+    border: 1px solid #c9b894;
+    border-radius: 18px;
+    padding: 5px 12px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.feed-detail-btn:hover {
+    background-color: #f3eedd;
+    color: #2f4a2c;
 }
 
 /* Kopf der Karte: wer hat die Sichtung eingetragen */
@@ -877,16 +921,46 @@ body.startseite nav.start-nav {
     margin-bottom: 8px;
 }
 
+/* Eine Kommentarzeile: Text links, Loeschen-Knopf rechts (Flex-Layout). */
 .kommentar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     margin: 4px 0;
     font-size: 14px;
     color: #33302a;
+}
+
+/* Autor + Text nehmen den Platz links ein; min-width:0 erlaubt das Umbrechen. */
+.kommentar-inhalt {
+    flex: 1;
+    min-width: 0;
+    word-break: break-word;
 }
 
 .komm-autor {
     font-weight: bold;
     color: #2f4a2c;
     margin-right: 4px;
+}
+
+/* Loeschen-Knopf: farbig im App-Stil (rot fuer Loeschen), rechtsbuendig.
+   Sitzt am rechten Rand der Kommentarzeile, also buendig mit dem Senden-Knopf. */
+.komm-loeschen {
+    flex-shrink: 0;
+    margin-top: 0;
+    padding: 6px 12px;
+    background-color: #b3402f;
+    color: #f1e9d6;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1.2;
+}
+
+.komm-loeschen:hover {
+    background-color: #8a2c20;
 }
 
 /* Eingabe fuer neuen Kommentar */

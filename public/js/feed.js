@@ -1,8 +1,9 @@
 // feed.js
 // Feed der neuesten Sichtungen auf der Startseite (im Instagram-Stil).
-// Pro Sichtung: oben wer sie eingetragen hat, darunter das Bild (falls vorhanden),
-// dann ein Like-Knopf (ohne Namensangabe) und ein Kommentarbereich
-// (zum Kommentieren ist ein Name Pflicht).
+// Pro Sichtung: oben wer sie eingetragen hat, Art und Ort, ein Like-Knopf
+// (Toggle, ohne Namensangabe) und ein Kommentarbereich (zum Kommentieren ist
+// ein Name Pflicht; Kommentare lassen sich auch wieder loeschen).
+// Ein Klick auf die Karte oeffnet die Detailansicht auf der Suchseite.
 //
 // Bewusst ohne jQuery geschrieben, damit es auch auf der Startseite laeuft
 // (dort ist jQuery nicht eingebunden). Reines Fetch/DOM.
@@ -79,6 +80,18 @@ function baueKarte(s) {
             '<span class="feed-melder">' + escapeHtml(melder) + '</span>' +
             '<span class="feed-meta">' + escapeHtml(datum) + '</span>' +
         '</div>';
+
+    // Detail-Knopf oben rechts: oeffnet die Detailansicht auf der Suchseite.
+    var detailBtn = document.createElement('button');
+    detailBtn.type = 'button';
+    detailBtn.className = 'feed-detail-btn';
+    detailBtn.innerHTML = '<i class="bi bi-eye"></i> Detail';
+    detailBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        window.location.href = 'search.html?id=' + s.id;
+    });
+    kopf.appendChild(detailBtn);
+
     karte.appendChild(kopf);
 
     // ---------- Info-Zeile: Art und Ort ----------
@@ -96,10 +109,14 @@ function baueKarte(s) {
     var likeBtn = document.createElement('button');
     likeBtn.type = 'button';
     likeBtn.className = 'feed-like-btn';
+    // Schon geliked? Dann gleich als "geliked" markieren (gefuelltes Herz).
+    if (istGeliked(s.id)) {
+        likeBtn.classList.add('geliked');
+    }
     likeBtn.innerHTML = '<i class="bi bi-heart"></i> <span class="like-zahl">'
         + (s.likes || 0) + '</span>';
     likeBtn.addEventListener('click', function () {
-        likeSichtung(s.id, likeBtn);
+        likeUmschalten(s.id, likeBtn);
     });
     aktionen.appendChild(likeBtn);
 
@@ -146,22 +163,72 @@ function baueKarte(s) {
         feld.focus();
     });
 
+    // Klick auf die Karte oeffnet die Detailansicht auf der Suchseite
+    // (gleiche Ansicht wie bei "Suchen"). Klicks im Like-/Kommentarbereich
+    // sollen NICHT als Detail-Klick gelten.
+    karte.classList.add('feed-karte-klickbar');
+    karte.addEventListener('click', function (e) {
+        if (e.target.closest('.feed-aktionen') || e.target.closest('.feed-kommentare')) {
+            return;
+        }
+        window.location.href = 'search.html?id=' + s.id;
+    });
+
     return karte;
 }
 
 
-// Zaehlt einen Like hoch (kein Name noetig) und aktualisiert die Anzeige.
-function likeSichtung(id, btn) {
-    fetch('/observations/' + id + '/like', { method: 'POST' })
+// Schaltet den Like um: noch nicht geliked -> +1, sonst -1 (Unlike).
+// Welche Sichtungen man geliked hat, merkt sich der Browser (localStorage),
+// damit der Status auch nach dem Neuladen erhalten bleibt.
+function likeUmschalten(id, btn) {
+    var schonGeliked = istGeliked(id);
+    var url = schonGeliked
+        ? '/observations/' + id + '/unlike'
+        : '/observations/' + id + '/like';
+
+    fetch(url, { method: 'POST' })
         .then(function (r) { return r.json(); })
         .then(function (data) {
             var zahl = btn.querySelector('.like-zahl');
             if (zahl && data && typeof data.likes === 'number') {
                 zahl.textContent = data.likes;
             }
-            btn.classList.add('geliked');
+            // Status umdrehen, im Browser merken und Herz-Optik anpassen.
+            merkeGeliked(id, !schonGeliked);
+            btn.classList.toggle('geliked', !schonGeliked);
         })
         .catch(function (e) { console.log('Like-Fehler: ' + e); });
+}
+
+
+// ----- kleine Helfer: gelikte Sichtungen im Browser merken (localStorage) -----
+
+// Liste der gelikten Sichtungs-ids holen (leeres Array, falls noch nichts da).
+function gelikteIds() {
+    try {
+        return JSON.parse(localStorage.getItem('gelikteSichtungen')) || [];
+    } catch (e) {
+        return [];
+    }
+}
+
+// Hat man diese Sichtung schon geliked?
+function istGeliked(id) {
+    return gelikteIds().indexOf(id) !== -1;
+}
+
+// Like-Status fuer eine Sichtung merken (true = geliked, false = nicht).
+function merkeGeliked(id, geliked) {
+    var ids = gelikteIds();
+    var pos = ids.indexOf(id);
+    if (geliked && pos === -1) {
+        ids.push(id);
+    }
+    if (!geliked && pos !== -1) {
+        ids.splice(pos, 1);
+    }
+    localStorage.setItem('gelikteSichtungen', JSON.stringify(ids));
 }
 
 
@@ -187,14 +254,51 @@ function ladeKommentare(id) {
             kommentare.forEach(function (k) {
                 var z = document.createElement('p');
                 z.className = 'kommentar';
-                z.innerHTML = '<span class="komm-autor">' + escapeHtml(k.author || 'unbekannt')
+
+                // Autor + Text in einen eigenen Bereich, damit der Loeschen-Knopf
+                // rechts daneben buendig sitzt (Flex-Layout, siehe style.css).
+                var inhalt = document.createElement('span');
+                inhalt.className = 'kommentar-inhalt';
+                inhalt.innerHTML = '<span class="komm-autor">' + escapeHtml(k.author || 'unbekannt')
                     + '</span> ' + escapeHtml(k.text || '');
+                z.appendChild(inhalt);
+
+                // Loeschen-Knopf rechts; jeder darf einen Kommentar entfernen.
+                var loeschen = document.createElement('button');
+                loeschen.type = 'button';
+                loeschen.className = 'komm-loeschen';
+                loeschen.title = 'Kommentar löschen';
+                loeschen.innerHTML = '<i class="bi bi-x-lg"></i>';
+                loeschen.addEventListener('click', function () {
+                    loescheKommentar(k.id, id);
+                });
+                z.appendChild(loeschen);
+
                 liste.appendChild(z);
             });
         })
         .catch(function (e) {
             liste.innerHTML = '<p class="feed-hinweis">Kommentare konnten nicht geladen werden.</p>';
             console.log('Kommentar-Fehler: ' + e);
+        });
+}
+
+
+// Loescht einen Kommentar (nach Rueckfrage) und laedt die Liste neu.
+function loescheKommentar(commentId, observationId) {
+    if (!confirm('Kommentar wirklich löschen?')) {
+        return;
+    }
+    fetch('/comments/' + commentId, { method: 'DELETE' })
+        .then(function (r) {
+            if (!r.ok) {
+                throw new Error('Status ' + r.status);
+            }
+            ladeKommentare(observationId);
+        })
+        .catch(function (e) {
+            alert('Kommentar konnte nicht gelöscht werden.');
+            console.log('Kommentar-Loeschen-Fehler: ' + e);
         });
 }
 

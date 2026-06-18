@@ -179,6 +179,20 @@ public class ObservationService {
 		return observation.getLikes();
 	}
 
+	// Verringert die Like-Zahl einer Sichtung um 1 (aber nicht unter 0) und gibt
+	// die neue Zahl zurueck. Gibt -1 zurueck, wenn es die Sichtung nicht gibt.
+	public int removeLike(Long id) {
+		Observation observation = observationRepository.findById(id).orElse(null);
+		if (observation == null) {
+			return -1;
+		}
+		if (observation.getLikes() > 0) {
+			observation.setLikes(observation.getLikes() - 1);
+			observationRepository.save(observation);
+		}
+		return observation.getLikes();
+	}
+
 	// Loescht eine Beobachtung anhand der id.
 	public void deleteObservation(Long id) {
 		observationRepository.deleteById(id);

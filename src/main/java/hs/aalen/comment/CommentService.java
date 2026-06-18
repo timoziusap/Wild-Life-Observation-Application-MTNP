@@ -45,4 +45,9 @@ public class CommentService {
 		comment.setCreatedAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
 		return commentRepository.save(comment);
 	}
+
+	// Loescht einen Kommentar anhand seiner id.
+	public void deleteComment(Long commentId) {
+		commentRepository.deleteById(commentId);
+	}
 }

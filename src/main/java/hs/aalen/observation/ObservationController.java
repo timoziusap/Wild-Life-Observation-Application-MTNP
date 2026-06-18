@@ -78,6 +78,17 @@ public class ObservationController {
 		return ResponseEntity.ok(Collections.singletonMap("likes", likes));
 	}
 
+	// Like wieder entfernen (Toggle im Frontend). Gibt die neue Like-Zahl zurueck.
+	@PostMapping("/observations/{id}/unlike")
+	public ResponseEntity<Map<String, Integer>> unlikeObservation(@PathVariable Long id) {
+		log.info("POST /observations/{}/unlike - Like wird entfernt", id);
+		int likes = observationService.removeLike(id);
+		if (likes < 0) {
+			return ResponseEntity.notFound().build();
+		}
+		return ResponseEntity.ok(Collections.singletonMap("likes", likes));
+	}
+
 	// Neue Beobachtung anlegen. Das Frontend schickt animal und location
 	// als verschachtelte Objekte mit ihrer id mit (z.B. animal: { id: 3 }).
 	@PostMapping("/observations")
