@@ -146,6 +146,24 @@ function bearbeiteObservation(id, animalId, locationLnr, date, time) {
 function loadObservationTable() {
     $('#observationTable').DataTable({
         destroy: true,
+        // deutsche Beschriftungen fuer die DataTable (Suchfeld, Blaettern, Infos)
+        "language": {
+            "emptyTable":     "Keine Daten in der Tabelle vorhanden",
+            "info":           "_START_ bis _END_ von _TOTAL_ Einträgen",
+            "infoEmpty":      "0 bis 0 von 0 Einträgen",
+            "infoFiltered":   "(gefiltert von _MAX_ Einträgen)",
+            "lengthMenu":     "_MENU_ Einträge anzeigen",
+            "loadingRecords": "Wird geladen …",
+            "processing":     "Bitte warten …",
+            "search":         "Suchen:",
+            "zeroRecords":    "Keine passenden Einträge gefunden",
+            "paginate": {
+                "first":    "Erste",
+                "last":     "Letzte",
+                "next":     "Nächste",
+                "previous": "Zurück"
+            }
+        },
         "ajax": {
             "url"     : '/observations',
             "dataSrc" : "",

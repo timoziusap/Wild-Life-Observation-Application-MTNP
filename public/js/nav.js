@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var seiten = [
         { href: 'tier.html',         text: 'Tiersichtung anlegen' },
         { href: 'search.html',       text: 'Tiersichtung suchen' },
-        { href: 'counter.html',      text: 'Counter' },
+        { href: 'counter.html',      text: 'Zählungen' },
         { href: 'schutzzeiten.html', text: 'Schutzzeiten' }
     ];
 
