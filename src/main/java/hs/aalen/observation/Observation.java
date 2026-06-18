@@ -1,16 +1,12 @@
 package hs.aalen.observation;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import hs.aalen.animal.Animal;
 import hs.aalen.location.Location;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Column;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Transient;
 
 // eine einzelne Beobachtung: welches Tier wurde wo und wann gesehen
 @Entity
@@ -30,14 +26,6 @@ public class Observation {
 	private String createdAt;
 
 	// Bild zur Sichtung als Data-URL (z.B. "data:image/jpeg;base64,...").
-	// Als TEXT gespeichert. columnDefinition="text" funktioniert auf
-	// HSQLDB und Postgres, kein riesiges varchar mehr.
-	// @JsonIgnore: das Bild kommt nicht in jede Observation-JSON,
-	// sondern nur ueber GET /observations/{id}/image.
-	@Column(columnDefinition = "text")
-	@JsonIgnore
-	private String imageData;
-
 	// Anzahl der "Gefaellt mir" (Likes). Fuer Likes ist kein Name noetig.
 	private int likes;
 
@@ -88,22 +76,6 @@ public class Observation {
 	}
 	public void setCreatedAt(String createdAt) {
 		this.createdAt = createdAt;
-	}
-
-	// Bild-Rohdaten (Data-URL). Nicht im JSON, nur intern/ueber den Bild-Endpoint.
-	@JsonIgnore
-	public String getImageData() {
-		return imageData;
-	}
-	public void setImageData(String imageData) {
-		this.imageData = imageData;
-	}
-
-	// Praktisches Flag fuers Frontend: gibt es ueberhaupt ein Bild?
-	// Landet als "hasImage" im JSON, ohne das grosse Bild mitzuschicken.
-	@Transient
-	public boolean getHasImage() {
-		return imageData != null && !imageData.isEmpty();
 	}
 
 	public int getLikes() {

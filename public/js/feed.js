@@ -78,16 +78,6 @@ function baueKarte(s) {
         '</div>';
     karte.appendChild(kopf);
 
-    // ---------- Bild (nur wenn vorhanden) ----------
-    if (s.hasImage) {
-        var bild = document.createElement('img');
-        bild.className = 'feed-bild';
-        bild.src = '/observations/' + s.id + '/image';
-        bild.alt = 'Bild der Sichtung: ' + titel;
-        bild.loading = 'lazy';
-        karte.appendChild(bild);
-    }
-
     // ---------- Info-Zeile: Art und Ort ----------
     var info = document.createElement('div');
     info.className = 'feed-info';

@@ -3,8 +3,6 @@ package hs.aalen.observation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -68,56 +65,6 @@ public class ObservationController {
 	public Observation getObservation(@PathVariable Long id) {
 		log.info("GET /observations/{} - einzelne Beobachtung wird geladen", id);
 		return observationService.getObservation(id);
-	}
-
-	// Liefert das Bild einer Sichtung als echtes Bild (image/jpeg, image/png ...).
-	// Das Bild ist als Data-URL gespeichert ("data:image/...;base64,...") und wird
-	// hier in Content-Type + Rohbytes zerlegt. So bleibt die normale Observation-JSON
-	// klein und das Bild kommt nur, wenn man es per <img src> anfordert.
-	@GetMapping("/observations/{id}/image")
-	public ResponseEntity<byte[]> getObservationImage(@PathVariable Long id) {
-		String dataUrl = observationService.getImageData(id);
-		if (dataUrl == null || dataUrl.isEmpty() || !dataUrl.startsWith("data:")) {
-			return ResponseEntity.notFound().build();
-		}
-		try {
-			int komma = dataUrl.indexOf(',');
-			String kopf = dataUrl.substring(5, komma);          // z.B. "image/jpeg;base64"
-			String base64 = dataUrl.substring(komma + 1);
-			String mime = kopf.contains(";") ? kopf.substring(0, kopf.indexOf(';')) : kopf;
-			byte[] bytes = Base64.getDecoder().decode(base64);
-			return ResponseEntity.ok()
-					.contentType(MediaType.parseMediaType(mime))
-					.body(bytes);
-		} catch (RuntimeException e) {
-			log.warn("Bild der Sichtung {} konnte nicht gelesen werden: {}", id, e.getMessage());
-			return ResponseEntity.notFound().build();
-		}
-	}
-
-	// Bild zu einer Sichtung hinzufuegen/aendern. Body: { reporter, imageData }.
-	// imageData ist eine Data-URL. Nur der Melder (Ersteller) darf das Bild setzen.
-	@PostMapping("/observations/{id}/image")
-	public ResponseEntity<Map<String, String>> addObservationImage(
-			@PathVariable Long id, @RequestBody Map<String, String> body) {
-		String reporter = body.get("reporter");
-		String imageData = body.get("imageData");
-		log.info("POST /observations/{}/image - Bild-Upload (Melder {})", id, reporter);
-		String status = observationService.addImage(id, reporter, imageData);
-		switch (status) {
-			case "OK":
-				return ResponseEntity.ok(Collections.singletonMap("status", "OK"));
-			case "NOT_FOUND":
-				return ResponseEntity.status(HttpStatus.NOT_FOUND)
-						.body(Collections.singletonMap("error", "Sichtung nicht gefunden."));
-			case "FORBIDDEN":
-				return ResponseEntity.status(HttpStatus.FORBIDDEN)
-						.body(Collections.singletonMap("error",
-								"Nur der Melder (Ersteller) darf ein Bild hinzufuegen."));
-			default:
-				return ResponseEntity.badRequest()
-						.body(Collections.singletonMap("error", "Kein gueltiges Bild uebergeben."));
-		}
 	}
 
 	// Like fuer eine Sichtung (kein Name noetig). Gibt die neue Like-Zahl zurueck.

@@ -136,18 +136,11 @@ public class ObservationService {
 	// Fremdschluessel stimmen und beim Laden die Details wieder mitkommen, holen wir
 	// das echte Tier und den echten Ort aus der DB und haengen sie an die Beobachtung.
 	public Observation saveObservation(Observation observation) {
-		// Beim Bearbeiten Bild und Likes erhalten: Diese Felder kommen ueber
-		// die JSON nicht mit (Bild ist @JsonIgnore). Sonst wuerden sie beim
-		// Speichern verloren gehen. Daher aus dem bestehenden Datensatz uebernehmen.
+		// Beim Bearbeiten Likes erhalten, da sie ueber die JSON nicht mitkommen.
 		if (observation.getId() != null) {
 			Observation bestehend = observationRepository.findById(observation.getId()).orElse(null);
-			if (bestehend != null) {
-				if (observation.getImageData() == null) {
-					observation.setImageData(bestehend.getImageData());
-				}
-				if (observation.getLikes() == 0) {
-					observation.setLikes(bestehend.getLikes());
-				}
+			if (bestehend != null && observation.getLikes() == 0) {
+				observation.setLikes(bestehend.getLikes());
 			}
 		}
 		// Erfassungszeitpunkt nur beim Neuanlegen setzen (noch keine id da),
@@ -184,39 +177,6 @@ public class ObservationService {
 		observation.setLikes(observation.getLikes() + 1);
 		observationRepository.save(observation);
 		return observation.getLikes();
-	}
-
-	// Liefert die Bild-Data-URL einer Sichtung (oder null, wenn keins da ist).
-	public String getImageData(Long id) {
-		Observation observation = observationRepository.findById(id).orElse(null);
-		if (observation == null) {
-			return null;
-		}
-		return observation.getImageData();
-	}
-
-	// Setzt/aendert das Bild einer Sichtung. Nur der Melder (Ersteller) darf das:
-	// der uebergebene Name muss mit dem reporter der Sichtung uebereinstimmen.
-	// Rueckgabe-Codes: "OK", "NOT_FOUND", "FORBIDDEN", "BAD_REQUEST".
-	public String addImage(Long id, String reporter, String imageData) {
-		Observation observation = observationRepository.findById(id).orElse(null);
-		if (observation == null) {
-			return "NOT_FOUND";
-		}
-		if (imageData == null || imageData.trim().isEmpty()) {
-			return "BAD_REQUEST";
-		}
-		if (reporter == null || reporter.trim().isEmpty()) {
-			return "FORBIDDEN";
-		}
-		String melder = observation.getReporter();
-		if (melder == null || !melder.trim().equalsIgnoreCase(reporter.trim())) {
-			// Nur der Ersteller (Melder) darf ein Bild hinzufuegen/aendern.
-			return "FORBIDDEN";
-		}
-		observation.setImageData(imageData);
-		observationRepository.save(observation);
-		return "OK";
 	}
 
 	// Loescht eine Beobachtung anhand der id.

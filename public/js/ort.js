@@ -292,56 +292,21 @@ function speichereTierUndSichtung(tierDaten, basis) {
             // createdAt setzt das Backend selbst
         };
 
-        postJson('/observations', sichtung, function(sichtungGespeichert) {
+        postJson('/observations', sichtung, function() {
+            // Zwischenstaende loeschen, damit der naechste Ablauf leer beginnt.
+            sessionStorage.removeItem('tierEntwurf');
+            sessionStorage.removeItem('ortEntwurf');
 
-            // Aufraeumen und weiterleiten - wird erst nach dem (optionalen)
-            // Bild-Upload aufgerufen.
-            function abschliessen() {
-                // Zwischenstaende loeschen, damit der naechste Ablauf leer beginnt.
-                sessionStorage.removeItem('tierEntwurf');
-                sessionStorage.removeItem('ortEntwurf');
-
-                // Kam die Sichtung aus dem Counter? Dann den erledigten Counter
-                // loeschen und zurueck zur Counter-Seite. Sonst zur Startseite.
-                var herkunft = sessionStorage.getItem('counterHerkunftId');
-                if (herkunft) {
-                    sessionStorage.removeItem('counterHerkunftId');
-                    deleteJson('/counters/' + herkunft, function() {
-                        window.location.href = 'counter.html';
-                    });
-                } else {
-                    window.location.href = 'index.html';
-                }
-            }
-
-            // Wurde ein Bild gewaehlt? Dann erst hochladen, danach abschliessen.
-            var bildFeld = document.getElementById('sichtungBild');
-            var datei = bildFeld && bildFeld.files && bildFeld.files[0];
-            var id = sichtungGespeichert ? sichtungGespeichert.id : null;
-
-            if (datei && id) {
-                var reader = new FileReader();
-                reader.onload = function(e) {
-                    // Das Bild als Data-URL an den Bild-Endpoint schicken.
-                    // Der Melder darf sein eigenes Bild setzen (Name == reporter).
-                    $.ajax({
-                        type: 'POST',
-                        url: '/observations/' + id + '/image',
-                        contentType: 'application/json',
-                        data: JSON.stringify({
-                            'reporter' : basis.reporter,
-                            'imageData': e.target.result
-                        }),
-                        complete: function() {
-                            // egal ob Bild geklappt hat oder nicht: Ablauf beenden
-                            abschliessen();
-                        }
-                    });
-                };
-                reader.onerror = function() { abschliessen(); };
-                reader.readAsDataURL(datei);
+            // Kam die Sichtung aus dem Counter? Dann den erledigten Counter
+            // loeschen und zurueck zur Counter-Seite. Sonst zur Startseite.
+            var herkunft = sessionStorage.getItem('counterHerkunftId');
+            if (herkunft) {
+                sessionStorage.removeItem('counterHerkunftId');
+                deleteJson('/counters/' + herkunft, function() {
+                    window.location.href = 'counter.html';
+                });
             } else {
-                abschliessen();
+                window.location.href = 'index.html';
             }
         });
     });
