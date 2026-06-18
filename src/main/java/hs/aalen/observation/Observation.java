@@ -30,10 +30,11 @@ public class Observation {
 	private String createdAt;
 
 	// Bild zur Sichtung als Data-URL (z.B. "data:image/jpeg;base64,...").
-	// Als Text (CLOB/TEXT) gespeichert, damit es auf HSQLDB und Postgres gleich
-	// funktioniert. @JsonIgnore: das Bild kommt NICHT in jede Observation-JSON
-	// (waere viel zu gross), sondern nur ueber GET /observations/{id}/image.
-	@Column(length = 10000000)
+	// Als TEXT gespeichert. columnDefinition="text" funktioniert auf
+	// HSQLDB und Postgres, kein riesiges varchar mehr.
+	// @JsonIgnore: das Bild kommt nicht in jede Observation-JSON,
+	// sondern nur ueber GET /observations/{id}/image.
+	@Column(columnDefinition = "text")
 	@JsonIgnore
 	private String imageData;
 
