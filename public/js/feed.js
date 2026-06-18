@@ -43,7 +43,10 @@ function ladeFeed() {
                 return;
             }
             sichtungen.forEach(function (s) {
+                // Erst ans DOM haengen, dann Kommentare laden.
+                // Sonst findet getElementById das Element noch nicht.
                 feed.appendChild(baueKarte(s));
+                ladeKommentare(s.id);
             });
         })
         .catch(function (e) {
@@ -142,9 +145,6 @@ function baueKarte(s) {
         feld.scrollIntoView({ behavior: 'smooth', block: 'center' });
         feld.focus();
     });
-
-    // Vorhandene Kommentare laden.
-    ladeKommentare(s.id);
 
     return karte;
 }
