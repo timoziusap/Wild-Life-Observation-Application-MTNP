@@ -232,6 +232,36 @@ button:hover {
     font-size: 14px;
 }
 
+/* Status-Schild auf der Schutzzeiten-Seite. Farbe zeigt auf einen Blick
+   ob die Gattung geschuetzt, gerade in Schonzeit oder jagdbar ist. */
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.status-badge i {
+    margin-right: 3px;
+}
+
+.badge-geschuetzt {
+    background-color: #a23b2d;   /* rotbraun, geschuetzte Art */
+    color: #faf7ef;
+}
+
+.badge-schonzeit {
+    background-color: #b97e3a;   /* sandbraun, aktuell Schonzeit */
+    color: #faf7ef;
+}
+
+.badge-jagdbar {
+    background-color: #4c7044;   /* gruen, aktuell jagdbar */
+    color: #f1e9d6;
+}
+
 table {
     margin-top: 15px;
 }

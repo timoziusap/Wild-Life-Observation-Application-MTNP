@@ -14,13 +14,28 @@ $(document).ready(function() {
 
     // 1) Gattungen laden und Tabelle aufbauen.
     ladeGattungen();
-
-    // 2) Formular: neue Gattung anlegen.
-    $('#newGenus').submit(function(event) {
-        event.preventDefault();
-        legeGattungAn();
-    });
 });
+
+
+// Baut das farbige Status-Schild fuer eine Gattung.
+// Geschuetzt -> rot, sonst per schonzeit.js: aktuell Schonzeit -> braun, sonst gruen.
+function statusBadge(gattung) {
+    if (gattung.protectedSpecies) {
+        return '<span class="status-badge badge-geschuetzt"><i class="bi bi-shield-fill"></i> Geschützt</span>';
+    }
+
+    // heutiges Datum als YYYY-MM-DD fuer die Schonzeit-Pruefung
+    var heute = new Date();
+    var heuteStr = heute.getFullYear() + '-'
+        + ('0' + (heute.getMonth() + 1)).slice(-2) + '-'
+        + ('0' + heute.getDate()).slice(-2);
+
+    var hinweis = (typeof schonzeitHinweis === 'function') ? schonzeitHinweis(gattung, heuteStr) : '';
+    if (hinweis) {
+        return '<span class="status-badge badge-schonzeit"><i class="bi bi-clock-history"></i> Schonzeit</span>';
+    }
+    return '<span class="status-badge badge-jagdbar"><i class="bi bi-check-circle"></i> Jagdbar</span>';
+}
 
 
 // Laedt alle Gattungen vom Backend und baut die Tabelle.
@@ -55,7 +70,10 @@ function zeigeGattungen() {
         }
         zeile.append('<td>' + name + '</td>');
 
-        // Spalte 2: Schutzstatus als Dropdown (ja/nein), aktueller Wert vorausgewaehlt.
+        // Spalte 2: farbiges Status-Schild (geschuetzt / Schonzeit / jagdbar).
+        zeile.append('<td>' + statusBadge(gattung) + '</td>');
+
+        // Spalte 3: Schutzstatus als Dropdown (ja/nein), aktueller Wert vorausgewaehlt.
         var tdSchutz = $('<td></td>');
         var schutzAuswahl = $('<select class="schutzStatus">'
             + '<option value="nein">nein</option>'
@@ -117,29 +135,5 @@ function speichereGattung(id, zeile) {
         // nach dem Speichern neu laden, damit ueberall der aktuelle Stand steht
         ladeGattungen();
         alert('Gespeichert.');
-    });
-}
-
-
-// Legt eine neue Gattung an (POST /genus).
-function legeGattungAn() {
-
-    var bezeichnung = $('#neueDesignation').val();
-    if (!bezeichnung) {
-        alert('Bitte eine Bezeichnung eingeben.');
-        return;
-    }
-
-    var neueGattung = {
-        'designation'      : bezeichnung,
-        'latinDesignation' : $('#neueLatin').val(),
-        'protectedSpecies' : $('#neueProtected').val() === 'ja',
-        'huntingSeason'    : $('#neueHuntingSeason').val()
-    };
-
-    postJson('/genus', neueGattung, function() {
-        // Formular leeren und Tabelle neu laden
-        $('#newGenus')[0].reset();
-        ladeGattungen();
     });
 }

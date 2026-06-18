@@ -31,8 +31,8 @@ $(document).ready(function() {
         if (entwurfHatDaten()) {
             var ok = confirm(
                 'Die Sichtung ist noch nicht gespeichert. Wenn du den Ablauf jetzt ' +
-                'verlaesst, gehen die Angaben zu Tier und Ort verloren.\n\n' +
-                'Zum Speichern bitte Schritt 2 (Ort) mit "Weiter" abschliessen.\n\n' +
+                'verlässt, gehen die Angaben zu Tier und Ort verloren.\n\n' +
+                'Zum Speichern bitte Schritt 2 (Ort) mit "Weiter" abschließen.\n\n' +
                 'Trotzdem verlassen?');
 
             if (!ok) {

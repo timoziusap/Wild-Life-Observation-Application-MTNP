@@ -68,7 +68,7 @@ function bearbeiteLocation(lNr, shorttitle, description, latitude, longitude) {
     $('[name=description]').val(description);
     $('[name=latitude]').val(latitude);
     $('[name=longitude]').val(longitude);
-    $('#newLocationButton').val('Aenderung speichern');
+    $('#newLocationButton').val('Änderung speichern');
 }
 
 // Loescht einen Ort nach Rueckfrage (DELETE /locations/{lNr}).

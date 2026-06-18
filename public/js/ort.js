@@ -118,7 +118,7 @@ function setzeKoordinaten(lat, lng) {
 // Ermittelt den aktuellen Standort ueber den Browser und uebernimmt ihn.
 function standortSuchen() {
     if (!navigator.geolocation) {
-        alert('Standortbestimmung wird vom Browser nicht unterstuetzt. Bitte direkt auf die Karte klicken.');
+        alert('Standortbestimmung wird vom Browser nicht unterstützt. Bitte direkt auf die Karte klicken.');
         return;
     }
     navigator.geolocation.getCurrentPosition(
@@ -139,7 +139,7 @@ function speichereNeuenOrt() {
 
     // Bezeichnung ist Pflicht.
     if (!bezeichnung) {
-        alert('Bitte eine Bezeichnung fuer den Ort angeben.');
+        alert('Bitte eine Bezeichnung für den Ort angeben.');
         return;
     }
 
@@ -202,14 +202,14 @@ function sichtungAbschliessen() {
     // 1) Es muss ein Ort ausgewaehlt sein.
     var gewaehlteLnr = $('#locationSelect').val();
     if (!gewaehlteLnr) {
-        alert('Bitte einen Ort auswaehlen oder einen neuen Ort anlegen.');
+        alert('Bitte einen Ort auswählen oder einen neuen Ort anlegen.');
         return;
     }
 
     // 1b) "Erfasst von" (Melder) ist Pflicht.
     var melder = $('#reporter').val();
     if (!melder || melder.trim() === '') {
-        alert('Bitte "Erfasst von" ausfuellen - das Feld ist Pflicht.');
+        alert('Bitte "Erfasst von" ausfüllen, das Feld ist Pflicht.');
         return;
     }
 
@@ -217,7 +217,7 @@ function sichtungAbschliessen() {
     var roh = sessionStorage.getItem('tierEntwurf');
     var tier = roh ? JSON.parse(roh) : null;
     if (!tier || !tier.genus || !tier.gender || !tier.animalCount) {
-        alert('Bitte zuerst Schritt 1 (Tier) vollstaendig ausfuellen.');
+        alert('Bitte zuerst Schritt 1 (Tier) vollständig ausfüllen.');
         window.location.href = 'tier.html';
         return;
     }
@@ -250,7 +250,7 @@ function sichtungAbschliessen() {
     if (tier.genus === 'sonstige') {
 
         if (!tier.sonstigeDesignation) {
-            alert('Bitte eine Bezeichnung fuer die neue Gattung eingeben (Schritt 1).');
+            alert('Bitte eine Bezeichnung für die neue Gattung eingeben (Schritt 1).');
             window.location.href = 'tier.html';
             return;
         }

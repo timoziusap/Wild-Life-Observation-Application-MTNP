@@ -138,7 +138,7 @@ function bearbeiteObservation(id, animalId, locationLnr, date, time) {
     $('#locationSelect').val(locationLnr);
     $('input[name=date]').val(date);
     $('input[name=time]').val(time);
-    $('#newObservationButton').val('Aenderung speichern');
+    $('#newObservationButton').val('Änderung speichern');
 }
 
 

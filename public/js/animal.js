@@ -221,7 +221,7 @@ function bearbeiteAnimal(id, gender, estimatedAge, estimatedSize, estimatedWeigh
 
     $('#genusSelect').val(genusId);
     zeigeGattungsInfo();   // Info-Box zur Gattung gleich mit anzeigen
-    $('#newAnimalButton').val('Aenderung speichern');
+    $('#newAnimalButton').val('Änderung speichern');
 }
 
 
