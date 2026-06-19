@@ -322,7 +322,12 @@ function zeigeDetails(beob) {
     if (koordinaten) {
         html += '<p><strong>Koordinaten:</strong> ' + koordinaten + '</p>';
     }
-    html += '<p><strong>Gattung:</strong> ' + (gattung.designation || 'unbekannt') + '</p>';
+    // Gattung mit lateinischem Namen (kursiv in Klammern), falls vorhanden.
+    var gattungText = gattung.designation || 'unbekannt';
+    if (gattung.latinDesignation) {
+        gattungText += ' (<em>' + gattung.latinDesignation + '</em>)';
+    }
+    html += '<p><strong>Gattung:</strong> ' + gattungText + '</p>';
     html += '<p><strong>Geschlecht:</strong> ' + (tier.gender || 'unbekannt') + '</p>';
     html += '<p><strong>Anzahl der Tiere:</strong> '
           + (tier.animalCount != null ? tier.animalCount : 'unbekannt') + '</p>';
