@@ -13,11 +13,13 @@ public class CounterService {
 	@Autowired
 	private CounterRepository counterRepository;
 
-	// Alle Counter holen. Wie bei Genus iterieren wir ueber das CrudRepository
-	// und packen alles in eine ArrayList.
+	// Alle Counter holen. Wie bei Genus iterieren wir ueber das Repository und
+	// packen alles in eine ArrayList. Wir holen sie fest nach id sortiert, damit
+	// die Reihenfolge nach dem Hochzaehlen gleich bleibt (sonst springen die
+	// Karten im Frontend rum).
 	public List<Counter> getAllCounters() {
 		List<Counter> counters = new ArrayList<>();
-		for (Counter c : counterRepository.findAll()) {
+		for (Counter c : counterRepository.findAllByOrderByIdAsc()) {
 			counters.add(c);
 		}
 		return counters;

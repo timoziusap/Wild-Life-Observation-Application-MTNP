@@ -10,4 +10,8 @@ public interface CounterRepository extends CrudRepository<Counter, Long> {
 	// Custom-Methode per Namenskonvention: sucht Counter mit passendem Namen.
 	List<Counter> findByName(String name);
 
+	// Alle Counter, fest nach id sortiert. Sonst kann sich die Reihenfolge nach
+	// einem Speichern (z.B. Hochzaehlen) aendern und die Karten springen rum.
+	List<Counter> findAllByOrderByIdAsc();
+
 }
