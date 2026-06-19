@@ -278,7 +278,13 @@ function baueZeile(gattung) {
         zeile.append(aktTd);
 
     } else {
-        zeile.append('<td class="sz-name-zelle">' + gattung.designation + '</td>');
+        // Name + lateinischer Name (wie bei den Karten), falls vorhanden.
+        var nameHtml = '<div class="sz-namensblock"><span class="sz-name">' + gattung.designation + '</span>';
+        if (gattung.latinDesignation) {
+            nameHtml += '<span class="sz-latin">' + gattung.latinDesignation + '</span>';
+        }
+        nameHtml += '</div>';
+        zeile.append('<td class="sz-name-zelle">' + nameHtml + '</td>');
         zeile.append('<td class="sz-badge-zelle">' + statusBadge(gattung) + '</td>');
         zeile.append('<td class="sz-wert">' + (gattung.huntingSeason || '—') + '</td>');
         zeile.append('<td class="sz-t-aktion"></td>');
