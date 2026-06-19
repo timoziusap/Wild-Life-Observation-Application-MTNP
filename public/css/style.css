@@ -773,11 +773,6 @@ body.startseite nav.start-nav {
        anpassen. */
     max-height: 720px;
     overflow-y: auto;
-    /* kein overscroll-behavior:contain: wenn man am oberen/unteren Ende des
-       Feeds angekommen ist, scrollt das Rad weiter die ganze Seite (Chaining). */
-    padding: 12px;
-    border: 1px solid #c9b894;
-    border-radius: 10px;
 }
 
 .feed-hinweis {
