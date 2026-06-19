@@ -1281,3 +1281,37 @@ body.startseite nav.start-nav {
         grid-template-columns: 1fr;
     }
 }
+
+/* ----- Schutzzeiten: Einklappen NUR auf dem Handy ----- */
+/* Am PC bleibt alles offen: Chevrons sind versteckt und die Marker-Klassen
+   (sz-zu / sz-card-zu) blenden nichts aus. */
+.sz-chevron { display: none; }
+
+.sz-kopf-rechts {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+    /* Chevron sichtbar machen und Koepfe als anklickbar kennzeichnen. */
+    .sz-chevron {
+        display: inline-block;
+        color: #7a7363;
+        font-size: 14px;
+        transition: transform 0.15s;
+    }
+    .sz-gruppe { cursor: pointer; -webkit-user-select: none; user-select: none; }
+    .sz-card-kopf { cursor: pointer; -webkit-user-select: none; user-select: none; margin-bottom: 0; }
+
+    /* eingeklappt -> Inhalt ausblenden */
+    .sz-gruppe-block.sz-zu .sz-grid { display: none; }
+    .sz-card.sz-card-zu .sz-card-body { display: none; }
+
+    /* Chevron drehen, wenn eingeklappt */
+    .sz-gruppe-block.sz-zu .sz-gruppe .sz-chevron,
+    .sz-card.sz-card-zu .sz-card-kopf .sz-chevron {
+        transform: rotate(-90deg);
+    }
+}

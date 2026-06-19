@@ -257,7 +257,6 @@ function sichtungAbschliessen() {
 
         var neueGattung = {
             'designation'      : tier.sonstigeDesignation,
-            'latinDesignation' : tier.sonstigeLatin,
             'protectedSpecies' : tier.sonstigeProtected === 'ja',
             'huntingSeason'    : tier.sonstigeHuntingSeason
         };

@@ -137,7 +137,6 @@ function entwurfMerken() {
     var entwurf = {
         'genus'                : $('#genusSelect').val(),
         'sonstigeDesignation'  : $('#sonstigeDesignation').val(),
-        'sonstigeLatin'        : $('#sonstigeLatin').val(),
         'sonstigeProtected'    : $('#sonstigeProtected').val(),
         'sonstigeHuntingSeason': $('#sonstigeHuntingSeason').val(),
         'gender'               : $('select[name=gender]').val(),
@@ -162,7 +161,6 @@ function entwurfWiederherstellen() {
 
     if (e.genus)             { $('#genusSelect').val(e.genus); }
     $('#sonstigeDesignation').val(e.sonstigeDesignation || '');
-    $('#sonstigeLatin').val(e.sonstigeLatin || '');
     if (e.sonstigeProtected) { $('#sonstigeProtected').val(e.sonstigeProtected); }
     $('#sonstigeHuntingSeason').val(e.sonstigeHuntingSeason || '');
     if (e.gender)            { $('select[name=gender]').val(e.gender); }
