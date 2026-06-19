@@ -1124,3 +1124,131 @@ body.startseite nav.start-nav {
         padding-bottom: 72px;
     }
 }
+
+/* ===================== Schutzzeiten: Karten-Layout (AP13) ===================== */
+
+/* Suchzeile mit Lupe-Symbol im Feld. */
+.sz-suchzeile {
+    position: relative;
+    margin: 6px 0 18px;
+}
+.sz-such-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #7a7363;
+    pointer-events: none;
+}
+.sz-suche {
+    width: 100%;
+    padding-left: 36px;
+    box-sizing: border-box;
+}
+
+/* Gruppen-Ueberschrift (Geschützt / Schonzeit / Jagdbar). */
+.sz-gruppe {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 18px 0 10px;
+    padding-left: 12px;
+    border-left: 5px solid #c9b894;
+}
+.sz-gruppe-geschuetzt { border-left-color: #a23b2d; }
+.sz-gruppe-schonzeit  { border-left-color: #b97e3a; }
+.sz-gruppe-jagdbar    { border-left-color: #4c7044; }
+
+.sz-gruppe-zahl {
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    font-weight: normal;
+    color: #6b6452;
+    background-color: #e4dcc6;
+    border-radius: 10px;
+    padding: 1px 9px;
+}
+
+/* Karten-Raster: passt sich automatisch der Breite an.
+   Am Handy ergibt sich dadurch automatisch eine Spalte. */
+.sz-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+    margin-bottom: 8px;
+}
+
+/* eine einzelne Gattungs-Karte. */
+.sz-card {
+    background-color: #faf7ef;
+    border: 1px solid #c9b894;
+    border-left: 5px solid #c9b894;
+    border-radius: 8px;
+    padding: 12px 14px;
+    box-sizing: border-box;
+}
+.sz-card-geschuetzt { border-left-color: #a23b2d; }
+.sz-card-schonzeit  { border-left-color: #b97e3a; }
+.sz-card-jagdbar    { border-left-color: #4c7044; }
+
+.sz-card-kopf {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+.sz-namensblock {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.25;
+}
+.sz-name {
+    font-weight: bold;
+    color: #2f4a2c;
+    font-size: 16px;
+}
+.sz-latin {
+    font-size: 12px;
+    font-style: italic;
+    color: #7a7363;
+}
+.sz-badge-wrap { flex-shrink: 0; }
+
+/* Feld-Beschriftungen in der Karte. */
+.sz-card .sz-feld-label {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 2px;
+    font-size: 13px;
+    font-weight: bold;
+    color: #4c5a44;
+}
+
+/* Speichern-Knopf: ruhig (nichts geaendert) vs. aktiv (Aenderung). */
+.sz-save {
+    width: 100%;
+    margin-top: 12px;
+    background-color: #e4dcc6;
+    color: #6b6452;
+    cursor: default;
+}
+.sz-save:hover {
+    background-color: #e4dcc6;
+}
+/* aktiv: sobald die Karte als geaendert markiert ist (Knopf nicht disabled) */
+.sz-save:not([disabled]) {
+    background-color: #4c7044;
+    color: #f1e9d6;
+    cursor: pointer;
+}
+.sz-save:not([disabled]):hover {
+    background-color: #2f4a2c;
+}
+
+/* Am Handy sicher eine Spalte und etwas mehr Luft. */
+@media (max-width: 768px) {
+    .sz-grid {
+        grid-template-columns: 1fr;
+    }
+}
