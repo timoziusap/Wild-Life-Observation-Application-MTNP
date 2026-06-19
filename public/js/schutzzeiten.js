@@ -1,38 +1,53 @@
 // schutzzeiten.js
-// AP13: Schutzzeiten pflegen - als Karten (Handy + PC).
-// Listet alle Gattungen (GET /genus) als Karten, nach Status gruppiert
-// (Geschützt / Schonzeit / Jagdbar). Pro Karte laesst sich der Schutzstatus
-// und der Jagdzeitraum bearbeiten (PUT /genus/{id}). Gespeichert wird nur,
-// wenn wirklich etwas geaendert wurde; ein Suchfeld filtert nach Name.
-//
-// NUR auf dem Handy lassen sich Gruppen UND einzelne Karten einklappen
-// (das Ein-/Ausblenden steuert allein das CSS in der Handy-Breite; am PC
-// bleibt alles offen). Die Klick-Handler setzen lediglich Marker-Klassen.
+// AP13: Schutzzeiten pflegen - RESPONSIV.
+//   - PC (breit):  Tabelle (Name, Status, Jagdzeitraum-Feld, Speichern).
+//   - Handy (schmal): Karten, nach Status gruppiert, Gruppen UND Karten
+//                     einklappbar; pro Karte zusaetzlich "Geschützt?".
+// Gespeichert wird per PUT /genus/{id}; nur wenn etwas geaendert wurde.
+// Beim Drehen/Resizen wird zwischen Tabelle und Karten umgeschaltet.
 
-// gemerkte Gattungen, damit wir beim Speichern die unveraenderten Felder
-// (Bezeichnung, lateinischer Name) wieder mitschicken koennen.
 var alleGattungen = [];
 
-// Reihenfolge und Beschriftung der Status-Gruppen.
+// Status-Gruppen (fuer die Karten) und Sortierrangfolge (fuer die Tabelle).
 var statusGruppen = [
     { key: 'geschuetzt', titel: 'Geschützt' },
     { key: 'schonzeit',  titel: 'In Schonzeit' },
     { key: 'jagdbar',    titel: 'Jagdbar' }
 ];
+var statusRang = { 'geschuetzt': 0, 'schonzeit': 1, 'jagdbar': 2 };
+
+// merkt sich, ob aktuell Tabelle ('tabelle') oder Karten ('karten') gezeigt werden.
+var aktuellerModus = null;
 
 
-// Wird ausgefuehrt, sobald die Seite fertig geladen ist.
 $(document).ready(function() {
 
-    // 1) Gattungen laden und Karten aufbauen.
     ladeGattungen();
 
-    // 2) Suchfeld: Karten nach Name filtern (ohne Neuaufbau, damit
-    //    angefangene Aenderungen erhalten bleiben).
+    // Suchfeld: filtert Zeilen bzw. Karten nach Name.
     $('#genusSuche').on('input', function() {
-        filtereKarten($(this).val());
+        filtereListe($(this).val());
+    });
+
+    // Bei Groessenaenderung ggf. zwischen Tabelle und Karten umschalten.
+    var timer;
+    $(window).on('resize', function() {
+        clearTimeout(timer);
+        timer = setTimeout(function() {
+            var modus = istHandy() ? 'karten' : 'tabelle';
+            if (modus !== aktuellerModus) {
+                zeigeGattungen();
+                filtereListe($('#genusSuche').val());
+            }
+        }, 150);
     });
 });
+
+
+// true, wenn die Anzeige im Handy-Format ist (gleiche Grenze wie im CSS).
+function istHandy() {
+    return window.matchMedia('(max-width: 768px)').matches;
+}
 
 
 // Bestimmt den Status einer Gattung: geschuetzt / schonzeit / jagdbar.
@@ -49,7 +64,7 @@ function statusKey(gattung) {
 }
 
 
-// Baut das farbige Status-Schild fuer eine Gattung.
+// Farbiges Status-Schild.
 function statusBadge(gattung) {
     var key = statusKey(gattung);
     if (key === 'geschuetzt') {
@@ -62,7 +77,38 @@ function statusBadge(gattung) {
 }
 
 
-// Laedt alle Gattungen vom Backend und baut die Karten.
+// Suchtext (Name + lateinischer Name) fuer den Filter.
+function suchtextVon(gattung) {
+    return (gattung.designation + ' ' + (gattung.latinDesignation || '')).toLowerCase();
+}
+
+
+// Gattungen nach Status (Geschützt zuerst), dann alphabetisch sortiert.
+function sortiereNachStatus(liste) {
+    return liste.slice().sort(function(a, b) {
+        var ra = statusRang[statusKey(a)];
+        var rb = statusRang[statusKey(b)];
+        if (ra !== rb) {
+            return ra - rb;
+        }
+        return a.designation.localeCompare(b.designation, 'de');
+    });
+}
+
+
+// Findet die gemerkte Gattung anhand der id.
+function findeOriginal(id) {
+    var gefunden = null;
+    $.each(alleGattungen, function(index, g) {
+        if (g.id === id) {
+            gefunden = g;
+        }
+    });
+    return gefunden;
+}
+
+
+// Laedt alle Gattungen vom Backend und baut die Anzeige.
 function ladeGattungen() {
     $.ajax({
         type: 'GET',
@@ -78,8 +124,73 @@ function ladeGattungen() {
 }
 
 
-// Baut alle Karten neu auf, nach Status gruppiert.
+// Entscheidet je nach Bildschirmbreite zwischen Tabelle und Karten.
 function zeigeGattungen() {
+    aktuellerModus = istHandy() ? 'karten' : 'tabelle';
+    if (aktuellerModus === 'karten') {
+        zeigeKarten();
+    } else {
+        zeigeTabelle();
+    }
+}
+
+
+/* ===================== PC: Tabelle ===================== */
+
+function zeigeTabelle() {
+    var container = $('#genusCards');
+    container.empty();
+
+    var tabelle = $('<table class="sz-tabelle"></table>');
+    tabelle.append(
+        '<thead><tr>'
+        + '<th class="sz-t-name">Gattung</th>'
+        + '<th class="sz-t-status">Status</th>'
+        + '<th>Jagdzeitraum / Schutzbestimmung</th>'
+        + '<th class="sz-t-aktion">Aktion</th>'
+        + '</tr></thead>');
+
+    var tbody = $('<tbody></tbody>');
+    sortiereNachStatus(alleGattungen).forEach(function(gattung) {
+        tbody.append(baueZeile(gattung));
+    });
+    tabelle.append(tbody);
+    container.append(tabelle);
+}
+
+
+function baueZeile(gattung) {
+    var zeile = $('<tr data-such="' + suchtextVon(gattung) + '"></tr>');
+
+    zeile.append('<td class="sz-name-zelle">' + gattung.designation + '</td>');
+    zeile.append('<td class="sz-badge-zelle">' + statusBadge(gattung) + '</td>');
+
+    var feldTd = $('<td></td>');
+    var feld = $('<input type="text" class="jagdZeit" placeholder="z.B. 01.08. - 31.01. oder ganzjährig">');
+    feld.val(gattung.huntingSeason || '');
+    feldTd.append(feld);
+    zeile.append(feldTd);
+
+    var aktionTd = $('<td class="sz-t-aktion"></td>');
+    var speichern = $('<button type="button" class="sz-save" disabled>'
+        + '<i class="bi bi-check2"></i> Gespeichert</button>');
+    speichern.click(function() {
+        speichereGattung(gattung.id, zeile, false);
+    });
+    aktionTd.append(speichern);
+    zeile.append(aktionTd);
+
+    feld.on('input', function() {
+        speichern.prop('disabled', false).html('<i class="bi bi-save"></i> Speichern');
+    });
+
+    return zeile;
+}
+
+
+/* ===================== Handy: Karten ===================== */
+
+function zeigeKarten() {
     var container = $('#genusCards');
     container.empty();
 
@@ -90,11 +201,11 @@ function zeigeGattungen() {
         if (inGruppe.length === 0) {
             return;
         }
+        inGruppe.sort(function(a, b) {
+            return a.designation.localeCompare(b.designation, 'de');
+        });
 
-        // Block = Ueberschrift + Karten-Raster. Die Ueberschrift ist (am Handy)
-        // anklickbar und klappt das Raster ein/aus.
         var block = $('<div class="sz-gruppe-block sz-gruppe-' + gruppe.key + '"></div>');
-
         var ueberschrift = $('<h3 class="sz-gruppe">'
             + '<i class="bi bi-chevron-down sz-chevron"></i>'
             + '<span class="sz-gruppe-titel">' + gruppe.titel + '</span>'
@@ -110,26 +221,19 @@ function zeigeGattungen() {
             grid.append(baueKarte(gattung));
         });
         block.append(grid);
-
         container.append(block);
     });
 }
 
 
-// Baut eine einzelne Gattungs-Karte.
 function baueKarte(gattung) {
     var key = statusKey(gattung);
-    var suchtext = (gattung.designation + ' ' + (gattung.latinDesignation || '')).toLowerCase();
 
-    // Am Handy ist die Karte standardmaessig zugeklappt (kompakt). Das
-    // tatsaechliche Aus-/Einblenden macht das CSS nur in der Handy-Breite.
-    var karte = $('<div class="sz-card sz-card-' + key + ' sz-card-zu" data-such="' + suchtext + '"></div>');
+    // Am Handy standardmaessig zugeklappt (kompakt).
+    var karte = $('<div class="sz-card sz-card-' + key + ' sz-card-zu" data-such="' + suchtextVon(gattung) + '"></div>');
 
-    // Kopf: Name + lateinischer Name links, Status-Schild + Chevron rechts.
-    // Der Kopf ist (am Handy) anklickbar und klappt die Karte auf/zu.
     var kopf = $('<div class="sz-card-kopf"></div>');
-    var namensBlock = '<div class="sz-namensblock"><span class="sz-name">'
-        + gattung.designation + '</span>';
+    var namensBlock = '<div class="sz-namensblock"><span class="sz-name">' + gattung.designation + '</span>';
     if (gattung.latinDesignation) {
         namensBlock += '<span class="sz-latin">' + gattung.latinDesignation + '</span>';
     }
@@ -144,7 +248,6 @@ function baueKarte(gattung) {
     });
     karte.append(kopf);
 
-    // Aufklappbarer Inhalt (Felder + Speichern).
     var body = $('<div class="sz-card-body"></div>');
 
     body.append('<label class="sz-feld-label">Geschützt?</label>');
@@ -159,17 +262,16 @@ function baueKarte(gattung) {
 
     body.append('<label class="sz-feld-label">Jagdzeitraum / Schutzbestimmung</label>');
     var feld = $('<input type="text" class="jagdZeit" placeholder="z.B. 01.08. - 31.01. oder ganzjährig">');
-    feld.val(gattung.huntingSeason ? gattung.huntingSeason : '');
+    feld.val(gattung.huntingSeason || '');
     body.append(feld);
 
     var speichern = $('<button type="button" class="sz-save" disabled>'
         + '<i class="bi bi-check2"></i> Gespeichert</button>');
     speichern.click(function() {
-        speichereGattung(gattung.id, karte);
+        speichereGattung(gattung.id, karte, true);
     });
     body.append(speichern);
 
-    // Sobald etwas geaendert wird: Knopf aktiv schalten.
     function alsGeaendertMarkieren() {
         karte.addClass('sz-dirty');
         speichern.prop('disabled', false).html('<i class="bi bi-save"></i> Speichern');
@@ -182,17 +284,24 @@ function baueKarte(gattung) {
 }
 
 
-// Filtert die Karten nach Suchtext (Name). Leere Gruppen werden mit
-// ausgeblendet. Bestehende (auch unsaved) Karten bleiben erhalten.
-function filtereKarten(text) {
+/* ===================== Suche ===================== */
+
+function filtereListe(text) {
     var suche = (text || '').trim().toLowerCase();
 
+    if (aktuellerModus === 'tabelle') {
+        $('#genusCards tbody tr').each(function() {
+            var treffer = ($(this).attr('data-such') || '').indexOf(suche) !== -1;
+            $(this).toggle(suche === '' || treffer);
+        });
+        return;
+    }
+
+    // Karten-Modus: Karten filtern, leere Gruppen ausblenden.
     $('.sz-card').each(function() {
-        var treffer = $(this).attr('data-such').indexOf(suche) !== -1;
+        var treffer = ($(this).attr('data-such') || '').indexOf(suche) !== -1;
         $(this).toggle(suche === '' || treffer);
     });
-
-    // ganzen Gruppen-Block ausblenden, wenn keine Karte sichtbar ist.
     $('#genusCards .sz-gruppe-block').each(function() {
         var sichtbar = $(this).find('.sz-card:visible').length > 0;
         $(this).toggle(sichtbar);
@@ -200,17 +309,14 @@ function filtereKarten(text) {
 }
 
 
-// Speichert die Aenderungen einer Gattung per PUT /genus/{id}.
-// Kein Neuaufbau, kein Popup: nach Erfolg wird nur die betroffene Karte
-// aktualisiert (Status-Schild + ruhiger "Gespeichert"-Knopf).
-function speichereGattung(id, karte) {
+/* ===================== Speichern ===================== */
 
-    var original = null;
-    $.each(alleGattungen, function(index, g) {
-        if (g.id === id) {
-            original = g;
-        }
-    });
+// behaelter = die Zeile (Tabelle) oder die Karte (Handy).
+// mitSchutz = true -> Schutzstatus aus dem Dropdown (nur Karten);
+//             false -> Schutzstatus unveraendert aus dem Original (Tabelle).
+function speichereGattung(id, behaelter, mitSchutz) {
+
+    var original = findeOriginal(id);
     if (original === null) {
         return;
     }
@@ -218,8 +324,8 @@ function speichereGattung(id, karte) {
     var geaendert = {
         'designation'      : original.designation,
         'latinDesignation' : original.latinDesignation,
-        'protectedSpecies' : karte.find('.schutzStatus').val() === 'ja',
-        'huntingSeason'    : karte.find('.jagdZeit').val()
+        'protectedSpecies' : mitSchutz ? (behaelter.find('.schutzStatus').val() === 'ja') : original.protectedSpecies,
+        'huntingSeason'    : behaelter.find('.jagdZeit').val()
     };
 
     putJson('/genus/' + id, geaendert, function() {
@@ -227,11 +333,10 @@ function speichereGattung(id, karte) {
         original.huntingSeason = geaendert.huntingSeason;
 
         // Status-Schild neu setzen (Farbe kann sich geaendert haben).
-        karte.find('.sz-badge-wrap').html(statusBadge(original));
+        behaelter.find('.sz-badge-wrap, .sz-badge-zelle').html(statusBadge(original));
 
-        // Karte als gespeichert markieren: Knopf wieder ruhig stellen.
-        karte.removeClass('sz-dirty');
-        var btn = karte.find('.sz-save');
+        behaelter.removeClass('sz-dirty');
+        var btn = behaelter.find('.sz-save');
         btn.prop('disabled', true).html('<i class="bi bi-check2-circle"></i> Gespeichert');
     });
 }

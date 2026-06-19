@@ -1315,3 +1315,55 @@ body.startseite nav.start-nav {
         transform: rotate(-90deg);
     }
 }
+
+/* ===================== Schutzzeiten: PC-Tabelle (wie Bild) ===================== */
+/* Wird nur am PC verwendet (das JS rendert am Handy stattdessen Karten). */
+.sz-tabelle {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 6px;
+}
+.sz-tabelle thead th {
+    background-color: #e4dcc6;
+    color: #3a2f1c;
+    font-weight: bold;
+    text-align: left;
+    padding: 10px 14px;
+    border-bottom: 2px solid #8a6d3b;
+    font-family: Georgia, 'Times New Roman', serif;
+}
+.sz-tabelle thead th.sz-t-aktion {
+    text-align: right;
+}
+.sz-tabelle tbody td {
+    padding: 10px 14px;
+    border-bottom: 1px solid #e4dcc6;
+    vertical-align: middle;
+}
+.sz-tabelle tbody tr:last-child td {
+    border-bottom: none;
+}
+.sz-name-zelle {
+    font-weight: bold;
+    color: #2f4a2c;
+    font-size: 17px;
+    white-space: nowrap;
+}
+.sz-badge-zelle {
+    white-space: nowrap;
+}
+.sz-tabelle td.sz-t-aktion {
+    text-align: right;
+    white-space: nowrap;
+}
+/* Eingabefeld und Speichern-Knopf in der Tabelle: ohne Block-Stil. */
+.sz-tabelle .jagdZeit {
+    margin-top: 0;
+}
+.sz-tabelle .sz-save {
+    width: auto;
+    margin-top: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
