@@ -244,7 +244,7 @@ function zeigeTabelle() {
         '<thead><tr>'
         + '<th class="sz-t-name">Gattung</th>'
         + '<th class="sz-t-status">Status</th>'
-        + '<th>Jagdzeitraum / Schutzbestimmung</th>'
+        + '<th>Schonzeit / Schutzbestimmung</th>'
         + '<th class="sz-t-aktion">Aktion</th>'
         + '</tr></thead>');
 
@@ -351,7 +351,7 @@ function baueKarte(gattung) {
         body.empty();
 
         if (!imEdit) {
-            body.append('<label class="sz-feld-label">Jagdzeitraum / Schutzbestimmung</label>');
+            body.append('<label class="sz-feld-label">Schonzeit / Schutzbestimmung</label>');
             body.append('<div class="sz-wert">' + (gattung.huntingSeason || '—') + '</div>');
             var bbtn = $('<button type="button" class="sz-bearbeiten-btn"><i class="bi bi-pencil-square"></i> Bearbeiten</button>');
             bbtn.click(function(e) {
@@ -365,7 +365,7 @@ function baueKarte(gattung) {
             body.append('<label class="sz-feld-label">Gattung (Name)</label>');
             body.append($('<input type="text" class="nameFeld">').val(gattung.designation));
 
-            body.append('<label class="sz-feld-label">Jagdzeitraum / Schutzbestimmung</label>');
+            body.append('<label class="sz-feld-label">Schonzeit / Schutzbestimmung</label>');
             body.append($('<input type="text" class="jagdZeit" placeholder="z.B. 01.08. - 31.10. oder ganzjährig geschont">')
                 .val(gattung.huntingSeason || ''));
 

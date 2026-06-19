@@ -85,27 +85,19 @@ function zeigeGattungsInfo() {
         // == statt ===, weil der Dropdown-Wert ein Text ist und id eine Zahl
         if (gattung.id == gewaehlteId) {
 
-            var text = '';
-            if (gattung.protectedSpecies) {
-                text = 'GESCHÜTZTE ART - darf nicht bejagt werden.';
-            } else {
-                text = 'Nicht geschützt.';
-            }
-            if (gattung.huntingSeason) {
-                text = text + ' Jagdzeit: ' + gattung.huntingSeason;
-            }
-
-            // Pruefen ob heute Schonzeit ist und ggf. warnen (schonzeit.js).
-            // Bei geschuetzten Arten steht der Hinweis schon oben, daher nur sonst.
-            if (!gattung.protectedSpecies && typeof schonzeitHinweis === 'function') {
+            // Status wird aus dem Zeitraum abgeleitet (im Zeitraum = geschuetzt).
+            var hinweis = '';
+            if (typeof schonzeitHinweis === 'function') {
                 var heute = new Date();
                 var heuteStr = heute.getFullYear() + '-'
                     + ('0' + (heute.getMonth() + 1)).slice(-2) + '-'
                     + ('0' + heute.getDate()).slice(-2);
-                var hinweis = schonzeitHinweis(gattung, heuteStr);
-                if (hinweis) {
-                    text = text + '. ' + hinweis;
-                }
+                hinweis = schonzeitHinweis(gattung, heuteStr);
+            }
+
+            var text = hinweis ? hinweis : 'Aktuell jagdbar.';
+            if (gattung.huntingSeason) {
+                text = text + ' Schonzeit: ' + gattung.huntingSeason;
             }
 
             $('#genusInfo').text(text).show();
