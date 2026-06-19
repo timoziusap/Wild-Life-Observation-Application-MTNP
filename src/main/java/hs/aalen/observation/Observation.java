@@ -25,7 +25,6 @@ public class Observation {
 	// Zeitpunkt, wann die Sichtung gespeichert wurde (als Text, z.B. "2026-06-13 12:50")
 	private String createdAt;
 
-	// Bild zur Sichtung als Data-URL (z.B. "data:image/jpeg;base64,...").
 	// Anzahl der "Gefaellt mir" (Likes). Fuer Likes ist kein Name noetig.
 	private int likes;
 
