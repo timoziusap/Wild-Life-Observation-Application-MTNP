@@ -41,13 +41,13 @@ public class GenusSeeder implements CommandLineRunner {
 		genusRepository.save(new Genus("Martes foina", "Steinmarder", false, "01.03. - 15.10."));
 		genusRepository.save(new Genus("Martes martes", "Baummarder", false, "01.03. - 15.10."));
 		genusRepository.save(new Genus("Mustela putorius", "Iltis", false, "01.03. - 31.07."));
-		genusRepository.save(new Genus("Procyon lotor", "Waschbaer", false, "keine"));
+		genusRepository.save(new Genus("Procyon lotor", "Waschbär", false, "keine"));
 		genusRepository.save(new Genus("Nyctereutes procyonoides", "Marderhund", false, "keine"));
 		genusRepository.save(new Genus("Anas platyrhynchos", "Stockente", false, "16.01. - 31.08."));
 		genusRepository.save(new Genus("Anser anser", "Graugans", false, "16.01. - 31.07."));
 		genusRepository.save(new Genus("Columba palumbus", "Ringeltaube", false, "21.02. - 31.10."));
 		genusRepository.save(new Genus("Phasianus colchicus", "Fasan", false, "16.01. - 30.09."));
-		genusRepository.save(new Genus("Perdix perdix", "Rebhuhn", true, "ganzjaehrig geschont (Bestand stark gefaehrdet)"));
+		genusRepository.save(new Genus("Perdix perdix", "Rebhuhn", true, "ganzjährig geschont (Bestand stark gefährdet)"));
 		genusRepository.save(new Genus("Scolopax rusticola", "Waldschnepfe", false, "16.01. - 15.10."));
 		genusRepository.save(new Genus("Ondatra zibethicus", "Bisamratte", false, "keine"));
 	}
