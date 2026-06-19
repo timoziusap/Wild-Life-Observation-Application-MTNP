@@ -240,12 +240,13 @@ function zeigeTabelle() {
     container.append(leiste);
 
     var tabelle = $('<table class="sz-tabelle"></table>');
+    // Aktion-Spalte nur im Bearbeiten-Modus, sonst ist sie ueberfluessig.
     tabelle.append(
         '<thead><tr>'
         + '<th class="sz-t-name">Gattung</th>'
         + '<th class="sz-t-status">Status</th>'
         + '<th>Schonzeit / Schutzbestimmung</th>'
-        + '<th class="sz-t-aktion">Aktion</th>'
+        + (bearbeitenAktiv ? '<th class="sz-t-aktion">Aktion</th>' : '')
         + '</tr></thead>');
 
     var tbody = $('<tbody></tbody>');
@@ -287,7 +288,6 @@ function baueZeile(gattung) {
         zeile.append('<td class="sz-name-zelle">' + nameHtml + '</td>');
         zeile.append('<td class="sz-badge-zelle">' + statusBadge(gattung) + '</td>');
         zeile.append('<td class="sz-wert">' + (gattung.huntingSeason || '—') + '</td>');
-        zeile.append('<td class="sz-t-aktion"></td>');
     }
     return zeile;
 }
