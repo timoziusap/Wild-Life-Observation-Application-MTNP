@@ -1054,8 +1054,9 @@ body.startseite nav.start-nav {
 }
 
 /* ===================== Untere Symbolleiste fuers Handy (nav.js) ===================== */
-/* Feste Leiste am unteren Rand wie bei einer Handy-App: flach am Rand, voller
-   Breite, klarer Indikator beim aktiven Punkt. Am PC ausgeblendet. */
+/* Feste Leiste am unteren Rand wie bei einer Handy-App. Wichtig: die Leiste ist
+   selbst ein <nav> mit <a>, deshalb werden die globalen nav- und nav-a-Stile
+   (cremefarbene Pillen, runde Ecken, Rand, Abstand) hier bewusst zurueckgesetzt. */
 .bottom-nav {
     display: none;
 }
@@ -1068,37 +1069,55 @@ body.startseite nav.start-nav {
         right: 0;
         bottom: 0;
         z-index: 1200;
+        /* globale nav-Optik abschalten, damit die Leiste flach am Rand sitzt */
+        margin: 0;
+        padding: 0;
+        border: none;
+        border-radius: 0;
         background-color: #2f4a2c;
         border-top: 1px solid #20331e;
-        /* iPhone: Platz fuer die Home-Leiste, damit die Leiste nicht schwebt */
+        /* iPhone: Platz fuer die Home-Leiste */
         padding-bottom: env(safe-area-inset-bottom, 0px);
     }
-    .bottom-nav-item {
+    .bottom-nav .bottom-nav-item {
         flex: 1 1 0;
         display: flex;
         flex-direction: column;
         align-items: center;
         gap: 3px;
+        /* globale nav-a-Pille abschalten */
+        margin: 0;
+        border-radius: 0;
+        background: none;
+        background-color: transparent;
         padding: 9px 2px 7px;
-        /* inaktiv: deutlich gedimmt, aber noch gut lesbar */
-        color: rgba(241, 233, 214, 0.55);
+        /* inaktiv: hell genug zum Lesen auf dem dunklen Gruen */
+        color: rgba(241, 233, 214, 0.7);
         text-decoration: none;
         font-size: 11px;
         font-weight: bold;
         text-align: center;
     }
-    .bottom-nav-item i {
+    .bottom-nav .bottom-nav-item i {
         font-size: 22px;
         line-height: 1;
     }
-    /* aktueller Punkt: voll hell, gruener Icon-Akzent und ein duenner
-       Balken oben drueber, damit man sofort sieht wo man ist */
-    .bottom-nav-item.aktiv {
+    /* aktueller Punkt: voll hell, gruener Icon-Akzent und ein Balken oben drueber */
+    .bottom-nav .bottom-nav-item.aktiv {
         color: #f1e9d6;
+        background: none;
+        background-color: transparent;
         box-shadow: inset 0 3px 0 #a8c98a;
     }
-    .bottom-nav-item.aktiv i {
+    .bottom-nav .bottom-nav-item.aktiv i {
         color: #a8c98a;
+    }
+    /* kein Hover/Tap-Pillen-Effekt der globalen Regeln */
+    .bottom-nav .bottom-nav-item:hover,
+    .bottom-nav .bottom-nav-item:active {
+        background: none;
+        background-color: transparent;
+        color: #f1e9d6;
     }
     /* Platz schaffen, damit die feste Leiste den Inhalt nicht verdeckt */
     body {
