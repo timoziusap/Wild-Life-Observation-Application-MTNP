@@ -772,6 +772,7 @@ body.startseite nav.start-nav {
        Ab der dritten Sichtung erscheint die Scrollleiste. Wert bei Bedarf
        anpassen. */
     max-height: 720px;
+    overflow-x: hidden;
     overflow-y: auto;
 }
 
