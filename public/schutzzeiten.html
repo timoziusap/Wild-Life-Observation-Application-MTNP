@@ -40,15 +40,18 @@
            Schutzbestimmung jeder Gattung. Die Angaben erscheinen automatisch
            überall, wo die Gattung verwendet wird (Tier-Dialog und Suche).</p>
 
-        <!-- Suchfeld: filtert die Gattungs-Karten nach Name (schutzzeiten.js) -->
-        <div class="sz-suchzeile">
-            <i class="bi bi-search sz-such-icon"></i>
-            <input type="text" id="genusSuche" class="sz-suche" placeholder="Gattung suchen …">
-        </div>
-
-        <!-- die Karten werden per AJAX aus GET /genus gefuellt (schutzzeiten.js),
-             nach Status gruppiert. -->
-        <div id="genusCards"></div>
+        <table id="genusTable" class="display" cellspacing="0" width="100%">
+            <thead>
+            <tr>
+                <th>Gattung</th>
+                <th>Status</th>
+                <th>Jagdzeitraum / Schutzbestimmung</th>
+                <th>Aktion</th>
+            </tr>
+            </thead>
+            <!-- die Zeilen werden per AJAX aus GET /genus gefuellt (schutzzeiten.js) -->
+            <tbody id="genusBody"></tbody>
+        </table>
     </section>
 
     <footer>Wild Life Observation App &ndash; Hochschule Aalen</footer>

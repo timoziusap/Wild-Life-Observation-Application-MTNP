@@ -998,6 +998,40 @@ body.startseite nav.start-nav {
     }
 }
 
+/* ===================== Schutzzeiten-Tabelle ===================== */
+/* Gattungsname in der Tabelle: groesser und fett.
+   #genusTable noetig, damit die Spezifitaet von table.display td ueberwunden wird. */
+#genusTable td.sz-name-zelle {
+    font-size: 17px;
+    font-weight: bold;
+    color: #2f4a2c;
+    width: 200px;
+    white-space: nowrap;
+}
+
+/* Badge-Spalte: nicht unnoetig breit werden lassen. */
+#genusTable td.sz-badge-zelle {
+    white-space: nowrap;
+    width: 130px;
+    text-align: center;
+}
+
+/* Jagdzeit-Eingabefeld in der Tabelle: volle Breite der Spalte. */
+#genusTable .jagdZeit {
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 0;
+    font-size: 13px;
+}
+
+/* Speichern-Knopf in der Tabelle: kompakt. */
+#genusTable .sz-save {
+    margin-top: 0;
+    padding: 4px 10px;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
 /* ===================== Bild in der Suche-Detailansicht ===================== */
 .detail-bild {
     margin: 10px 0;
