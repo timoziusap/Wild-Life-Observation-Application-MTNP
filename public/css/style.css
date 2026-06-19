@@ -759,15 +759,13 @@ body.startseite nav.start-nav {
     display: none;
 }
 
-/* Feed-Liste: einspaltig und zentriert, wie ein klassischer Foto-Feed.
+/* Feed-Liste: auf dem PC zwei Spalten nebeneinander, auf dem Handy einspaltig.
    max-height + overflow-y machen daraus ein eigenes Scrollfenster: die neuesten
    Sichtungen sind in sich scrollbar, die Kacheln darueber bleiben oben sichtbar.
-   overscroll-behavior:contain verhindert, dass beim Scrollen am Feed-Ende die
-   ganze Hauptseite mitscrollt. Rahmen macht das Fenster sichtbar. */
+   Rahmen macht das Fenster sichtbar. */
 .feed {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 18px;
     margin-top: 12px;
     /* Hoehe so, dass ca. zwei Karten in voller Groesse sichtbar sind.
@@ -775,11 +773,6 @@ body.startseite nav.start-nav {
        anpassen. */
     max-height: 720px;
     overflow-y: auto;
-    /* kein overscroll-behavior:contain: wenn man am oberen/unteren Ende des
-       Feeds angekommen ist, scrollt das Rad weiter die ganze Seite (Chaining). */
-    padding: 12px;
-    border: 1px solid #c9b894;
-    border-radius: 10px;
 }
 
 .feed-hinweis {
@@ -791,7 +784,7 @@ body.startseite nav.start-nav {
 /* eine einzelne Feed-Karte (Sichtung) */
 .feed-karte {
     width: 100%;
-    max-width: 520px;
+    max-width: none;
     background-color: #faf7ef;
     border: 1px solid #c9b894;
     border-radius: 10px;
@@ -997,9 +990,10 @@ body.startseite nav.start-nav {
     .feed-section #feed {
         display: none;
     }
-    /* ... und erst nach Klick auf den Knopf anzeigen */
+    /* ... und erst nach Klick auf den Knopf anzeigen; auf dem Handy einspaltig */
     .feed-section.feed-offen #feed {
-        display: flex;
+        display: grid;
+        grid-template-columns: 1fr;
     }
 }
 
