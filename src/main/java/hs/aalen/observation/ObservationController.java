@@ -36,11 +36,11 @@ public class ObservationController {
 		return observationService.getAllObservations();
 	}
 
-	// Die 5 neuesten Sichtungen fuer den Feed auf der Startseite.
+	// Die 4 neuesten Sichtungen fuer den Feed auf der Startseite.
 	@GetMapping("/observations/latest")
 	public List<Observation> getLatestObservations() {
 		log.info("GET /observations/latest - neueste Sichtungen fuer den Feed");
-		return observationService.getLatestObservations(5);
+		return observationService.getLatestObservations(4);
 	}
 
 	// Suche mit Filtern (Dialog 4). Alle Parameter sind optional, z.B.
