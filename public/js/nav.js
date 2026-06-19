@@ -2,25 +2,26 @@
 // Gemeinsame Navigation fuer alle Seiten (ohne jQuery, damit es auch
 // auf der Startseite laeuft).
 //
-// Normale Seiten bekommen ein Aufklapp-Menue ("Menü ▾"):
-//  - die anderen Seiten sind anklickbar,
-//  - die aktuelle Seite steht im Menue, ist aber ausgegraut,
-//  - "Startseite" gibt es nicht als Eintrag: ein Klick auf den Titel (Header)
-//    fuehrt zur Startseite.
+// Oben (am PC):
+//  - Normale Seiten zeigen alle Menuepunkte direkt als Leiste (kein Dropdown mehr).
+//  - Die aktuelle Seite ist ausgegraut und nicht klickbar.
+//  - Die Startseite blendet die obere Leiste aus, dort navigieren die Kacheln.
+//  - Die zwei Seiten des Anlage-Ablaufs (tier.html, ort.html) bekommen statt
+//    der Leiste einen Fortschrittsbalken (Schritt 1 Tier, Schritt 2 Ort).
 //
-// Die zwei Seiten des Anlage-Ablaufs (tier.html, ort.html) bekommen statt
-// des Menues einen Fortschrittsbalken (Stepper) mit Schritt 1 (Tier) und
-// Schritt 2 (Ort). So sieht man, wo man gerade steht, und kann zwischen den
-// beiden Schritten hin- und herwechseln.
+// Unten (auf dem Handy): auf allen Seiten eine feste Symbolleiste mit allen
+// Punkten. Am PC ist sie ausgeblendet. Im Anlage-Ablauf warnt flowguard.js,
+// wenn man ueber die Leiste den Ablauf verlaesst.
 
 document.addEventListener('DOMContentLoaded', function() {
 
-    // Seiten im normalen Menue (ohne Startseite).
+    // Alle Seiten mit Icon (Bootstrap Icons) und Kurztext fuer die Handy-Leiste.
     var seiten = [
-        { href: 'tier.html',         text: 'Tiersichtung anlegen' },
-        { href: 'search.html',       text: 'Tiersichtung suchen' },
-        { href: 'counter.html',      text: 'Zählungen' },
-        { href: 'schutzzeiten.html', text: 'Schutzzeiten' }
+        { href: 'index.html',        text: 'Startseite',           kurz: 'Start',     icon: 'bi-house' },
+        { href: 'tier.html',         text: 'Tiersichtung anlegen', kurz: 'Anlegen',   icon: 'bi-binoculars' },
+        { href: 'search.html',       text: 'Suchen',               kurz: 'Suchen',    icon: 'bi-search' },
+        { href: 'counter.html',      text: 'Zählungen',            kurz: 'Zählung',   icon: 'bi-calculator' },
+        { href: 'schutzzeiten.html', text: 'Schutzzeiten',         kurz: 'Schutz',    icon: 'bi-shield-check' }
     ];
 
     // aktuelle Seite aus der URL bestimmen (letzter Teil des Pfads).
@@ -36,46 +37,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
     var nav = document.querySelector('nav');
     if (nav && imFlow) {
-        // Im Anlage-Ablauf: Fortschrittsbalken statt Menue.
+        // Im Anlage-Ablauf: Fortschrittsbalken statt Leiste.
         nav.classList.add('top-stepper-nav');
         nav.innerHTML = baueStepper(aktuell);
 
     } else if (nav) {
-        // Normale Seite: Aufklapp-Menue. Auf dem Handy wird diese Leiste
-        // ausgeblendet, weil dort die untere Symbolleiste die Navigation uebernimmt.
+        // Normale Seite: alle Punkte direkt als Leiste (kein Dropdown).
+        // Die Startseite selbst lassen wir weg, dorthin fuehrt der Titel-Klick.
         nav.classList.add('top-menu-nav');
         var eintraege = '';
         seiten.forEach(function(s) {
+            if (s.href === 'index.html') {
+                return;
+            }
             if (s.href === aktuell) {
                 // aktuelle Seite: anzeigen, aber ausgegraut und nicht klickbar
-                eintraege += '<span class="menu-eintrag aktuell">' + s.text + '</span>';
+                eintraege += '<span class="aktuell">' + s.text + '</span>';
             } else {
-                eintraege += '<a class="menu-eintrag" href="' + s.href + '">' + s.text + '</a>';
+                eintraege += '<a href="' + s.href + '">' + s.text + '</a>';
             }
         });
-
-        nav.innerHTML =
-            '<div class="menu-wrap">' +
-            '<button type="button" class="menu-button" id="menuButton">Menü ▾</button>' +
-            '<div class="menu-panel" id="menuPanel">' + eintraege + '</div>' +
-            '</div>';
-
-        var button = document.getElementById('menuButton');
-        var panel = document.getElementById('menuPanel');
-
-        // Auf-/Zuklappen.
-        button.addEventListener('click', function(e) {
-            e.stopPropagation();
-            panel.classList.toggle('offen');
-        });
-        // Klick irgendwo anders schliesst das Menue.
-        document.addEventListener('click', function() {
-            panel.classList.remove('offen');
-        });
-        // Klick im Menue selbst soll es nicht sofort schliessen.
-        panel.addEventListener('click', function(e) {
-            e.stopPropagation();
-        });
+        nav.innerHTML = '<div class="top-links">' + eintraege + '</div>';
     }
 
     // Titel im Header zur Startseite verlinken (ersetzt den Startseite-Knopf).
@@ -87,7 +69,34 @@ document.addEventListener('DOMContentLoaded', function() {
         h1.parentNode.insertBefore(link, h1);
         link.appendChild(h1);
     }
+
+    // Untere Handy-Leiste auf jeder Seite einbauen.
+    baueUntereLeiste(seiten, aktuell, imFlow);
 });
+
+
+// Baut die feste untere Symbolleiste fuers Handy (auf allen Seiten).
+// Sie ist ein <nav>, damit flowguard.js (Selektor "nav a") die Klicks im
+// Anlage-Ablauf mitbekommt und ggf. warnt.
+function baueUntereLeiste(seiten, aktuell, imFlow) {
+
+    var html = '';
+    seiten.forEach(function(s) {
+        // Aktiv ist die aktuelle Seite. Im Anlage-Ablauf (tier/ort) ist
+        // "Anlegen" der aktive Punkt.
+        var aktiv = (s.href === aktuell) || (imFlow && s.href === 'tier.html');
+        var klasse = 'bottom-nav-item' + (aktiv ? ' aktiv' : '');
+        html += '<a class="' + klasse + '" href="' + s.href + '">' +
+                    '<i class="bi ' + s.icon + '"></i>' +
+                    '<span>' + s.kurz + '</span>' +
+                '</a>';
+    });
+
+    var leiste = document.createElement('nav');
+    leiste.className = 'bottom-nav';
+    leiste.innerHTML = html;
+    document.body.appendChild(leiste);
+}
 
 
 // Baut den Fortschrittsbalken fuer den Anlage-Ablauf.
