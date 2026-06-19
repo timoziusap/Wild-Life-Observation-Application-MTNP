@@ -1169,9 +1169,10 @@ body.startseite nav.start-nav {
     color: #7a7363;
     pointer-events: none;
 }
-.sz-suche {
+/* hoehere Spezifitaet als input[type=text], damit das Icon nicht ueberlappt */
+.sz-suchzeile .sz-suche {
     width: 100%;
-    padding-left: 36px;
+    padding: 8px 10px 8px 38px;
     box-sizing: border-box;
 }
 
@@ -1365,5 +1366,96 @@ body.startseite nav.start-nav {
     margin-top: 0;
     display: inline-flex;
     align-items: center;
+    gap: 6px;
+}
+
+/* ===================== Schutzzeiten: Bearbeiten-Modus ===================== */
+/* Werkzeugleiste ueber der PC-Tabelle. */
+.sz-toolbar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 6px 0 12px;
+}
+.sz-toolbar .sz-hinweis {
+    font-size: 13px;
+    color: #7a7363;
+}
+
+/* roter "Bearbeiten"-Button (PC und Handy). */
+.sz-bearbeiten-btn {
+    background-color: #a23b2d;
+    color: #faf7ef;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.sz-bearbeiten-btn:hover {
+    background-color: #7f2c20;
+}
+.sz-bearbeiten-btn.aktiv {
+    background-color: #6b6452;
+}
+.sz-bearbeiten-btn.aktiv:hover {
+    background-color: #534d3e;
+}
+
+/* aktiver Speichern-Knopf (gruen). */
+.sz-save-aktiv {
+    background-color: #4c7044;
+    color: #f1e9d6;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.sz-save-aktiv:hover {
+    background-color: #2f4a2c;
+}
+
+/* Abbrechen-Knopf (dezent). */
+.sz-abbrechen {
+    background-color: #e4dcc6;
+    color: #6b6452;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+}
+.sz-abbrechen:hover {
+    background-color: #d8cfb4;
+}
+
+/* Anzeige-Wert (schreibgeschuetzt, im Nicht-Bearbeiten-Modus). */
+.sz-wert {
+    color: #33302a;
+}
+
+/* Namensfeld in der Tabelle nicht zu breit. */
+.sz-tabelle .sz-name-input {
+    margin-top: 0;
+    font-weight: bold;
+}
+
+/* In der PC-Tabelle die Knoepfe kompakt halten. */
+.sz-tabelle .sz-save-aktiv {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* In den Handy-Karten Knoepfe volle Breite, Abstand dazwischen. */
+.sz-card-body .sz-bearbeiten-btn,
+.sz-card-body .sz-save-aktiv,
+.sz-card-body .sz-abbrechen {
+    width: 100%;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     gap: 6px;
 }

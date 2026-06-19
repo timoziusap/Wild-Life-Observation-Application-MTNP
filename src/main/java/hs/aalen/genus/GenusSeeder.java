@@ -1,14 +1,18 @@
 package hs.aalen.genus;
 
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-// Schreibt beim Start eine Liste mit gaengigen jagdbaren Wildarten in die DB.
-// Wird nur ausgefuehrt wenn noch keine Gattung vorhanden ist, damit beim
-// naechsten Start keine Dubletten entstehen.
-// Die Jagdzeiten sind Beispielwerte nach Bundesjagdgesetz - je nach
-// Bundesland koennen sie abweichen, fuer die App reicht das aber.
+// Schreibt beim Start eine Liste gaengiger Wildarten in die DB (nur wenn noch
+// keine Gattung vorhanden ist, damit keine Dubletten entstehen).
+//
+// WICHTIG: huntingSeason enthaelt jetzt die SCHONZEIT (geschuetzte Zeit),
+// passend zur Logik "im Zeitraum = geschuetzt". Die Schonzeit ist der
+// Gegenzeitraum zur jagdlichen Jagdzeit. Ganzjaehrig bejagbare Arten haben
+// keine Schonzeit ("keine").
 @Component
+@Order(1)
 public class GenusSeeder implements CommandLineRunner {
 
 	private final GenusRepository genusRepository;
@@ -25,27 +29,27 @@ public class GenusSeeder implements CommandLineRunner {
 			return;
 		}
 
-		// latinDesignation, designation, protectedSpecies, huntingSeason
-		genusRepository.save(new Genus("Capreolus capreolus", "Rehwild", false, "01.05. - 31.01."));
-		genusRepository.save(new Genus("Cervus elaphus", "Rotwild", false, "01.08. - 31.01."));
-		genusRepository.save(new Genus("Dama dama", "Damwild", false, "01.09. - 31.01."));
-		genusRepository.save(new Genus("Sus scrofa", "Schwarzwild (Wildschwein)", false, "ganzjaehrig (Bachen mit Frischlingen geschont)"));
-		genusRepository.save(new Genus("Vulpes vulpes", "Rotfuchs", false, "ganzjaehrig (Elterntiere waehrend Aufzucht geschont)"));
-		genusRepository.save(new Genus("Lepus europaeus", "Feldhase", false, "01.10. - 15.01."));
-		genusRepository.save(new Genus("Oryctolagus cuniculus", "Wildkaninchen", false, "ganzjaehrig"));
-		genusRepository.save(new Genus("Meles meles", "Dachs", false, "01.08. - 31.10."));
-		genusRepository.save(new Genus("Martes foina", "Steinmarder", false, "16.10. - 28.02."));
-		genusRepository.save(new Genus("Martes martes", "Baummarder", false, "16.10. - 28.02."));
-		genusRepository.save(new Genus("Mustela putorius", "Iltis", false, "01.08. - 28.02."));
-		genusRepository.save(new Genus("Procyon lotor", "Waschbaer", false, "ganzjaehrig"));
-		genusRepository.save(new Genus("Nyctereutes procyonoides", "Marderhund", false, "ganzjaehrig"));
-		genusRepository.save(new Genus("Anas platyrhynchos", "Stockente", false, "01.09. - 15.01."));
-		genusRepository.save(new Genus("Anser anser", "Graugans", false, "01.08. - 15.01."));
-		genusRepository.save(new Genus("Columba palumbus", "Ringeltaube", false, "01.11. - 20.02."));
-		genusRepository.save(new Genus("Phasianus colchicus", "Fasan", false, "01.10. - 15.01."));
+		// latinDesignation, designation, protectedSpecies, huntingSeason (= Schonzeit)
+		genusRepository.save(new Genus("Capreolus capreolus", "Rehwild", false, "01.02. - 30.04."));
+		genusRepository.save(new Genus("Cervus elaphus", "Rotwild", false, "01.02. - 31.07."));
+		genusRepository.save(new Genus("Dama dama", "Damwild", false, "01.02. - 31.08."));
+		genusRepository.save(new Genus("Sus scrofa", "Schwarzwild (Wildschwein)", false, "keine"));
+		genusRepository.save(new Genus("Vulpes vulpes", "Rotfuchs", false, "keine"));
+		genusRepository.save(new Genus("Lepus europaeus", "Feldhase", false, "16.01. - 30.09."));
+		genusRepository.save(new Genus("Oryctolagus cuniculus", "Wildkaninchen", false, "keine"));
+		genusRepository.save(new Genus("Meles meles", "Dachs", false, "01.11. - 31.07."));
+		genusRepository.save(new Genus("Martes foina", "Steinmarder", false, "01.03. - 15.10."));
+		genusRepository.save(new Genus("Martes martes", "Baummarder", false, "01.03. - 15.10."));
+		genusRepository.save(new Genus("Mustela putorius", "Iltis", false, "01.03. - 31.07."));
+		genusRepository.save(new Genus("Procyon lotor", "Waschbaer", false, "keine"));
+		genusRepository.save(new Genus("Nyctereutes procyonoides", "Marderhund", false, "keine"));
+		genusRepository.save(new Genus("Anas platyrhynchos", "Stockente", false, "16.01. - 31.08."));
+		genusRepository.save(new Genus("Anser anser", "Graugans", false, "16.01. - 31.07."));
+		genusRepository.save(new Genus("Columba palumbus", "Ringeltaube", false, "21.02. - 31.10."));
+		genusRepository.save(new Genus("Phasianus colchicus", "Fasan", false, "16.01. - 30.09."));
 		genusRepository.save(new Genus("Perdix perdix", "Rebhuhn", true, "ganzjaehrig geschont (Bestand stark gefaehrdet)"));
-		genusRepository.save(new Genus("Scolopax rusticola", "Waldschnepfe", false, "16.10. - 15.01."));
-		genusRepository.save(new Genus("Ondatra zibethicus", "Bisamratte", false, "ganzjaehrig"));
+		genusRepository.save(new Genus("Scolopax rusticola", "Waldschnepfe", false, "16.01. - 15.10."));
+		genusRepository.save(new Genus("Ondatra zibethicus", "Bisamratte", false, "keine"));
 	}
 
 }
